@@ -254,6 +254,26 @@ textarea { resize: vertical; min-height: 70px; }
 /* ─── WHEAT MILL SECTION ─── */
 .mill-card { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1.5px solid var(--amber); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
 
+/* ─── BOTTOM NAV (mobile) ─── */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  background: white; border-top: 1px solid var(--gray-200);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+  padding: 6px 0 max(6px, env(safe-area-inset-bottom));
+}
+.bottom-nav-inner { display: flex; justify-content: space-around; align-items: center; }
+.bnav-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 4px 8px; border: none; background: none; cursor: pointer;
+  color: var(--gray-400); font-family: var(--font); min-width: 52px;
+  border-radius: 8px; transition: all 0.15s;
+}
+.bnav-btn.active { color: var(--blue); }
+.bnav-btn:active { background: var(--blue-pale); }
+.bnav-icon { font-size: 20px; line-height: 1; }
+.bnav-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .3px; }
+
 /* ─── RESPONSIVE ─── */
 @media (max-width: 768px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -261,6 +281,19 @@ textarea { resize: vertical; min-height: 70px; }
   .split-view { grid-template-columns: 1fr; }
   .stock-grid { grid-template-columns: repeat(2, 1fr); }
   .nav-tabs { display: none; }
+  .bottom-nav { display: block; }
+  .screen { padding: 14px 14px 80px; }
+  .menu-fields { grid-template-columns: 1fr 1fr; }
+  .nav { padding: 0 12px; }
+  .nav-logo { font-size: 14px; }
+  .nav-logo-dot { width: 24px; height: 24px; font-size: 12px; }
+  .section-title { font-size: 16px; }
+  .report-table { font-size: 11px; }
+  .report-table th, .report-table td { padding: 7px 8px; }
+  .mill-card > div:nth-child(2) { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 769px) {
+  .bottom-nav { display: none !important; }
 }
 
 /* ─── UTILS ─── */
@@ -310,10 +343,10 @@ textarea { resize: vertical; min-height: 70px; }
       <div class="section-title" id="dash-week-label">Week of 20 Apr – 25 Apr</div>
       <div class="section-sub">Saku Healthy Bowls & Thali Kitchen · Kothrud, Pune</div>
     </div>
-    <div class="row">
-      <button class="btn btn-outline btn-sm" onclick="showScreen('daily')">＋ Daily Entry</button>
-      <button class="btn btn-whatsapp btn-sm" onclick="openWaModal('daily')">📲 Send Report</button>
-      <button class="btn btn-primary btn-sm" onclick="showScreen('report')">View Report →</button>
+    <div style="display:flex;flex-direction:column;gap:6px;min-width:140px">
+      <button class="btn btn-primary btn-sm" onclick="showScreen('daily')" style="width:100%;justify-content:center">✏️ Enter Sales</button>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('expenses')" style="width:100%;justify-content:center">🧾 Expenses</button>
+      <button class="btn btn-whatsapp btn-sm" onclick="openWaModal('daily')" style="width:100%;justify-content:center">📲 Send Report</button>
     </div>
   </div>
 
@@ -367,6 +400,7 @@ textarea { resize: vertical; min-height: 70px; }
 <div class="screen" id="screen-menu">
   <div class="section-header">
     <div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('dashboard')" style="margin-bottom:8px;display:flex;align-items:center;gap:4px">🏠 Home</button>
       <div class="section-title">Weekly Menu Setup</div>
       <div class="section-sub" id="menu-week-label">Set the menu for each day</div>
     </div>
@@ -391,8 +425,9 @@ textarea { resize: vertical; min-height: 70px; }
 <div class="screen" id="screen-daily">
   <div class="section-header">
     <div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('dashboard')" style="margin-bottom:8px;display:flex;align-items:center;gap:4px">🏠 Home</button>
       <div class="section-title">Daily Sales Entry</div>
-      <div class="section-sub">Select a day and enter today's sales</div>
+      <div class="section-sub">Select a day below to enter sales</div>
     </div>
   </div>
 
@@ -401,6 +436,12 @@ textarea { resize: vertical; min-height: 70px; }
 
   <!-- Entry area -->
   <div id="daily-entry-area" style="display:none">
+    <!-- Back bar -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:10px 16px;background:white;border-radius:var(--radius-sm);border:1px solid var(--gray-200)">
+      <button class="btn btn-outline btn-sm" onclick="closeDailyEntry()">← Back to Days</button>
+      <span style="font-size:14px;font-weight:700;color:var(--gray-700)" id="daily-selected-label">Monday</span>
+      <span style="font-size:12px;color:var(--gray-400)" id="daily-selected-date"></span>
+    </div>
     <div class="split-view">
       <!-- Thali Sales -->
       <div class="card">
@@ -489,6 +530,7 @@ textarea { resize: vertical; min-height: 70px; }
 <div class="screen" id="screen-expenses">
   <div class="section-header">
     <div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('dashboard')" style="margin-bottom:8px;display:flex;align-items:center;gap:4px">🏠 Home</button>
       <div class="section-title">Daily Expenses</div>
       <div class="section-sub">Log purchases and ingredient usage per day</div>
     </div>
@@ -497,6 +539,12 @@ textarea { resize: vertical; min-height: 70px; }
   <div class="days-grid" id="expense-days" style="margin-bottom:20px"></div>
 
   <div id="expense-entry-area" style="display:none">
+    <!-- Back bar -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:10px 16px;background:white;border-radius:var(--radius-sm);border:1px solid var(--gray-200)">
+      <button class="btn btn-outline btn-sm" onclick="closeExpenseEntry()">← Back to Days</button>
+      <span style="font-size:14px;font-weight:700;color:var(--gray-700)" id="exp-selected-label">Monday</span>
+      <span style="font-size:12px;color:var(--gray-400)" id="exp-selected-date"></span>
+    </div>
     <div class="tabs">
       <button class="tab active" onclick="switchExpTab('thali', this)">🍱 Thali Purchases</button>
       <button class="tab" onclick="switchExpTab('bowl', this)">🥗 Bowl Purchases</button>
@@ -506,13 +554,16 @@ textarea { resize: vertical; min-height: 70px; }
       <div class="card" style="margin-bottom:12px">
         <div class="card-header">
           <span class="card-title">🍱 Thali — Today's Purchases</span>
-          <button class="btn btn-outline btn-sm" onclick="addExpenseRow('thali')">＋ Add Item</button>
+          <button class="btn btn-primary btn-sm" onclick="addExpenseRow('thali')">＋ Add Purchase</button>
         </div>
         <div id="thali-expense-rows"></div>
         <div class="divider"></div>
-        <div class="row" style="justify-content:space-between; margin-top:8px">
-          <div style="font-size:14px; font-weight:800; color:var(--gray-700)">Total Thali Expense</div>
-          <div style="font-size:18px; font-weight:800; color:var(--red); font-family:var(--mono)" id="thali-exp-total">₹0</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:12px 16px;background:var(--red-pale);border-radius:var(--radius-sm);border:1.5px solid #fca5a5">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:.5px">Total Thali Purchase Expense</div>
+            <div style="font-size:11px;color:#b91c1c;margin-top:2px" id="thali-exp-count">0 items</div>
+          </div>
+          <div style="font-size:22px;font-weight:800;color:#991b1b;font-family:var(--mono)" id="thali-exp-total">₹0</div>
         </div>
       </div>
 
@@ -530,13 +581,16 @@ textarea { resize: vertical; min-height: 70px; }
       <div class="card" style="margin-bottom:12px">
         <div class="card-header">
           <span class="card-title">🥗 Bowl — Today's Purchases (Fresh)</span>
-          <button class="btn btn-outline btn-sm" onclick="addExpenseRow('bowl')">＋ Add Item</button>
+          <button class="btn btn-primary btn-sm" onclick="addExpenseRow('bowl')">＋ Add Purchase</button>
         </div>
         <div id="bowl-expense-rows"></div>
         <div class="divider"></div>
-        <div class="row" style="justify-content:space-between; margin-top:8px">
-          <div style="font-size:14px; font-weight:800; color:var(--gray-700)">Total Bowl Expense</div>
-          <div style="font-size:18px; font-weight:800; color:var(--red); font-family:var(--mono)" id="bowl-exp-total">₹0</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:12px 16px;background:var(--red-pale);border-radius:var(--radius-sm);border:1.5px solid #fca5a5">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:.5px">Total Bowl Purchase Expense</div>
+            <div style="font-size:11px;color:#b91c1c;margin-top:2px" id="bowl-exp-count">0 items</div>
+          </div>
+          <div style="font-size:22px;font-weight:800;color:#991b1b;font-family:var(--mono)" id="bowl-exp-total">₹0</div>
         </div>
       </div>
 
@@ -556,6 +610,7 @@ textarea { resize: vertical; min-height: 70px; }
 <div class="screen" id="screen-stock">
   <div class="section-header">
     <div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('dashboard')" style="margin-bottom:8px;display:flex;align-items:center;gap:4px">🏠 Home</button>
       <div class="section-title">Stock Management</div>
       <div class="section-sub">Long shelf-life items — auto-deducted on daily usage entry</div>
     </div>
@@ -610,13 +665,16 @@ textarea { resize: vertical; min-height: 70px; }
 <div class="screen" id="screen-report">
   <div class="section-header">
     <div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('dashboard')" style="margin-bottom:8px;display:flex;align-items:center;gap:4px">🏠 Home</button>
       <div class="section-title">Weekly Master Report</div>
       <div class="section-sub" id="report-week-label">Auto-calculated from all daily entries</div>
     </div>
-    <div class="row">
-      <button class="btn btn-outline btn-sm" onclick="generateReport()">🔄 Refresh</button>
-      <button class="btn btn-whatsapp btn-sm" onclick="openWaModal('weekly')">📲 Send to Director</button>
-      <button class="btn btn-primary btn-sm" onclick="printReport()">🖨 Print</button>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <button class="btn btn-whatsapp btn-sm" onclick="openWaModal('weekly')" style="justify-content:center">📲 Send to Director</button>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-outline btn-sm" onclick="generateReport()">🔄 Refresh</button>
+        <button class="btn btn-primary btn-sm" onclick="printReport()">🖨 Print</button>
+      </div>
     </div>
   </div>
 
@@ -829,6 +887,12 @@ function showScreen(name) {
   document.querySelectorAll('.nav-tab').forEach(t => {
     if (t.getAttribute('onclick') && t.getAttribute('onclick').includes(name)) t.classList.add('active');
   });
+  // Update bottom nav
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  const bnavBtn = document.getElementById('bnav-' + name);
+  if (bnavBtn) bnavBtn.classList.add('active');
+  // Scroll to top on screen change
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   if (name === 'dashboard') renderDashboard();
   if (name === 'menu') renderMenuEditor();
   if (name === 'daily') renderDailyDays();
@@ -1057,10 +1121,16 @@ function renderDailyEntry(day) {
   const week = state.currentWeek;
   const sales = (state.sales[week] || {})[day] || {};
   const menu = (state.menu[week] || DEFAULT_MENU);
+  const dayIdx = DAYS.indexOf(day);
+  const dateStr = getDayDate(week, dayIdx);
 
   // Labels
   document.getElementById('thali-day-label').textContent = day;
   document.getElementById('bowl-day-label').textContent = day;
+  const dl = document.getElementById('daily-selected-label');
+  const dd = document.getElementById('daily-selected-date');
+  if (dl) dl.textContent = day;
+  if (dd) dd.textContent = dateStr;
 
   // Bowl info
   const bowl = (menu.bowl || {})[day] || {};
@@ -1168,6 +1238,13 @@ function selectExpDay(day) {
   document.getElementById('expense-entry-area').style.display = 'block';
   document.getElementById('expense-entry-area').scrollIntoView({behavior:'smooth', block:'nearest'});
 
+  const dayIdx = DAYS.indexOf(day);
+  const dateStr = getDayDate(state.currentWeek, dayIdx);
+  const el = document.getElementById('exp-selected-label');
+  const ed = document.getElementById('exp-selected-date');
+  if (el) el.textContent = day;
+  if (ed) ed.textContent = dateStr;
+
   const week = state.currentWeek;
   const exp = (state.expenses[week] || {})[day] || {};
 
@@ -1187,35 +1264,99 @@ function renderExpenseRows() {
 function renderExpList(type) {
   const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
   const container = document.getElementById(type + '-expense-rows');
+
   if (!rows.length) {
-    container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px">No purchases added yet. Click "+ Add Item" above.</div>`;
+    container.innerHTML = `
+      <div style="text-align:center;padding:28px 20px;color:var(--gray-400)">
+        <div style="font-size:28px;margin-bottom:8px">🧾</div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:4px">No purchases logged yet</div>
+        <div style="font-size:12px">Tap "+ Add Purchase" to log what was bought today</div>
+      </div>`;
     document.getElementById(type + '-exp-total').textContent = '₹0';
     return;
   }
-  container.innerHTML = `<div style="margin-bottom:8px;display:grid;grid-template-columns:2fr 0.8fr 0.8fr 1fr auto auto;gap:6px;padding:0 0 6px;border-bottom:1px solid var(--gray-100)">
-    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">Item</span>
-    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">Qty</span>
-    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">Unit</span>
-    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">₹ Amount</span>
-    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">Bill</span>
-    <span></span>
-  </div>` + rows.map((row, i) => {
-    const hasPhoto = row.photo ? `<img src="${row.photo}" class="photo-thumb" onclick="openLightbox('${row.photo}')" title="View bill">` : `<label style="cursor:pointer;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--blue);font-weight:600"><input type="file" accept="image/*" capture="environment" style="display:none" onchange="attachBillPhoto('${type}',${i},this)">📷</label>`;
-    return `<div style="display:grid;grid-template-columns:2fr 0.8fr 0.8fr 1fr auto auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--gray-100)" id="exp-row-${type}-${i}">
-      <input type="text" placeholder="Item name" value="${row.name||''}" onchange="updateExpRow('${type}',${i},'name',this.value)">
-      <input type="number" placeholder="Qty" value="${row.qty||''}" onchange="updateExpRow('${type}',${i},'qty',this.value)">
-      <input type="text" placeholder="kg/gm/pcs" value="${row.unit||''}" onchange="updateExpRow('${type}',${i},'unit',this.value)">
-      <input type="number" placeholder="Amount" value="${row.amount||''}" onchange="updateExpRow('${type}',${i},'amount',parseFloat(this.value)||0); calcExpTotal('${type}')">
-      <div>${hasPhoto}</div>
-      <button class="btn btn-danger btn-sm" onclick="removeExpRow('${type}',${i})" style="padding:4px 8px">✕</button>
+
+  container.innerHTML = rows.map((row, i) => {
+    const photoHtml = row.photo
+      ? `<div style="position:relative;display:inline-block">
+           <img src="${row.photo}" style="width:72px;height:72px;border-radius:8px;object-fit:cover;border:2px solid var(--green);cursor:pointer" onclick="openLightbox('${row.photo}')" title="Tap to view full bill">
+           <button onclick="removeBillPhoto('${type}',${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">✕</button>
+         </div>`
+      : `<label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:72px;height:72px;border:2px dashed var(--gray-300);border-radius:8px;cursor:pointer;background:var(--gray-50);transition:all .15s" onmouseover="this.style.borderColor='var(--blue)';this.style.background='var(--blue-pale)'" onmouseout="this.style.borderColor='var(--gray-300)';this.style.background='var(--gray-50)'">
+           <span style="font-size:22px">📷</span>
+           <span style="font-size:9px;font-weight:700;color:var(--gray-400);text-align:center">TAP TO<br>ADD BILL</span>
+           <input type="file" accept="image/*" capture="environment" style="display:none" onchange="attachBillPhoto('${type}',${i},this)">
+         </label>`;
+
+    return `<div id="exp-row-${type}-${i}" style="background:white;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:14px;margin-bottom:10px">
+      <!-- Row header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <span style="font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px">Purchase #${i+1}</span>
+        <button class="btn btn-danger btn-sm" onclick="removeExpRow('${type}',${i})" style="padding:3px 10px;font-size:11px">Remove</button>
+      </div>
+      <!-- Main fields + photo -->
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <!-- Photo block -->
+        <div style="flex-shrink:0">${photoHtml}</div>
+        <!-- Fields -->
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+          <div class="form-group" style="margin:0">
+            <label>Item / Ingredient Name</label>
+            <input type="text" placeholder="e.g. Tomatoes, Paneer, Coriander..." value="${row.name||''}"
+              oninput="updateExpRow('${type}',${i},'name',this.value)" style="font-size:14px;font-weight:600">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div class="form-group" style="margin:0">
+              <label>Qty</label>
+              <input type="number" placeholder="e.g. 2" min="0" step="0.1" value="${row.qty||''}"
+                oninput="updateExpRow('${type}',${i},'qty',this.value)">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Unit</label>
+              <select onchange="updateExpRow('${type}',${i},'unit',this.value)" style="padding:9px 8px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-family:var(--font);font-size:13px;background:white">
+                <option value="kg" ${(row.unit||'kg')==='kg'?'selected':''}>kg</option>
+                <option value="gm" ${row.unit==='gm'?'selected':''}>gm</option>
+                <option value="litre" ${row.unit==='litre'?'selected':''}>litre</option>
+                <option value="ml" ${row.unit==='ml'?'selected':''}>ml</option>
+                <option value="pcs" ${row.unit==='pcs'?'selected':''}>pcs</option>
+                <option value="dozen" ${row.unit==='dozen'?'selected':''}>dozen</option>
+                <option value="bunch" ${row.unit==='bunch'?'selected':''}>bunch</option>
+                <option value="packet" ${row.unit==='packet'?'selected':''}>packet</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>₹ Amount Paid</label>
+              <input type="number" placeholder="0" min="0" step="1" value="${row.amount||''}"
+                oninput="updateExpRow('${type}',${i},'amount',parseFloat(this.value)||0);calcExpTotal('${type}')"
+                style="font-weight:700;color:var(--blue)">
+            </div>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Vendor / Shop (optional)</label>
+            <input type="text" placeholder="e.g. Market, Supplier name, Local shop..." value="${row.vendor||''}"
+              oninput="updateExpRow('${type}',${i},'vendor',this.value)">
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Notes (optional)</label>
+            <input type="text" placeholder="e.g. Price increased, bought extra stock..." value="${row.notes||''}"
+              oninput="updateExpRow('${type}',${i},'notes',this.value)">
+          </div>
+        </div>
+      </div>
+      <!-- Amount display -->
+      <div style="margin-top:10px;padding:8px 10px;background:var(--blue-pale);border-radius:6px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;font-weight:600;color:var(--blue)">${row.name||'This item'}</span>
+        <span style="font-size:15px;font-weight:800;color:var(--blue);font-family:var(--mono)">₹${(parseFloat(row.amount)||0).toLocaleString('en-IN')}</span>
+      </div>
     </div>`;
   }).join('');
+
   calcExpTotal(type);
 }
 
 function addExpenseRow(type) {
   const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
-  rows.push({ name:'', qty:'', unit:'kg', amount:0, photo:null });
+  rows.push({ name:'', qty:'', unit:'kg', amount:0, vendor:'', notes:'', photo:null, photoName:null });
   renderExpList(type);
 }
 
@@ -1234,47 +1375,58 @@ function removeExpRow(type, idx) {
 function calcExpTotal(type) {
   const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
   const total = rows.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+  const countEl = document.getElementById(type + '-exp-count');
+  if (countEl) countEl.textContent = rows.length + (rows.length === 1 ? ' item' : ' items') + ' purchased';
   document.getElementById(type + '-exp-total').textContent = '₹' + total.toLocaleString('en-IN');
 }
 
 function renderStockUsage() {
-  // Thali stock items
-  const thaliStock = state.stock.filter(s => s.service === 'thali' || s.service === 'both');
   const week = state.currentWeek;
   const day = state.selectedDay;
   const savedUsage = ((state.expenses[week] || {})[day] || {}).stock_usage || {};
 
-  document.getElementById('thali-stock-usage').innerHTML = thaliStock.length ?
-    `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">` +
-    thaliStock.map(s => `
-      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--gray-50);border-radius:var(--radius-sm)">
-        <div style="flex:1">
-          <div style="font-size:12px;font-weight:700">${s.name}</div>
-          <div style="font-size:11px;color:var(--gray-400)">Stock: ${s.qty} ${s.unit}</div>
-        </div>
-        <input type="number" style="width:70px" min="0" step="0.1" placeholder="Used"
-          id="su_thali_${s.id}" value="${savedUsage['thali_'+s.id]||''}"
-          title="Qty used today in ${s.unit}">
-        <span style="font-size:11px;color:var(--gray-400)">${s.unit}</span>
-      </div>`).join('') + '</div>'
-    : '<div style="color:var(--gray-400);font-size:13px;padding:10px">No thali stock items configured</div>';
+  function stockHtml(items, prefix) {
+    if (!items.length) return '<div style="color:var(--gray-400);font-size:13px;padding:10px">No stock items — add them in the Stock screen.</div>';
+    return '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:4px">' +
+      items.map(s => {
+        const used = savedUsage[prefix+'_'+s.id] || '';
+        const stockLeft = parseFloat(s.qty) || 0;
+        const usedVal = parseFloat(used) || 0;
+        const remaining = Math.max(0, stockLeft - usedVal).toFixed(2);
+        const isLow = stockLeft <= s.min;
+        return `<div style="background:${isLow?'var(--red-pale)':'var(--gray-50)'};border:1.5px solid ${isLow?'var(--red)':'var(--gray-200)'};border-radius:var(--radius-sm);padding:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <div style="font-size:13px;font-weight:700;color:var(--gray-900)">${s.name}</div>
+            ${isLow ? '<span style="font-size:10px;font-weight:700;color:var(--red);background:var(--red-pale);padding:2px 6px;border-radius:4px">LOW</span>' : ''}
+          </div>
+          <div style="font-size:11px;color:var(--gray-400);margin-bottom:8px">In stock: <strong style="color:${isLow?'var(--red)':'var(--gray-700)'}">${stockLeft} ${s.unit}</strong></div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <input type="number" style="flex:1;padding:6px 8px;font-size:13px;border:1.5px solid var(--gray-200);border-radius:6px;font-family:var(--font)"
+              min="0" step="0.1" max="${stockLeft}" placeholder="Used today"
+              id="su_${prefix}_${s.id}" value="${used}"
+              oninput="updateStockPreview('${prefix}','${s.id}','${stockLeft}','${s.unit}',this.value,this)">
+            <span style="font-size:12px;color:var(--gray-400);white-space:nowrap">${s.unit}</span>
+          </div>
+          <div style="font-size:11px;color:var(--gray-500);margin-top:5px" id="sr_${prefix}_${s.id}">
+            ${usedVal > 0 ? `After use: <strong>${remaining} ${s.unit}</strong>` : 'Enter qty used today'}
+          </div>
+        </div>`;
+      }).join('') + '</div>';
+  }
 
-  // Bowl stock items
-  const bowlStock = state.stock.filter(s => s.service === 'bowl' || s.service === 'both');
-  document.getElementById('bowl-stock-usage').innerHTML = bowlStock.length ?
-    `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">` +
-    bowlStock.map(s => `
-      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--gray-50);border-radius:var(--radius-sm)">
-        <div style="flex:1">
-          <div style="font-size:12px;font-weight:700">${s.name}</div>
-          <div style="font-size:11px;color:var(--gray-400)">Stock: ${s.qty} ${s.unit}</div>
-        </div>
-        <input type="number" style="width:70px" min="0" step="0.1" placeholder="Used"
-          id="su_bowl_${s.id}" value="${savedUsage['bowl_'+s.id]||''}"
-          title="Qty used today in ${s.unit}">
-        <span style="font-size:11px;color:var(--gray-400)">${s.unit}</span>
-      </div>`).join('') + '</div>'
-    : '<div style="color:var(--gray-400);font-size:13px;padding:10px">No bowl stock items configured</div>';
+  const thaliStock = state.stock.filter(s => s.service === 'thali' || s.service === 'both');
+  const bowlStock  = state.stock.filter(s => s.service === 'bowl'  || s.service === 'both');
+  document.getElementById('thali-stock-usage').innerHTML = stockHtml(thaliStock, 'thali');
+  document.getElementById('bowl-stock-usage').innerHTML  = stockHtml(bowlStock,  'bowl');
+}
+
+function updateStockPreview(prefix, id, stockQty, unit, val, inp) {
+  const used = parseFloat(val) || 0;
+  const remaining = Math.max(0, parseFloat(stockQty) - used).toFixed(2);
+  const el = document.getElementById(`sr_${prefix}_${id}`);
+  if (el) el.innerHTML = used > 0 ? `After use: <strong>${remaining} ${unit}</strong>` : 'Enter qty used today';
+  // Clamp to stock qty
+  if (used > parseFloat(stockQty)) inp.value = stockQty;
 }
 
 function switchExpTab(tab, btn) {
@@ -1559,6 +1711,22 @@ function printReport() {
   window.print();
 }
 
+// ═══════════════════════════════════ BACK BUTTONS ═══════════════════════════════════
+
+function closeDailyEntry() {
+  document.getElementById('daily-entry-area').style.display = 'none';
+  state.selectedDay = null;
+  renderDailyDays();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function closeExpenseEntry() {
+  document.getElementById('expense-entry-area').style.display = 'none';
+  state.selectedDay = null;
+  renderExpenseDays();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
 // ═══════════════════════════════════ WHATSAPP ═══════════════════════════════════
 
 const DIRECTOR_WA = '917721830718';
@@ -1703,6 +1871,11 @@ function attachBillPhoto(type, idx, input) {
   reader.readAsDataURL(file);
 }
 
+function removeBillPhoto(type, idx) {
+  const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
+  if (rows[idx]) { rows[idx].photo = null; rows[idx].photoName = null; renderExpList(type); }
+}
+
 function openLightbox(src) {
   document.getElementById('lightbox-img').src = src;
   document.getElementById('photo-lightbox').classList.add('open');
@@ -1751,5 +1924,34 @@ function init() {
 
 init();
 </script>
+<!-- ─── BOTTOM NAV ─── -->
+<nav class="bottom-nav" id="bottom-nav">
+  <div class="bottom-nav-inner">
+    <button class="bnav-btn active" id="bnav-dashboard" onclick="showScreen('dashboard')">
+      <span class="bnav-icon">🏠</span>
+      <span class="bnav-label">Home</span>
+    </button>
+    <button class="bnav-btn" id="bnav-daily" onclick="showScreen('daily')">
+      <span class="bnav-icon">✏️</span>
+      <span class="bnav-label">Sales</span>
+    </button>
+    <button class="bnav-btn" id="bnav-expenses" onclick="showScreen('expenses')">
+      <span class="bnav-icon">🧾</span>
+      <span class="bnav-label">Expenses</span>
+    </button>
+    <button class="bnav-btn" id="bnav-stock" onclick="showScreen('stock')">
+      <span class="bnav-icon">📦</span>
+      <span class="bnav-label">Stock</span>
+    </button>
+    <button class="bnav-btn" id="bnav-menu" onclick="showScreen('menu')">
+      <span class="bnav-icon">🍱</span>
+      <span class="bnav-label">Menu</span>
+    </button>
+    <button class="bnav-btn" id="bnav-report" onclick="showScreen('report')">
+      <span class="bnav-icon">📊</span>
+      <span class="bnav-label">Report</span>
+    </button>
+  </div>
+</nav>
 </body>
 </html>
