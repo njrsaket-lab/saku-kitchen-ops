@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saku Kitchen — Operations Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #0843C7;
+  --blue-light: #3d6fd4;
+  --blue-pale: #e8eeff;
+  --green: #82BD85;
+  --green-dark: #5a9e5e;
+  --green-pale: #eaf5eb;
+  --amber: #f59e0b;
+  --amber-pale: #fef3c7;
+  --red: #ef4444;
+  --red-pale: #fee2e2;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --font: 'Montserrat', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--gray-50); color: var(--gray-900); min-height: 100vh; }
+
+/* ─── NAV ─── */
+.nav {
+  background: var(--blue);
+  color: white;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(8,67,199,0.3);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -0.3px; }
+.nav-logo-dot { width: 28px; height: 28px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: white; }
+.nav-tabs { display: flex; gap: 2px; }
+.nav-tab {
+  padding: 6px 13px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.15s; border: none; background: none; font-family: var(--font);
+}
+.nav-tab:hover { color: white; background: rgba(255,255,255,0.1); }
+.nav-tab.active { color: white; background: rgba(255,255,255,0.18); }
+.nav-week {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.12); border-radius: 8px; padding: 4px 12px;
+  font-size: 12px; font-weight: 600;
+}
+.nav-week select {
+  background: none; border: none; color: white; font-family: var(--font); font-size: 12px; font-weight: 600; cursor: pointer; outline: none;
+}
+.nav-week select option { color: var(--gray-900); background: white; }
+
+/* ─── LAYOUT ─── */
+.screen { display: none; padding: 20px; max-width: 1100px; margin: 0 auto; }
+.screen.active { display: block; }
+
+/* ─── CARDS ─── */
+.card {
+  background: white; border-radius: var(--radius); padding: 20px;
+  box-shadow: var(--shadow); border: 1px solid var(--gray-200);
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--gray-100);
+}
+.card-title { font-size: 14px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ─── STAT CARDS ─── */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: white; border-radius: var(--radius); padding: 16px 18px; border: 1px solid var(--gray-200); box-shadow: var(--shadow); }
+.stat-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.stat-value { font-size: 24px; font-weight: 800; color: var(--gray-900); font-family: var(--mono); }
+.stat-sub { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+.stat-card.blue { border-left: 3px solid var(--blue); }
+.stat-card.green { border-left: 3px solid var(--green); }
+.stat-card.amber { border-left: 3px solid var(--amber); }
+.stat-card.red { border-left: 3px solid var(--red); }
+
+/* ─── DAY GRID ─── */
+.days-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 20px; }
+.day-card {
+  background: white; border-radius: var(--radius-sm); padding: 14px 12px;
+  border: 2px solid var(--gray-200); cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.day-card:hover { border-color: var(--blue); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.day-card.active { border-color: var(--blue); background: var(--blue-pale); }
+.day-card.has-data { border-color: var(--green); }
+.day-name { font-size: 11px; font-weight: 700; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+.day-date { font-size: 20px; font-weight: 800; color: var(--gray-900); margin: 2px 0; }
+.day-menu-preview { font-size: 10px; color: var(--gray-600); line-height: 1.3; margin-top: 4px; }
+.day-sales-badge {
+  display: inline-block; background: var(--green-pale); color: var(--green-dark);
+  font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; margin-top: 4px;
+}
+
+/* ─── TABS ─── */
+.tabs { display: flex; gap: 4px; background: var(--gray-100); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 16px; width: fit-content; }
+.tab {
+  padding: 7px 18px; border-radius: 6px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; background: none; font-family: var(--font); color: var(--gray-600); transition: all 0.15s;
+}
+.tab.active { background: white; color: var(--blue); box-shadow: var(--shadow); }
+
+/* ─── FORMS ─── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1 / -1; }
+label { font-size: 11px; font-weight: 700; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; }
+input[type=text], input[type=number], input[type=date], select, textarea {
+  padding: 9px 12px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 13px; color: var(--gray-900); background: white;
+  transition: border-color 0.15s; width: 100%;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--blue); }
+textarea { resize: vertical; min-height: 70px; }
+
+/* ─── SALES TABLE ─── */
+.sales-table { width: 100%; border-collapse: collapse; }
+.sales-table th {
+  font-size: 10px; font-weight: 700; color: var(--gray-400); text-transform: uppercase;
+  letter-spacing: 0.5px; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--gray-100);
+}
+.sales-table td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+.sales-table tr:last-child td { border-bottom: none; }
+.sales-table .price-col { color: var(--gray-400); font-size: 12px; font-family: var(--mono); }
+.sales-table .total-col { font-weight: 700; font-family: var(--mono); color: var(--blue); }
+.sales-table .total-row td { background: var(--blue-pale); font-weight: 700; font-size: 14px; color: var(--blue); }
+.sales-table input[type=number] { width: 80px; padding: 5px 8px; font-size: 13px; text-align: center; }
+
+/* ─── BUTTONS ─── */
+.btn {
+  padding: 9px 18px; border-radius: var(--radius-sm); font-family: var(--font);
+  font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--blue); color: white; }
+.btn-primary:hover { background: var(--blue-light); }
+.btn-success { background: var(--green); color: white; }
+.btn-success:hover { background: var(--green-dark); }
+.btn-outline { background: white; color: var(--gray-700); border: 1.5px solid var(--gray-200); }
+.btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+.btn-danger { background: var(--red-pale); color: var(--red); border: none; }
+.btn-sm { padding: 5px 10px; font-size: 11px; }
+
+/* ─── BADGES ─── */
+.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; }
+.badge-blue { background: var(--blue-pale); color: var(--blue); }
+.badge-green { background: var(--green-pale); color: var(--green-dark); }
+.badge-amber { background: var(--amber-pale); color: #92400e; }
+.badge-red { background: var(--red-pale); color: #991b1b; }
+
+/* ─── STOCK ITEMS ─── */
+.stock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.stock-item {
+  background: white; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  padding: 14px; display: flex; flex-direction: column; gap: 8px;
+}
+.stock-item.low { border-color: var(--red); background: var(--red-pale); }
+.stock-item.medium { border-color: var(--amber); background: var(--amber-pale); }
+.stock-name { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.stock-qty { font-size: 22px; font-weight: 800; font-family: var(--mono); }
+.stock-qty.low { color: var(--red); }
+.stock-qty.ok { color: var(--green-dark); }
+.stock-controls { display: flex; gap: 6px; align-items: center; }
+.stock-controls input { width: 70px; }
+
+/* ─── EXPENSE ROWS ─── */
+.expense-row {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 8px;
+  align-items: center; padding: 8px 0; border-bottom: 1px solid var(--gray-100);
+}
+.expense-row:last-child { border-bottom: none; }
+
+/* ─── SECTION HEADERS ─── */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-size: 18px; font-weight: 800; color: var(--gray-900); }
+.section-sub { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
+
+/* ─── ALERTS ─── */
+.alert { padding: 10px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; margin-bottom: 12px; }
+.alert-warning { background: var(--amber-pale); color: #92400e; border-left: 3px solid var(--amber); }
+.alert-success { background: var(--green-pale); color: var(--green-dark); border-left: 3px solid var(--green); }
+
+/* ─── REPORT TABLE ─── */
+.report-table { width: 100%; border-collapse: collapse; }
+.report-table th { background: var(--gray-900); color: white; padding: 10px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; }
+.report-table td { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--gray-100); }
+.report-table tr:nth-child(even) td { background: var(--gray-50); }
+.report-table .subtotal td { background: var(--blue-pale); font-weight: 700; color: var(--blue); }
+.report-table .grand-total td { background: var(--gray-900); color: white; font-weight: 800; font-size: 15px; }
+
+/* ─── MENU EDITOR ─── */
+.menu-day-editor { background: white; border-radius: var(--radius); border: 1.5px solid var(--gray-200); overflow: hidden; margin-bottom: 12px; }
+.menu-day-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--gray-50); cursor: pointer;
+  border-bottom: 1px solid var(--gray-200);
+}
+.menu-day-header:hover { background: var(--blue-pale); }
+.menu-day-body { padding: 16px; display: none; }
+.menu-day-body.open { display: block; }
+.menu-fields { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+/* ─── PHOTO UPLOAD ─── */
+.photo-upload {
+  border: 2px dashed var(--gray-300); border-radius: var(--radius-sm);
+  padding: 14px 20px; text-align: center; cursor: pointer; transition: all 0.15s;
+  background: var(--gray-50); display: flex; align-items: center; gap: 10px; justify-content: center;
+}
+.photo-upload:hover { border-color: var(--blue); background: var(--blue-pale); }
+.photo-thumb { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; border: 2px solid var(--gray-200); cursor: pointer; }
+.photo-thumb:hover { border-color: var(--blue); }
+.bill-photos-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+/* ─── WHATSAPP BUTTON ─── */
+.btn-whatsapp { background: #25D366; color: white; }
+.btn-whatsapp:hover { background: #1ebe5d; }
+
+/* ─── MODAL OVERLAY ─── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  z-index: 500; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: white; border-radius: var(--radius); padding: 24px;
+  max-width: 480px; width: 100%; box-shadow: var(--shadow-md);
+}
+.modal-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--gray-900); }
+.modal-body { font-size: 13px; color: var(--gray-600); line-height: 1.7; margin-bottom: 20px; white-space: pre-wrap; }
+.modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ─── DAILY ENTRY SPLIT VIEW ─── */
+.split-view { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ─── WHEAT MILL SECTION ─── */
+.mill-card { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1.5px solid var(--amber); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .days-grid { grid-template-columns: repeat(3, 1fr); }
+  .split-view { grid-template-columns: 1fr; }
+  .stock-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-tabs { display: none; }
+}
+
+/* ─── UTILS ─── */
+.gap-12 { display: flex; flex-direction: column; gap: 12px; }
+.gap-16 { display: flex; flex-direction: column; gap: 16px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.ml-auto { margin-left: auto; }
+.text-mono { font-family: var(--mono); }
+.text-green { color: var(--green-dark); }
+.text-blue { color: var(--blue); }
+.text-red { color: var(--red); }
+.fw-700 { font-weight: 700; }
+.fs-12 { font-size: 12px; }
+.divider { height: 1px; background: var(--gray-100); margin: 12px 0; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-dot">S</div>
+    Saku Kitchen
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showScreen('dashboard')">Dashboard</button>
+    <button class="nav-tab" onclick="showScreen('menu')">Weekly Menu</button>
+    <button class="nav-tab" onclick="showScreen('daily')">Daily Entry</button>
+    <button class="nav-tab" onclick="showScreen('expenses')">Expenses</button>
+    <button class="nav-tab" onclick="showScreen('stock')">Stock</button>
+    <button class="nav-tab" onclick="showScreen('report')">Weekly Report</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="btn btn-whatsapp btn-sm" onclick="openWaModal()" style="font-size:11px;padding:5px 10px">📲 Report</button>
+    <div class="nav-week">
+      📅
+      <select id="globalWeek" onchange="onWeekChange()">
+      </select>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════ DASHBOARD ═══════════════════════════════════ -->
+<div class="screen active" id="screen-dashboard">
+  <div class="section-header" style="margin-bottom:20px">
+    <div>
+      <div class="section-title" id="dash-week-label">Week of 20 Apr – 25 Apr</div>
+      <div class="section-sub">Saku Healthy Bowls & Thali Kitchen · Kothrud, Pune</div>
+    </div>
+    <div class="row">
+      <button class="btn btn-outline btn-sm" onclick="showScreen('daily')">＋ Daily Entry</button>
+      <button class="btn btn-whatsapp btn-sm" onclick="openWaModal('daily')">📲 Send Report</button>
+      <button class="btn btn-primary btn-sm" onclick="showScreen('report')">View Report →</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid" id="dash-stats">
+    <div class="stat-card blue">
+      <div class="stat-label">Thali Revenue</div>
+      <div class="stat-value" id="stat-thali-rev">₹0</div>
+      <div class="stat-sub">This week</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Bowl Revenue</div>
+      <div class="stat-value" id="stat-bowl-rev">₹0</div>
+      <div class="stat-sub">This week</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="stat-label">Total Expenses</div>
+      <div class="stat-value" id="stat-expenses">₹0</div>
+      <div class="stat-sub">Thali + Bowl</div>
+    </div>
+    <div class="stat-card" id="stat-margin-card">
+      <div class="stat-label">Net Margin</div>
+      <div class="stat-value" id="stat-margin">₹0</div>
+      <div class="stat-sub" id="stat-margin-pct">—</div>
+    </div>
+  </div>
+
+  <!-- Stock alerts -->
+  <div id="dash-alerts"></div>
+
+  <!-- Day cards -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">This Week — Click a Day to Enter Sales</span>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('menu')">Edit Menu</button>
+    </div>
+    <div class="days-grid" id="dash-days"></div>
+  </div>
+
+  <!-- Quick entry prompt -->
+  <div style="margin-top:12px; padding:14px 18px; background:white; border-radius:var(--radius); border:1px solid var(--gray-200); display:flex; align-items:center; gap:12px;">
+    <span style="font-size:20px">💡</span>
+    <div>
+      <div style="font-size:13px; font-weight:700; color:var(--gray-700)">Daily Workflow</div>
+      <div style="font-size:12px; color:var(--gray-400)">Lunch closes → Enter thali sales → Enter bowl sales (evening) → Log today's expenses → Update stock used</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ WEEKLY MENU ═══════════════════════════════════ -->
+<div class="screen" id="screen-menu">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Weekly Menu Setup</div>
+      <div class="section-sub" id="menu-week-label">Set the menu for each day</div>
+    </div>
+    <button class="btn btn-primary" onclick="saveMenu()">💾 Save Menu</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchMenuTab('thali', this)">🍱 Thali Menu</button>
+    <button class="tab" onclick="switchMenuTab('bowl', this)">🥗 Bowl Menu</button>
+  </div>
+
+  <div id="menu-thali-section">
+    <div id="thali-menu-days"></div>
+  </div>
+
+  <div id="menu-bowl-section" style="display:none">
+    <div id="bowl-menu-days"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ DAILY ENTRY ═══════════════════════════════════ -->
+<div class="screen" id="screen-daily">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Daily Sales Entry</div>
+      <div class="section-sub">Select a day and enter today's sales</div>
+    </div>
+  </div>
+
+  <!-- Day selector -->
+  <div class="days-grid" id="daily-days" style="margin-bottom:20px"></div>
+
+  <!-- Entry area -->
+  <div id="daily-entry-area" style="display:none">
+    <div class="split-view">
+      <!-- Thali Sales -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🍱 Thali Sales</span>
+          <span class="badge badge-blue" id="thali-day-label">Monday</span>
+        </div>
+        <table class="sales-table">
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Price</th>
+              <th>Qty</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="thali-sales-body"></tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="2">Total Thali Revenue</td>
+              <td id="thali-total-qty">—</td>
+              <td id="thali-total-rev">₹0</td>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="divider"></div>
+        <div class="form-group">
+          <label>Notes (e.g. special requests, cancellations)</label>
+          <textarea id="thali-notes" placeholder="Optional notes for today's thali service..."></textarea>
+        </div>
+        <div style="margin-top:12px">
+          <button class="btn btn-primary" onclick="saveThaliSales()">💾 Save Thali Sales</button>
+        </div>
+      </div>
+
+      <!-- Bowl Sales -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🥗 Bowl Sales</span>
+          <span class="badge badge-green" id="bowl-day-label">Monday</span>
+        </div>
+        <div class="gap-16" style="margin-bottom:16px">
+          <div style="background:var(--green-pale); border-radius:var(--radius-sm); padding:14px; border:1px solid var(--green);">
+            <div style="font-size:12px; font-weight:700; color:var(--green-dark); margin-bottom:8px">TODAY'S BOWL</div>
+            <div id="bowl-today-name" style="font-size:16px; font-weight:800; color:var(--gray-900)">—</div>
+            <div id="bowl-today-ingredients" style="font-size:11px; color:var(--gray-600); margin-top:4px; line-height:1.5">—</div>
+          </div>
+          <table class="sales-table">
+            <thead>
+              <tr><th>Item</th><th>Price</th><th>Qty</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Bowl — Paid</strong></td>
+                <td class="price-col">₹280</td>
+                <td><input type="number" id="bowl-sold" min="0" value="0" oninput="calcBowlTotal()"></td>
+                <td class="total-col" id="bowl-sold-total">₹0</td>
+              </tr>
+              <tr>
+                <td>Bowl — Complimentary</td>
+                <td class="price-col">₹0</td>
+                <td><input type="number" id="bowl-free" min="0" value="0" oninput="calcBowlTotal()"></td>
+                <td class="total-col">₹0</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="2">Total Bowl Revenue</td>
+                <td id="bowl-total-qty">—</td>
+                <td id="bowl-total-rev">₹0</td>
+              </tr>
+            </tfoot>
+          </table>
+          <div class="form-group">
+            <label>Bowl Notes</label>
+            <textarea id="bowl-notes" placeholder="e.g. ingredient substitutions, customer feedback..."></textarea>
+          </div>
+        </div>
+        <button class="btn btn-success" onclick="saveBowlSales()">💾 Save Bowl Sales</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ EXPENSES ═══════════════════════════════════ -->
+<div class="screen" id="screen-expenses">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Daily Expenses</div>
+      <div class="section-sub">Log purchases and ingredient usage per day</div>
+    </div>
+  </div>
+
+  <div class="days-grid" id="expense-days" style="margin-bottom:20px"></div>
+
+  <div id="expense-entry-area" style="display:none">
+    <div class="tabs">
+      <button class="tab active" onclick="switchExpTab('thali', this)">🍱 Thali Purchases</button>
+      <button class="tab" onclick="switchExpTab('bowl', this)">🥗 Bowl Purchases</button>
+    </div>
+
+    <div id="exp-thali-section">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header">
+          <span class="card-title">🍱 Thali — Today's Purchases</span>
+          <button class="btn btn-outline btn-sm" onclick="addExpenseRow('thali')">＋ Add Item</button>
+        </div>
+        <div id="thali-expense-rows"></div>
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between; margin-top:8px">
+          <div style="font-size:14px; font-weight:800; color:var(--gray-700)">Total Thali Expense</div>
+          <div style="font-size:18px; font-weight:800; color:var(--red); font-family:var(--mono)" id="thali-exp-total">₹0</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header">
+          <span class="card-title">📦 Thali — Stock Used Today</span>
+          <span style="font-size:11px; color:var(--gray-400)">Enter qty used — auto-deducts from stock</span>
+        </div>
+        <div id="thali-stock-usage"></div>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveThaliExpenses()">💾 Save Thali Expenses</button>
+      </div>
+    </div>
+
+    <div id="exp-bowl-section" style="display:none">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header">
+          <span class="card-title">🥗 Bowl — Today's Purchases (Fresh)</span>
+          <button class="btn btn-outline btn-sm" onclick="addExpenseRow('bowl')">＋ Add Item</button>
+        </div>
+        <div id="bowl-expense-rows"></div>
+        <div class="divider"></div>
+        <div class="row" style="justify-content:space-between; margin-top:8px">
+          <div style="font-size:14px; font-weight:800; color:var(--gray-700)">Total Bowl Expense</div>
+          <div style="font-size:18px; font-weight:800; color:var(--red); font-family:var(--mono)" id="bowl-exp-total">₹0</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📦 Bowl — Stock Used Today</span>
+          <span style="font-size:11px; color:var(--gray-400)">Enter qty used — auto-deducts from stock</span>
+        </div>
+        <div id="bowl-stock-usage"></div>
+        <button class="btn btn-success btn-sm" style="margin-top:12px" onclick="saveBowlExpenses()">💾 Save Bowl Expenses</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ STOCK ═══════════════════════════════════ -->
+<div class="screen" id="screen-stock">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Stock Management</div>
+      <div class="section-sub">Long shelf-life items — auto-deducted on daily usage entry</div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="saveStock()">💾 Save Stock</button>
+  </div>
+
+  <!-- Wheat Mill Section -->
+  <div class="mill-card">
+    <div style="font-size:13px; font-weight:800; color:#78350f; margin-bottom:10px">🌾 Wheat Grain → Flour Mill Tracker</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr auto; gap:10px; align-items:end">
+      <div class="form-group">
+        <label>Grain in Stock (kg)</label>
+        <input type="number" id="wheat-grain-stock" min="0" step="0.5" placeholder="e.g. 60">
+      </div>
+      <div class="form-group">
+        <label>Sent to Mill (kg)</label>
+        <input type="number" id="wheat-sent" min="0" step="0.5" placeholder="e.g. 15">
+      </div>
+      <div class="form-group">
+        <label>Flour Received (kg)</label>
+        <input type="number" id="wheat-flour-received" min="0" step="0.5" placeholder="e.g. 13.5">
+      </div>
+      <div class="form-group">
+        <label>Flour Available (kg)</label>
+        <input type="number" id="wheat-flour-stock" min="0" step="0.5" placeholder="Auto-calc">
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="logMillRun()">Log Mill Run</button>
+    </div>
+    <div style="font-size:11px; color:#92400e; margin-top:8px">Daily use: ~8 kg flour · Mill every ~3 days · Half-bag = 15 kg grain sent</div>
+  </div>
+
+  <!-- Stock categories -->
+  <div id="stock-alerts-bar"></div>
+
+  <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap">
+    <button class="btn btn-outline btn-sm active-filter" onclick="filterStock('all', this)">All Items</button>
+    <button class="btn btn-outline btn-sm" onclick="filterStock('grain', this)">Grains & Dals</button>
+    <button class="btn btn-outline btn-sm" onclick="filterStock('millet', this)">Millets</button>
+    <button class="btn btn-outline btn-sm" onclick="filterStock('pulse', this)">Pulses & Proteins</button>
+    <button class="btn btn-outline btn-sm" onclick="filterStock('dryfruit', this)">Dry Fruits</button>
+    <button class="btn btn-outline btn-sm" onclick="filterStock('other', this)">Other</button>
+  </div>
+
+  <div class="stock-grid" id="stock-grid"></div>
+
+  <div style="margin-top:16px; text-align:right">
+    <button class="btn btn-outline btn-sm" onclick="addStockItem()">＋ Add New Stock Item</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ WEEKLY REPORT ═══════════════════════════════════ -->
+<div class="screen" id="screen-report">
+  <div class="section-header">
+    <div>
+      <div class="section-title">Weekly Master Report</div>
+      <div class="section-sub" id="report-week-label">Auto-calculated from all daily entries</div>
+    </div>
+    <div class="row">
+      <button class="btn btn-outline btn-sm" onclick="generateReport()">🔄 Refresh</button>
+      <button class="btn btn-whatsapp btn-sm" onclick="openWaModal('weekly')">📲 Send to Director</button>
+      <button class="btn btn-primary btn-sm" onclick="printReport()">🖨 Print</button>
+    </div>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="stats-grid" id="report-stats" style="margin-bottom:20px"></div>
+
+  <!-- Day-by-day breakdown -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header"><span class="card-title">📊 Day-by-Day Sales Breakdown</span></div>
+    <table class="report-table" id="report-sales-table">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Full Thali</th>
+          <th>Dal Rice</th>
+          <th>Chap Bhaji</th>
+          <th>Extras</th>
+          <th>Thali Rev</th>
+          <th>Bowls Sold</th>
+          <th>Bowl Free</th>
+          <th>Bowl Rev</th>
+          <th>Day Total</th>
+        </tr>
+      </thead>
+      <tbody id="report-sales-body"></tbody>
+      <tfoot id="report-sales-foot"></tfoot>
+    </table>
+  </div>
+
+  <!-- Expense breakdown -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header"><span class="card-title">💸 Week Expense Summary</span></div>
+    <table class="report-table" id="report-exp-table">
+      <thead>
+        <tr><th>Day</th><th>Thali Purchases</th><th>Bowl Purchases</th><th>Total Day Expense</th></tr>
+      </thead>
+      <tbody id="report-exp-body"></tbody>
+      <tfoot id="report-exp-foot"></tfoot>
+    </table>
+  </div>
+
+  <!-- P&L -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">📈 Weekly P&L Summary</span></div>
+    <div id="report-pnl"></div>
+  </div>
+</div>
+
+<!-- WhatsApp Report Modal -->
+<div class="modal-overlay" id="wa-modal">
+  <div class="modal-box">
+    <div class="modal-title">📲 Send WhatsApp Report</div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.5px">Report Type</label>
+      <div class="tabs" style="margin-top:6px;margin-bottom:0">
+        <button class="tab active" onclick="switchWaTab('daily',this)">Today's Summary</button>
+        <button class="tab" onclick="switchWaTab('weekly',this)">Weekly Report</button>
+      </div>
+    </div>
+    <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px;max-height:260px;overflow-y:auto">
+      <pre id="wa-preview" style="font-size:12px;color:var(--gray-700);white-space:pre-wrap;font-family:var(--font);line-height:1.6"></pre>
+    </div>
+    <div style="font-size:11px;color:var(--gray-400);margin-bottom:14px">Will open WhatsApp to: <strong>+91 7721830718</strong></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeWaModal()">Cancel</button>
+      <button class="btn btn-whatsapp" onclick="sendWhatsApp()">Send on WhatsApp →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Photo Lightbox -->
+<div class="modal-overlay" id="photo-lightbox">
+  <div style="max-width:90vw;max-height:90vh;position:relative">
+    <img id="lightbox-img" src="" style="max-width:85vw;max-height:85vh;border-radius:var(--radius);box-shadow:0 8px 32px rgba(0,0,0,0.4)">
+    <button class="btn btn-outline" style="position:absolute;top:-14px;right:-14px;background:white;border-radius:50%;width:32px;height:32px;padding:0;display:flex;align-items:center;justify-content:center;font-size:16px" onclick="closeLightbox()">✕</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════ DATA ═══════════════════════════════════
+
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAY_DATES_APR = ['20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr'];
+
+const THALI_ITEMS = [
+  { id:'full_thali',    name:'Full Thali',       price:70  },
+  { id:'dal_rice',      name:'Dal Rice',          price:40  },
+  { id:'chap_bhaji',   name:'Chapati Bhaji',     price:45  },
+  { id:'chapati',      name:'Chapati',            price:10  },
+  { id:'rice',         name:'Rice',              price:20  },
+  { id:'dal',          name:'Dal',               price:15  },
+  { id:'bhaji',        name:'Bhaji',             price:20  },
+  { id:'buttermilk',   name:'Buttermilk (paid)', price:25  },
+  { id:'sweet',        name:'Sweet',             price:35  },
+  { id:'papad',        name:'Papad (extra)',      price:5   },
+];
+
+const DEFAULT_STOCK = [
+  { id:'wheat_grain', name:'Wheat Grain',  qty:60,  unit:'kg', min:20, category:'grain',    service:'thali' },
+  { id:'wheat_flour', name:'Wheat Flour',  qty:13.5,unit:'kg', min:8,  category:'grain',    service:'thali' },
+  { id:'rice',        name:'Rice',         qty:25,  unit:'kg', min:5,  category:'grain',    service:'thali' },
+  { id:'toor_dal',    name:'Toor Dal',     qty:10,  unit:'kg', min:2,  category:'grain',    service:'thali' },
+  { id:'masoor_dal',  name:'Masoor Dal',   qty:8,   unit:'kg', min:2,  category:'grain',    service:'thali' },
+  { id:'chana_dal',   name:'Chana Dal',    qty:6,   unit:'kg', min:1,  category:'grain',    service:'thali' },
+  { id:'moong_dal',   name:'Moong Dal',    qty:5,   unit:'kg', min:1,  category:'grain',    service:'thali' },
+  { id:'ragi',        name:'Ragi',         qty:4,   unit:'kg', min:1,  category:'millet',   service:'bowl'  },
+  { id:'jowar',       name:'Jowar',        qty:4,   unit:'kg', min:1,  category:'millet',   service:'bowl'  },
+  { id:'bajra',       name:'Bajra',        qty:3,   unit:'kg', min:1,  category:'millet',   service:'bowl'  },
+  { id:'rajma',       name:'Rajma',        qty:5,   unit:'kg', min:1,  category:'pulse',    service:'bowl'  },
+  { id:'matki',       name:'Matki',        qty:4,   unit:'kg', min:1,  category:'pulse',    service:'thali' },
+  { id:'harbara',     name:'Harbara',      qty:4,   unit:'kg', min:1,  category:'pulse',    service:'bowl'  },
+  { id:'val_beans',   name:'Val Beans',    qty:3,   unit:'kg', min:0.5,category:'pulse',    service:'bowl'  },
+  { id:'quinoa',      name:'Quinoa',       qty:2,   unit:'kg', min:0.5,category:'pulse',    service:'bowl'  },
+  { id:'cashews',     name:'Cashews',      qty:500, unit:'gm', min:100,category:'dryfruit', service:'bowl'  },
+  { id:'raisins',     name:'Raisins',      qty:300, unit:'gm', min:50, category:'dryfruit', service:'bowl'  },
+  { id:'almonds',     name:'Almonds',      qty:400, unit:'gm', min:100,category:'dryfruit', service:'bowl'  },
+  { id:'mixed_nuts',  name:'Mixed Nuts',   qty:600, unit:'gm', min:100,category:'dryfruit', service:'bowl'  },
+  { id:'paneer',      name:'Paneer',       qty:3,   unit:'kg', min:0.5,category:'other',    service:'both'  },
+  { id:'peanuts',     name:'Peanuts',      qty:3,   unit:'kg', min:0.5,category:'other',    service:'both'  },
+  { id:'peanut_butter',name:'Peanut Butter',qty:1.5,unit:'kg', min:0.3,category:'other',   service:'bowl'  },
+  { id:'sesame',      name:'Sesame',       qty:500, unit:'gm', min:50, category:'other',    service:'bowl'  },
+];
+
+const DEFAULT_MENU = {
+  thali: {
+    Monday:    { dal:'Rajma Masala', rice:'Jeera Rice',   bhaji:'Dal Fry',   koshimbir:'Onion-Cucumber Salad', side:'Papad',  sweet_or_tak:'Sweet — Gulab Jamun' },
+    Tuesday:   { dal:'Amti',        rice:'Normal Rice',   bhaji:'Chavli Usal',koshimbir:'Kakdi Koshimbir',     side:'Loncha', sweet_or_tak:'Taak Included' },
+    Wednesday: { dal:'Light Dal',   rice:'Masala Bhat',   bhaji:'Mix Veg (Batata, Matar, Flower)', koshimbir:'Gajar Koshimbir', side:'Chutney', sweet_or_tak:'Mattha Included' },
+    Thursday:  { dal:'Tomato Saar', rice:'Steam Rice',    bhaji:'Matki Usal', koshimbir:'Onion Koshimbir',     side:'Papad',  sweet_or_tak:'Taak Included' },
+    Friday:    { dal:'Dal Tadka',   rice:'Veg Pulao',     bhaji:'Paneer Butter Masala', koshimbir:'Chopped Salad', side:'Loncha', sweet_or_tak:'Sweet — Sheera' },
+    Saturday:  { dal:'Simple Dal',  rice:'Normal Rice',   bhaji:'Sukka Batata Bhaji', koshimbir:'Cucumber Salad', side:'Loncha', sweet_or_tak:'Taak Included' },
+  },
+  bowl: {
+    Monday:    { name:'', ingredients:'' },
+    Tuesday:   { name:'', ingredients:'' },
+    Wednesday: { name:'', ingredients:'' },
+    Thursday:  { name:'Hakka Paneer Fusion Bowl', ingredients:'Wheat Spaghetti 80g · Paneer 80g · Sweet Potato 60g · Capsicum 40g · Roasted Beans 25g · Khare Shengdana 20g · Grapes 30g' },
+    Friday:    { name:'Podi Rajma & Quinoa Comfort Bowl', ingredients:'Rajma 90g · Quinoa 70g · Lettuce 40g · Peanuts 20g · Coconut 25g · Ragi Cracker 30g · Hung Curd 40g' },
+    Saturday:  { name:'Val-Harbara Comfort Balance Bowl', ingredients:'Val Beans 70g · Harbara 70g · Zucchini Noodles 100g · Carrot 30g · Beetroot 30g · Mixed Nuts 25g · Hung Curd 40g' },
+  }
+};
+
+// ═══════════════════════════════════ STATE ═══════════════════════════════════
+
+let state = {
+  currentWeek: '2025-04-20',
+  selectedDay: null,
+  menu: {},
+  sales: {},
+  expenses: {},
+  stock: [],
+  millLog: []
+};
+
+function getWeeks() {
+  const weeks = [];
+  // Generate next 8 weeks starting from Apr 20
+  const start = new Date('2025-04-20');
+  for (let i = 0; i < 8; i++) {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i * 7);
+    const key = d.toISOString().split('T')[0];
+    const end = new Date(d); end.setDate(end.getDate() + 5);
+    const label = `${d.getDate()} ${d.toLocaleString('en',{month:'short'})} – ${end.getDate()} ${end.toLocaleString('en',{month:'short'})}`;
+    weeks.push({ key, label });
+  }
+  return weeks;
+}
+
+function getWeekLabel(weekKey) {
+  const w = getWeeks().find(w => w.key === weekKey);
+  return w ? w.label : weekKey;
+}
+
+function getDayDate(weekKey, dayIndex) {
+  const start = new Date(weekKey);
+  start.setDate(start.getDate() + dayIndex);
+  return `${start.getDate()} ${start.toLocaleString('en',{month:'short'})}`;
+}
+
+// ═══════════════════════════════════ PERSISTENCE ═══════════════════════════════════
+
+function save() {
+  try {
+    localStorage.setItem('saku_state', JSON.stringify(state));
+  } catch(e) {}
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem('saku_state');
+    if (raw) {
+      const loaded = JSON.parse(raw);
+      state = { ...state, ...loaded };
+    }
+  } catch(e) {}
+  // Ensure defaults
+  if (!state.stock || state.stock.length === 0) state.stock = JSON.parse(JSON.stringify(DEFAULT_STOCK));
+  if (!state.menu[state.currentWeek]) state.menu[state.currentWeek] = JSON.parse(JSON.stringify(DEFAULT_MENU));
+  if (!state.sales) state.sales = {};
+  if (!state.expenses) state.expenses = {};
+}
+
+// ═══════════════════════════════════ NAVIGATION ═══════════════════════════════════
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    if (t.getAttribute('onclick') && t.getAttribute('onclick').includes(name)) t.classList.add('active');
+  });
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'menu') renderMenuEditor();
+  if (name === 'daily') renderDailyDays();
+  if (name === 'expenses') renderExpenseDays();
+  if (name === 'stock') renderStock();
+  if (name === 'report') generateReport();
+}
+
+function onWeekChange() {
+  state.currentWeek = document.getElementById('globalWeek').value;
+  if (!state.menu[state.currentWeek]) state.menu[state.currentWeek] = JSON.parse(JSON.stringify(DEFAULT_MENU));
+  save();
+  const active = document.querySelector('.screen.active');
+  if (active) showScreen(active.id.replace('screen-',''));
+}
+
+// ═══════════════════════════════════ DASHBOARD ═══════════════════════════════════
+
+function renderDashboard() {
+  const week = state.currentWeek;
+  document.getElementById('dash-week-label').textContent = 'Week of ' + getWeekLabel(week);
+
+  // Calc totals
+  let thaliRev = 0, bowlRev = 0, totalExp = 0;
+  const weekSales = state.sales[week] || {};
+  const weekExp = state.expenses[week] || {};
+
+  DAYS.forEach(day => {
+    const s = weekSales[day] || {};
+    if (s.thali) {
+      THALI_ITEMS.forEach(item => {
+        thaliRev += (s.thali[item.id] || 0) * item.price;
+      });
+    }
+    if (s.bowl) bowlRev += (s.bowl.sold || 0) * 280;
+    const e = weekExp[day] || {};
+    (e.thali_purchases || []).forEach(p => totalExp += (p.amount || 0));
+    (e.bowl_purchases || []).forEach(p => totalExp += (p.amount || 0));
+  });
+
+  const margin = thaliRev + bowlRev - totalExp;
+  const pct = (thaliRev + bowlRev) > 0 ? ((margin / (thaliRev + bowlRev)) * 100).toFixed(1) : 0;
+
+  document.getElementById('stat-thali-rev').textContent = '₹' + thaliRev.toLocaleString('en-IN');
+  document.getElementById('stat-bowl-rev').textContent = '₹' + bowlRev.toLocaleString('en-IN');
+  document.getElementById('stat-expenses').textContent = '₹' + totalExp.toLocaleString('en-IN');
+  document.getElementById('stat-margin').textContent = '₹' + margin.toLocaleString('en-IN');
+  document.getElementById('stat-margin-pct').textContent = pct + '% margin';
+  const mc = document.getElementById('stat-margin-card');
+  mc.className = 'stat-card ' + (margin >= 0 ? 'green' : 'red');
+  document.getElementById('stat-margin').style.color = margin >= 0 ? 'var(--green-dark)' : 'var(--red)';
+
+  // Stock alerts
+  const alerts = state.stock.filter(s => s.qty <= s.min);
+  const alertDiv = document.getElementById('dash-alerts');
+  alertDiv.innerHTML = alerts.length ? alerts.map(a =>
+    `<div class="alert alert-warning">⚠️ Low stock: <strong>${a.name}</strong> — only ${a.qty} ${a.unit} remaining (min: ${a.min} ${a.unit})</div>`
+  ).join('') : '';
+
+  // Day cards
+  const menu = state.menu[week] || DEFAULT_MENU;
+  const container = document.getElementById('dash-days');
+  container.innerHTML = DAYS.map((day, i) => {
+    const s = weekSales[day] || {};
+    const thaliCount = s.thali ? (s.thali.full_thali || 0) : 0;
+    const bowlCount = s.bowl ? (s.bowl.sold || 0) : 0;
+    const hasData = thaliCount > 0 || bowlCount > 0;
+    const m = (menu.thali || {})[day] || {};
+    const preview = [m.bhaji, m.dal].filter(Boolean).join(' · ');
+    return `<div class="day-card ${hasData ? 'has-data' : ''}" onclick="quickDayEntry('${day}')">
+      <div class="day-name">${day.slice(0,3)}</div>
+      <div class="day-date">${getDayDate(week, i)}</div>
+      <div class="day-menu-preview">${preview || 'Menu not set'}</div>
+      ${hasData ? `<span class="day-sales-badge">T:${thaliCount} B:${bowlCount}</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function quickDayEntry(day) {
+  state.selectedDay = day;
+  showScreen('daily');
+  setTimeout(() => selectDay(day, 'daily'), 100);
+}
+
+// ═══════════════════════════════════ MENU EDITOR ═══════════════════════════════════
+
+function renderMenuEditor() {
+  const week = state.currentWeek;
+  const menu = state.menu[week] || JSON.parse(JSON.stringify(DEFAULT_MENU));
+  document.getElementById('menu-week-label').textContent = 'Week of ' + getWeekLabel(week);
+
+  // Thali
+  document.getElementById('thali-menu-days').innerHTML = DAYS.map(day => {
+    const m = (menu.thali || {})[day] || {};
+    return `<div class="menu-day-editor">
+      <div class="menu-day-header" onclick="toggleMenuDay(this)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <strong style="font-size:14px">${day}</strong>
+          <span style="font-size:12px;color:var(--gray-400)">${m.bhaji || 'Click to set menu'}</span>
+        </div>
+        <span style="color:var(--gray-400)">▾</span>
+      </div>
+      <div class="menu-day-body">
+        <div class="menu-fields">
+          <div class="form-group">
+            <label>Dal / Liquid Side</label>
+            <input type="text" data-day="${day}" data-field="dal" value="${m.dal||''}" placeholder="e.g. Amti, Tomato Saar">
+          </div>
+          <div class="form-group">
+            <label>Rice / Grain</label>
+            <input type="text" data-day="${day}" data-field="rice" value="${m.rice||''}" placeholder="e.g. Jeera Rice, Masala Bhat">
+          </div>
+          <div class="form-group">
+            <label>Bhaji / Sabzi</label>
+            <input type="text" data-day="${day}" data-field="bhaji" value="${m.bhaji||''}" placeholder="e.g. Paneer Butter Masala">
+          </div>
+          <div class="form-group">
+            <label>Koshimbir / Salad</label>
+            <input type="text" data-day="${day}" data-field="koshimbir" value="${m.koshimbir||''}" placeholder="e.g. Kakdi Koshimbir">
+          </div>
+          <div class="form-group">
+            <label>Side (Loncha / Papad / Chutney)</label>
+            <input type="text" data-day="${day}" data-field="side" value="${m.side||''}" placeholder="e.g. Loncha">
+          </div>
+          <div class="form-group">
+            <label>Sweet or Taak/Mattha</label>
+            <input type="text" data-day="${day}" data-field="sweet_or_tak" value="${m.sweet_or_tak||''}" placeholder="e.g. Taak Included / Sweet — Sheera">
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Bowl
+  document.getElementById('bowl-menu-days').innerHTML = DAYS.map(day => {
+    const m = (menu.bowl || {})[day] || {};
+    return `<div class="menu-day-editor">
+      <div class="menu-day-header" onclick="toggleMenuDay(this)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <strong style="font-size:14px">${day}</strong>
+          <span style="font-size:12px;color:var(--gray-400)">${m.name || 'No bowl this day (click to set)'}</span>
+        </div>
+        <span style="color:var(--gray-400)">▾</span>
+      </div>
+      <div class="menu-day-body">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Bowl Name</label>
+            <input type="text" data-day="${day}" data-field="bowl_name" value="${m.name||''}" placeholder="e.g. Hakka Paneer Fusion Bowl">
+          </div>
+          <div class="form-group">
+            <label>Price Override (blank = ₹280)</label>
+            <input type="number" data-day="${day}" data-field="bowl_price" value="${m.price||''}" placeholder="280">
+          </div>
+          <div class="form-group full">
+            <label>Ingredients (per bowl)</label>
+            <textarea data-day="${day}" data-field="bowl_ingredients" placeholder="e.g. Rajma 90g · Quinoa 70g · Lettuce 40g...">${m.ingredients||''}</textarea>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleMenuDay(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+  header.querySelector('span:last-child').textContent = body.classList.contains('open') ? '▴' : '▾';
+}
+
+function switchMenuTab(tab, btn) {
+  document.querySelectorAll('#screen-menu .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('menu-thali-section').style.display = tab === 'thali' ? 'block' : 'none';
+  document.getElementById('menu-bowl-section').style.display = tab === 'bowl' ? 'block' : 'none';
+}
+
+function saveMenu() {
+  const week = state.currentWeek;
+  if (!state.menu[week]) state.menu[week] = { thali:{}, bowl:{} };
+
+  document.querySelectorAll('#thali-menu-days input').forEach(inp => {
+    const day = inp.dataset.day, field = inp.dataset.field;
+    if (!state.menu[week].thali[day]) state.menu[week].thali[day] = {};
+    state.menu[week].thali[day][field] = inp.value;
+  });
+  document.querySelectorAll('#bowl-menu-days input, #bowl-menu-days textarea').forEach(inp => {
+    const day = inp.dataset.day, field = inp.dataset.field;
+    if (!state.menu[week].bowl[day]) state.menu[week].bowl[day] = {};
+    if (field === 'bowl_name') state.menu[week].bowl[day].name = inp.value;
+    else if (field === 'bowl_price') state.menu[week].bowl[day].price = parseFloat(inp.value) || 280;
+    else if (field === 'bowl_ingredients') state.menu[week].bowl[day].ingredients = inp.value;
+  });
+  save();
+  showToast('Menu saved ✓');
+}
+
+// ═══════════════════════════════════ DAILY SALES ═══════════════════════════════════
+
+function renderDailyDays() {
+  const container = document.getElementById('daily-days');
+  const week = state.currentWeek;
+  const weekSales = state.sales[week] || {};
+  container.innerHTML = DAYS.map((day, i) => {
+    const s = weekSales[day] || {};
+    const hasData = s.thali || s.bowl;
+    return `<div class="day-card ${hasData ? 'has-data' : ''} ${state.selectedDay===day?'active':''}" onclick="selectDay('${day}','daily')">
+      <div class="day-name">${day.slice(0,3)}</div>
+      <div class="day-date">${getDayDate(week, i)}</div>
+      ${hasData ? '<span class="day-sales-badge">Entered ✓</span>' : '<div style="font-size:10px;color:var(--gray-400);margin-top:4px">Tap to enter</div>'}
+    </div>`;
+  }).join('');
+}
+
+function selectDay(day, context) {
+  state.selectedDay = day;
+  if (context === 'daily') {
+    renderDailyDays();
+    renderDailyEntry(day);
+    document.getElementById('daily-entry-area').style.display = 'block';
+    document.getElementById('daily-entry-area').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+}
+
+function renderDailyEntry(day) {
+  const week = state.currentWeek;
+  const sales = (state.sales[week] || {})[day] || {};
+  const menu = (state.menu[week] || DEFAULT_MENU);
+
+  // Labels
+  document.getElementById('thali-day-label').textContent = day;
+  document.getElementById('bowl-day-label').textContent = day;
+
+  // Bowl info
+  const bowl = (menu.bowl || {})[day] || {};
+  document.getElementById('bowl-today-name').textContent = bowl.name || 'No bowl set for this day';
+  document.getElementById('bowl-today-ingredients').textContent = bowl.ingredients || '—';
+
+  // Thali table
+  const thaliSaved = sales.thali || {};
+  document.getElementById('thali-sales-body').innerHTML = THALI_ITEMS.map(item => {
+    const qty = thaliSaved[item.id] || 0;
+    return `<tr>
+      <td>${item.name}</td>
+      <td class="price-col">₹${item.price}</td>
+      <td><input type="number" id="ti_${item.id}" min="0" value="${qty}" oninput="calcThaliTotal()"></td>
+      <td class="total-col" id="tt_${item.id}">₹${qty*item.price}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('thali-notes').value = sales.thali_notes || '';
+
+  // Bowl
+  document.getElementById('bowl-sold').value = (sales.bowl || {}).sold || 0;
+  document.getElementById('bowl-free').value = (sales.bowl || {}).free || 0;
+  document.getElementById('bowl-notes').value = sales.bowl_notes || '';
+
+  calcThaliTotal();
+  calcBowlTotal();
+}
+
+function calcThaliTotal() {
+  let total = 0, totalQty = 0;
+  THALI_ITEMS.forEach(item => {
+    const qty = parseInt(document.getElementById('ti_'+item.id)?.value) || 0;
+    const lineTotal = qty * item.price;
+    total += lineTotal;
+    totalQty += qty;
+    const el = document.getElementById('tt_'+item.id);
+    if (el) el.textContent = '₹' + lineTotal;
+  });
+  document.getElementById('thali-total-rev').textContent = '₹' + total.toLocaleString('en-IN');
+  document.getElementById('thali-total-qty').textContent = totalQty + ' items';
+}
+
+function calcBowlTotal() {
+  const sold = parseInt(document.getElementById('bowl-sold')?.value) || 0;
+  const total = sold * 280;
+  const totalQty = sold + (parseInt(document.getElementById('bowl-free')?.value) || 0);
+  document.getElementById('bowl-sold-total').textContent = '₹' + total.toLocaleString('en-IN');
+  document.getElementById('bowl-total-rev').textContent = '₹' + total.toLocaleString('en-IN');
+  document.getElementById('bowl-total-qty').textContent = totalQty + ' bowls';
+}
+
+function saveThaliSales() {
+  const week = state.currentWeek;
+  const day = state.selectedDay;
+  if (!day) return alert('Please select a day first');
+  if (!state.sales[week]) state.sales[week] = {};
+  if (!state.sales[week][day]) state.sales[week][day] = {};
+  const data = {};
+  THALI_ITEMS.forEach(item => {
+    data[item.id] = parseInt(document.getElementById('ti_'+item.id)?.value) || 0;
+  });
+  state.sales[week][day].thali = data;
+  state.sales[week][day].thali_notes = document.getElementById('thali-notes').value;
+  save();
+  showToast('Thali sales saved ✓');
+  renderDailyDays();
+}
+
+function saveBowlSales() {
+  const week = state.currentWeek;
+  const day = state.selectedDay;
+  if (!day) return alert('Please select a day first');
+  if (!state.sales[week]) state.sales[week] = {};
+  if (!state.sales[week][day]) state.sales[week][day] = {};
+  state.sales[week][day].bowl = {
+    sold: parseInt(document.getElementById('bowl-sold').value) || 0,
+    free: parseInt(document.getElementById('bowl-free').value) || 0,
+  };
+  state.sales[week][day].bowl_notes = document.getElementById('bowl-notes').value;
+  save();
+  showToast('Bowl sales saved ✓');
+  renderDailyDays();
+}
+
+// ═══════════════════════════════════ EXPENSES ═══════════════════════════════════
+
+let thaliExpRows = [], bowlExpRows = [];
+
+function renderExpenseDays() {
+  const container = document.getElementById('expense-days');
+  const week = state.currentWeek;
+  container.innerHTML = DAYS.map((day, i) => {
+    const e = (state.expenses[week] || {})[day] || {};
+    const hasData = (e.thali_purchases || []).length > 0 || (e.bowl_purchases || []).length > 0;
+    return `<div class="day-card ${hasData ? 'has-data' : ''}" onclick="selectExpDay('${day}')">
+      <div class="day-name">${day.slice(0,3)}</div>
+      <div class="day-date">${getDayDate(week, i)}</div>
+      ${hasData ? '<span class="day-sales-badge">Entered ✓</span>' : '<div style="font-size:10px;color:var(--gray-400);margin-top:4px">Tap to enter</div>'}
+    </div>`;
+  }).join('');
+}
+
+function selectExpDay(day) {
+  state.selectedDay = day;
+  document.getElementById('expense-entry-area').style.display = 'block';
+  document.getElementById('expense-entry-area').scrollIntoView({behavior:'smooth', block:'nearest'});
+
+  const week = state.currentWeek;
+  const exp = (state.expenses[week] || {})[day] || {};
+
+  thaliExpRows = exp.thali_purchases ? JSON.parse(JSON.stringify(exp.thali_purchases)) : [];
+  bowlExpRows = exp.bowl_purchases ? JSON.parse(JSON.stringify(exp.bowl_purchases)) : [];
+
+  renderExpenseRows();
+  renderStockUsage();
+  renderExpenseDays();
+}
+
+function renderExpenseRows() {
+  renderExpList('thali');
+  renderExpList('bowl');
+}
+
+function renderExpList(type) {
+  const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
+  const container = document.getElementById(type + '-expense-rows');
+  if (!rows.length) {
+    container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px">No purchases added yet. Click "+ Add Item" above.</div>`;
+    document.getElementById(type + '-exp-total').textContent = '₹0';
+    return;
+  }
+  container.innerHTML = `<div style="margin-bottom:8px;display:grid;grid-template-columns:2fr 0.8fr 0.8fr 1fr auto auto;gap:6px;padding:0 0 6px;border-bottom:1px solid var(--gray-100)">
+    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">Item</span>
+    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">Qty</span>
+    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">Unit</span>
+    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">₹ Amount</span>
+    <span style="font-size:10px;font-weight:700;color:var(--gray-400);text-transform:uppercase">Bill</span>
+    <span></span>
+  </div>` + rows.map((row, i) => {
+    const hasPhoto = row.photo ? `<img src="${row.photo}" class="photo-thumb" onclick="openLightbox('${row.photo}')" title="View bill">` : `<label style="cursor:pointer;display:flex;align-items:center;gap:4px;font-size:11px;color:var(--blue);font-weight:600"><input type="file" accept="image/*" capture="environment" style="display:none" onchange="attachBillPhoto('${type}',${i},this)">📷</label>`;
+    return `<div style="display:grid;grid-template-columns:2fr 0.8fr 0.8fr 1fr auto auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid var(--gray-100)" id="exp-row-${type}-${i}">
+      <input type="text" placeholder="Item name" value="${row.name||''}" onchange="updateExpRow('${type}',${i},'name',this.value)">
+      <input type="number" placeholder="Qty" value="${row.qty||''}" onchange="updateExpRow('${type}',${i},'qty',this.value)">
+      <input type="text" placeholder="kg/gm/pcs" value="${row.unit||''}" onchange="updateExpRow('${type}',${i},'unit',this.value)">
+      <input type="number" placeholder="Amount" value="${row.amount||''}" onchange="updateExpRow('${type}',${i},'amount',parseFloat(this.value)||0); calcExpTotal('${type}')">
+      <div>${hasPhoto}</div>
+      <button class="btn btn-danger btn-sm" onclick="removeExpRow('${type}',${i})" style="padding:4px 8px">✕</button>
+    </div>`;
+  }).join('');
+  calcExpTotal(type);
+}
+
+function addExpenseRow(type) {
+  const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
+  rows.push({ name:'', qty:'', unit:'kg', amount:0, photo:null });
+  renderExpList(type);
+}
+
+function updateExpRow(type, idx, field, val) {
+  const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
+  if (rows[idx]) rows[idx][field] = val;
+  if (field === 'amount') calcExpTotal(type);
+}
+
+function removeExpRow(type, idx) {
+  if (type === 'thali') thaliExpRows.splice(idx, 1);
+  else bowlExpRows.splice(idx, 1);
+  renderExpList(type);
+}
+
+function calcExpTotal(type) {
+  const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
+  const total = rows.reduce((sum, r) => sum + (parseFloat(r.amount) || 0), 0);
+  document.getElementById(type + '-exp-total').textContent = '₹' + total.toLocaleString('en-IN');
+}
+
+function renderStockUsage() {
+  // Thali stock items
+  const thaliStock = state.stock.filter(s => s.service === 'thali' || s.service === 'both');
+  const week = state.currentWeek;
+  const day = state.selectedDay;
+  const savedUsage = ((state.expenses[week] || {})[day] || {}).stock_usage || {};
+
+  document.getElementById('thali-stock-usage').innerHTML = thaliStock.length ?
+    `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">` +
+    thaliStock.map(s => `
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--gray-50);border-radius:var(--radius-sm)">
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:700">${s.name}</div>
+          <div style="font-size:11px;color:var(--gray-400)">Stock: ${s.qty} ${s.unit}</div>
+        </div>
+        <input type="number" style="width:70px" min="0" step="0.1" placeholder="Used"
+          id="su_thali_${s.id}" value="${savedUsage['thali_'+s.id]||''}"
+          title="Qty used today in ${s.unit}">
+        <span style="font-size:11px;color:var(--gray-400)">${s.unit}</span>
+      </div>`).join('') + '</div>'
+    : '<div style="color:var(--gray-400);font-size:13px;padding:10px">No thali stock items configured</div>';
+
+  // Bowl stock items
+  const bowlStock = state.stock.filter(s => s.service === 'bowl' || s.service === 'both');
+  document.getElementById('bowl-stock-usage').innerHTML = bowlStock.length ?
+    `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">` +
+    bowlStock.map(s => `
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--gray-50);border-radius:var(--radius-sm)">
+        <div style="flex:1">
+          <div style="font-size:12px;font-weight:700">${s.name}</div>
+          <div style="font-size:11px;color:var(--gray-400)">Stock: ${s.qty} ${s.unit}</div>
+        </div>
+        <input type="number" style="width:70px" min="0" step="0.1" placeholder="Used"
+          id="su_bowl_${s.id}" value="${savedUsage['bowl_'+s.id]||''}"
+          title="Qty used today in ${s.unit}">
+        <span style="font-size:11px;color:var(--gray-400)">${s.unit}</span>
+      </div>`).join('') + '</div>'
+    : '<div style="color:var(--gray-400);font-size:13px;padding:10px">No bowl stock items configured</div>';
+}
+
+function switchExpTab(tab, btn) {
+  document.querySelectorAll('#screen-expenses .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('exp-thali-section').style.display = tab === 'thali' ? 'block' : 'none';
+  document.getElementById('exp-bowl-section').style.display = tab === 'bowl' ? 'block' : 'none';
+}
+
+function saveThaliExpenses() {
+  saveExpenses('thali');
+}
+function saveBowlExpenses() {
+  saveExpenses('bowl');
+}
+
+function saveExpenses(type) {
+  const week = state.currentWeek;
+  const day = state.selectedDay;
+  if (!day) return alert('Please select a day first');
+  if (!state.expenses[week]) state.expenses[week] = {};
+  if (!state.expenses[week][day]) state.expenses[week][day] = {};
+
+  const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
+  state.expenses[week][day][type + '_purchases'] = JSON.parse(JSON.stringify(rows));
+
+  // Save stock usage and deduct
+  const stockItems = state.stock.filter(s => s.service === type || s.service === 'both');
+  const usage = state.expenses[week][day].stock_usage || {};
+  stockItems.forEach(s => {
+    const inp = document.getElementById(`su_${type}_${s.id}`);
+    if (inp) {
+      const used = parseFloat(inp.value) || 0;
+      const prevUsed = parseFloat(usage[type+'_'+s.id]) || 0;
+      const diff = used - prevUsed; // net change
+      usage[type+'_'+s.id] = used;
+      // Deduct from stock
+      const stockItem = state.stock.find(si => si.id === s.id);
+      if (stockItem) stockItem.qty = Math.max(0, parseFloat(stockItem.qty) - diff);
+    }
+  });
+  state.expenses[week][day].stock_usage = usage;
+  save();
+  showToast(`${type === 'thali' ? 'Thali' : 'Bowl'} expenses saved & stock updated ✓`);
+  renderExpenseDays();
+}
+
+// ═══════════════════════════════════ STOCK ═══════════════════════════════════
+
+let currentFilter = 'all';
+
+function renderStock() {
+  const alerts = state.stock.filter(s => s.qty <= s.min);
+  const alertsBar = document.getElementById('stock-alerts-bar');
+  alertsBar.innerHTML = alerts.length ?
+    `<div class="alert alert-warning" style="margin-bottom:12px">⚠️ ${alerts.length} item(s) at or below minimum stock: ${alerts.map(a=>a.name).join(', ')}</div>` : '';
+
+  const filtered = currentFilter === 'all' ? state.stock : state.stock.filter(s => s.category === currentFilter);
+
+  // Wheat grain values
+  const wg = state.stock.find(s => s.id === 'wheat_grain');
+  const wf = state.stock.find(s => s.id === 'wheat_flour');
+  if (wg) document.getElementById('wheat-grain-stock').value = wg.qty;
+  if (wf) document.getElementById('wheat-flour-stock').value = wf.qty;
+
+  document.getElementById('stock-grid').innerHTML = filtered.map(s => {
+    const level = s.qty <= s.min ? 'low' : s.qty <= s.min * 2 ? 'medium' : '';
+    return `<div class="stock-item ${level}">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="stock-name">${s.name}</div>
+        <span class="badge ${level==='low'?'badge-red':level==='medium'?'badge-amber':'badge-green'}">${level==='low'?'LOW':level==='medium'?'LOW-MED':'OK'}</span>
+      </div>
+      <div class="stock-qty ${level==='low'?'low':'ok'}">${s.qty} <span style="font-size:14px;font-weight:500">${s.unit}</span></div>
+      <div style="font-size:11px;color:var(--gray-400)">Min alert: ${s.min} ${s.unit} · ${s.category}</div>
+      <div class="stock-controls">
+        <input type="number" min="0" step="0.5" value="${s.qty}" id="sq_${s.id}" style="font-size:13px">
+        <span style="font-size:11px;color:var(--gray-400)">${s.unit}</span>
+        <button class="btn btn-outline btn-sm" onclick="updateStockQty('${s.id}')">Update</button>
+      </div>
+      <div style="display:flex;gap:6px;font-size:11px">
+        <input type="number" min="0" step="0.1" placeholder="Min alert" value="${s.min}" id="sm_${s.id}" style="width:90px;font-size:11px;padding:4px 6px">
+        <button class="btn btn-outline btn-sm" onclick="updateStockMin('${s.id}')">Set Min</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterStock(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('#screen-stock .btn-outline').forEach(b => b.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  renderStock();
+}
+
+function updateStockQty(id) {
+  const item = state.stock.find(s => s.id === id);
+  const inp = document.getElementById('sq_'+id);
+  if (item && inp) { item.qty = parseFloat(inp.value) || 0; saveStock(); renderStock(); }
+}
+
+function updateStockMin(id) {
+  const item = state.stock.find(s => s.id === id);
+  const inp = document.getElementById('sm_'+id);
+  if (item && inp) { item.min = parseFloat(inp.value) || 0; saveStock(); renderStock(); }
+}
+
+function logMillRun() {
+  const grain = parseFloat(document.getElementById('wheat-sent').value) || 0;
+  const flour = parseFloat(document.getElementById('wheat-flour-received').value) || 0;
+  if (!grain) return alert('Enter kg of grain sent to mill');
+
+  // Deduct grain from stock, add flour
+  const wg = state.stock.find(s => s.id === 'wheat_grain');
+  const wf = state.stock.find(s => s.id === 'wheat_flour');
+  if (wg) wg.qty = Math.max(0, wg.qty - grain);
+  if (wf) wf.qty = (parseFloat(wf.qty) || 0) + flour;
+
+  state.millLog = state.millLog || [];
+  state.millLog.push({ date: new Date().toLocaleDateString(), sent: grain, received: flour });
+  saveStock();
+  renderStock();
+  showToast(`Mill run logged: ${grain}kg grain → ${flour}kg flour ✓`);
+}
+
+function addStockItem() {
+  const name = prompt('Stock item name:');
+  if (!name) return;
+  const unit = prompt('Unit (kg/gm/pcs):', 'kg') || 'kg';
+  const qty = parseFloat(prompt('Current quantity:', '0')) || 0;
+  const min = parseFloat(prompt('Minimum alert threshold:', '1')) || 1;
+  const category = prompt('Category (grain/millet/pulse/dryfruit/other):', 'other') || 'other';
+  const service = prompt('Service (thali/bowl/both):', 'both') || 'both';
+  const id = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g,'');
+  state.stock.push({ id, name, qty, unit, min, category, service });
+  saveStock();
+  renderStock();
+}
+
+function saveStock() {
+  // Update wheat grain and flour from direct inputs if visible
+  const wgInput = document.getElementById('wheat-grain-stock');
+  const wfInput = document.getElementById('wheat-flour-stock');
+  const wg = state.stock.find(s => s.id === 'wheat_grain');
+  const wf = state.stock.find(s => s.id === 'wheat_flour');
+  if (wgInput && wg && wgInput.value) wg.qty = parseFloat(wgInput.value) || wg.qty;
+  if (wfInput && wf && wfInput.value) wf.qty = parseFloat(wfInput.value) || wf.qty;
+  save();
+  showToast('Stock saved ✓');
+}
+
+// ═══════════════════════════════════ WEEKLY REPORT ═══════════════════════════════════
+
+function generateReport() {
+  const week = state.currentWeek;
+  document.getElementById('report-week-label').textContent = 'Week of ' + getWeekLabel(week);
+
+  const weekSales = state.sales[week] || {};
+  const weekExp = state.expenses[week] || {};
+
+  let totalThaliRev = 0, totalBowlRev = 0, totalExp = 0;
+  let totalThaliQty = 0, totalBowlSold = 0, totalBowlFree = 0;
+
+  // Sales table
+  const salesRows = DAYS.map(day => {
+    const s = weekSales[day] || {};
+    const thali = s.thali || {};
+    const bowl = s.bowl || {};
+
+    const fullThali = thali.full_thali || 0;
+    const dalRice = thali.dal_rice || 0;
+    const chapBhaji = thali.chap_bhaji || 0;
+    const extras = (thali.chapati||0) + (thali.rice||0) + (thali.dal||0) +
+                   (thali.bhaji||0) + (thali.buttermilk||0) + (thali.sweet||0) + (thali.papad||0);
+
+    let thaliRev = 0;
+    THALI_ITEMS.forEach(item => { thaliRev += (thali[item.id] || 0) * item.price; });
+    const bowlSold = bowl.sold || 0;
+    const bowlFree = bowl.free || 0;
+    const bowlRev = bowlSold * 280;
+    const dayTotal = thaliRev + bowlRev;
+
+    totalThaliRev += thaliRev;
+    totalBowlRev += bowlRev;
+    totalThaliQty += fullThali;
+    totalBowlSold += bowlSold;
+    totalBowlFree += bowlFree;
+
+    return `<tr>
+      <td><strong>${day}</strong></td>
+      <td>${fullThali || '—'}</td>
+      <td>${dalRice || '—'}</td>
+      <td>${chapBhaji || '—'}</td>
+      <td>${extras || '—'}</td>
+      <td class="text-mono">₹${thaliRev.toLocaleString('en-IN')}</td>
+      <td>${bowlSold || '—'}</td>
+      <td>${bowlFree || '—'}</td>
+      <td class="text-mono">₹${bowlRev.toLocaleString('en-IN')}</td>
+      <td class="text-mono fw-700">₹${dayTotal.toLocaleString('en-IN')}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('report-sales-body').innerHTML = salesRows;
+  document.getElementById('report-sales-foot').innerHTML = `
+    <tr class="subtotal">
+      <td>WEEK TOTAL</td>
+      <td>${totalThaliQty}</td>
+      <td colspan="3">—</td>
+      <td class="text-mono">₹${totalThaliRev.toLocaleString('en-IN')}</td>
+      <td>${totalBowlSold}</td>
+      <td>${totalBowlFree}</td>
+      <td class="text-mono">₹${totalBowlRev.toLocaleString('en-IN')}</td>
+      <td class="text-mono">₹${(totalThaliRev+totalBowlRev).toLocaleString('en-IN')}</td>
+    </tr>`;
+
+  // Expense table
+  let totalThaliExp = 0, totalBowlExp = 0;
+  const expRows = DAYS.map(day => {
+    const e = weekExp[day] || {};
+    const thaliPurch = (e.thali_purchases || []).reduce((s, r) => s + (parseFloat(r.amount)||0), 0);
+    const bowlPurch = (e.bowl_purchases || []).reduce((s, r) => s + (parseFloat(r.amount)||0), 0);
+    totalThaliExp += thaliPurch;
+    totalBowlExp += bowlPurch;
+    totalExp += thaliPurch + bowlPurch;
+    return `<tr>
+      <td><strong>${day}</strong></td>
+      <td class="text-mono">₹${thaliPurch.toLocaleString('en-IN')}</td>
+      <td class="text-mono">₹${bowlPurch.toLocaleString('en-IN')}</td>
+      <td class="text-mono fw-700">₹${(thaliPurch+bowlPurch).toLocaleString('en-IN')}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('report-exp-body').innerHTML = expRows;
+  document.getElementById('report-exp-foot').innerHTML = `
+    <tr class="subtotal">
+      <td>WEEK TOTAL</td>
+      <td class="text-mono">₹${totalThaliExp.toLocaleString('en-IN')}</td>
+      <td class="text-mono">₹${totalBowlExp.toLocaleString('en-IN')}</td>
+      <td class="text-mono">₹${totalExp.toLocaleString('en-IN')}</td>
+    </tr>`;
+
+  // P&L
+  const totalRev = totalThaliRev + totalBowlRev;
+  const margin = totalRev - totalExp;
+  const marginPct = totalRev > 0 ? ((margin / totalRev) * 100).toFixed(1) : 0;
+
+  document.getElementById('report-pnl').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px">
+      <div style="background:var(--blue-pale);border-radius:var(--radius-sm);padding:16px;text-align:center">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total Revenue</div>
+        <div style="font-size:28px;font-weight:800;color:var(--blue);font-family:var(--mono)">₹${totalRev.toLocaleString('en-IN')}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px">Thali ₹${totalThaliRev.toLocaleString('en-IN')} + Bowl ₹${totalBowlRev.toLocaleString('en-IN')}</div>
+      </div>
+      <div style="background:var(--red-pale);border-radius:var(--radius-sm);padding:16px;text-align:center">
+        <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total Expenses</div>
+        <div style="font-size:28px;font-weight:800;color:var(--red);font-family:var(--mono)">₹${totalExp.toLocaleString('en-IN')}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px">Thali ₹${totalThaliExp.toLocaleString('en-IN')} + Bowl ₹${totalBowlExp.toLocaleString('en-IN')}</div>
+      </div>
+      <div style="background:${margin>=0?'var(--green-pale)':'var(--red-pale)'};border-radius:var(--radius-sm);padding:16px;text-align:center">
+        <div style="font-size:11px;font-weight:700;color:${margin>=0?'var(--green-dark)':'var(--red)'};text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Net Margin</div>
+        <div style="font-size:28px;font-weight:800;color:${margin>=0?'var(--green-dark)':'var(--red)'};font-family:var(--mono)">₹${margin.toLocaleString('en-IN')}</div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:4px">${marginPct}% margin this week</div>
+      </div>
+    </div>
+    <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:14px">
+      <div style="font-size:12px;color:var(--gray-600);line-height:1.8">
+        <strong>Thali:</strong> ${totalThaliQty} full thalis · ₹${totalThaliRev.toLocaleString('en-IN')} revenue &nbsp;|&nbsp;
+        <strong>Bowl:</strong> ${totalBowlSold} sold + ${totalBowlFree} complimentary · ₹${totalBowlRev.toLocaleString('en-IN')} revenue &nbsp;|&nbsp;
+        <strong>Expenses:</strong> ₹${totalExp.toLocaleString('en-IN')} &nbsp;|&nbsp;
+        <strong>Net:</strong> ₹${margin.toLocaleString('en-IN')} (${marginPct}%)
+      </div>
+    </div>`;
+
+  // Stats
+  document.getElementById('report-stats').innerHTML = `
+    <div class="stat-card blue"><div class="stat-label">Thali Revenue</div><div class="stat-value">₹${totalThaliRev.toLocaleString('en-IN')}</div><div class="stat-sub">${totalThaliQty} full thalis</div></div>
+    <div class="stat-card green"><div class="stat-label">Bowl Revenue</div><div class="stat-value">₹${totalBowlRev.toLocaleString('en-IN')}</div><div class="stat-sub">${totalBowlSold} bowls sold</div></div>
+    <div class="stat-card amber"><div class="stat-label">Total Expenses</div><div class="stat-value">₹${totalExp.toLocaleString('en-IN')}</div><div class="stat-sub">All purchases</div></div>
+    <div class="stat-card ${margin>=0?'green':'red'}"><div class="stat-label">Net Profit</div><div class="stat-value" style="color:${margin>=0?'var(--green-dark)':'var(--red)'}">₹${margin.toLocaleString('en-IN')}</div><div class="stat-sub">${marginPct}% margin</div></div>`;
+}
+
+function printReport() {
+  window.print();
+}
+
+// ═══════════════════════════════════ WHATSAPP ═══════════════════════════════════
+
+const DIRECTOR_WA = '917721830718';
+let waTabMode = 'daily';
+
+function openWaModal(mode) {
+  waTabMode = mode || 'daily';
+  document.getElementById('wa-modal').classList.add('open');
+  // Set active tab
+  document.querySelectorAll('#wa-modal .tab').forEach((t,i) => {
+    t.classList.toggle('active', (i===0 && waTabMode==='daily') || (i===1 && waTabMode==='weekly'));
+  });
+  buildWaPreview();
+}
+
+function closeWaModal() {
+  document.getElementById('wa-modal').classList.remove('open');
+}
+
+function switchWaTab(mode, btn) {
+  waTabMode = mode;
+  document.querySelectorAll('#wa-modal .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  buildWaPreview();
+}
+
+function buildWaPreview() {
+  const week = state.currentWeek;
+  const weekLabel = getWeekLabel(week);
+  const weekSales = state.sales[week] || {};
+  const weekExp = state.expenses[week] || {};
+  const today = state.selectedDay || DAYS[new Date().getDay() - 1] || DAYS[0];
+  let msg = '';
+
+  if (waTabMode === 'daily') {
+    const s = weekSales[today] || {};
+    const thali = s.thali || {};
+    const bowl = s.bowl || {};
+    let thaliRev = 0;
+    THALI_ITEMS.forEach(item => { thaliRev += (thali[item.id]||0) * item.price; });
+    const bowlRev = (bowl.sold||0) * 280;
+    const e = weekExp[today] || {};
+    const thaliExp = (e.thali_purchases||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
+    const bowlExp = (e.bowl_purchases||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
+    const totalExp = thaliExp + bowlExp;
+    const totalRev = thaliRev + bowlRev;
+    const menu = (state.menu[week]||DEFAULT_MENU).thali[today]||{};
+    const bowlMenu = (state.menu[week]||DEFAULT_MENU).bowl[today]||{};
+
+    msg = `🍱 *SAKU KITCHEN — ${today.toUpperCase()} REPORT*
+📅 Week: ${weekLabel}
+━━━━━━━━━━━━━━━━━━━
+*THALI SERVICE*
+Menu: ${menu.bhaji||'—'} | ${menu.dal||'—'}
+Sweet/Taak: ${menu.sweet_or_tak||'—'}
+
+Sales:
+• Full Thali: ${thali.full_thali||0} × ₹70 = ₹${((thali.full_thali||0)*70).toLocaleString('en-IN')}
+• Dal Rice: ${thali.dal_rice||0} × ₹40 = ₹${((thali.dal_rice||0)*40).toLocaleString('en-IN')}
+• Chapati Bhaji: ${thali.chap_bhaji||0} × ₹45 = ₹${((thali.chap_bhaji||0)*45).toLocaleString('en-IN')}
+• Extras: Chap ${thali.chapati||0} | Rice ${thali.rice||0} | Dal ${thali.dal||0} | BM ${thali.buttermilk||0}
+💰 Thali Revenue: *₹${thaliRev.toLocaleString('en-IN')}*
+━━━━━━━━━━━━━━━━━━━
+*HEALTHY BOWL SERVICE*
+${bowlMenu.name ? 'Bowl: ' + bowlMenu.name : 'No bowl today'}
+• Sold: ${bowl.sold||0} × ₹280 = ₹${((bowl.sold||0)*280).toLocaleString('en-IN')}
+• Complimentary: ${bowl.free||0}
+💰 Bowl Revenue: *₹${bowlRev.toLocaleString('en-IN')}*
+━━━━━━━━━━━━━━━━━━━
+*EXPENSES*
+• Thali Purchases: ₹${thaliExp.toLocaleString('en-IN')}
+• Bowl Purchases: ₹${bowlExp.toLocaleString('en-IN')}
+💸 Total Expense: *₹${totalExp.toLocaleString('en-IN')}*
+━━━━━━━━━━━━━━━━━━━
+📊 *NET: ₹${(totalRev-totalExp).toLocaleString('en-IN')}*
+${s.thali_notes ? '📝 Notes: ' + s.thali_notes : ''}
+_Sent from Saku Kitchen Ops Platform_`;
+
+  } else {
+    // Weekly
+    let totalThaliRev=0, totalBowlRev=0, totalExp=0, totalThaliQty=0, totalBowlSold=0;
+    const lines = DAYS.map(day => {
+      const s = weekSales[day]||{};
+      const thali = s.thali||{};
+      const bowl = s.bowl||{};
+      let thaliRev=0;
+      THALI_ITEMS.forEach(item => { thaliRev += (thali[item.id]||0)*item.price; });
+      const bowlRev = (bowl.sold||0)*280;
+      const e = weekExp[day]||{};
+      const exp = (e.thali_purchases||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0)
+                + (e.bowl_purchases||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
+      totalThaliRev+=thaliRev; totalBowlRev+=bowlRev; totalExp+=exp;
+      totalThaliQty+=(thali.full_thali||0); totalBowlSold+=(bowl.sold||0);
+      const dayTotal = thaliRev+bowlRev;
+      if (!dayTotal && !exp) return `${day.slice(0,3)}: No data`;
+      return `${day.slice(0,3)}: T₹${thaliRev.toLocaleString('en-IN')} + B₹${bowlRev.toLocaleString('en-IN')} - Exp₹${exp.toLocaleString('en-IN')} = *₹${(dayTotal-exp).toLocaleString('en-IN')}*`;
+    });
+    const totalRev = totalThaliRev + totalBowlRev;
+    const margin = totalRev - totalExp;
+    const pct = totalRev>0 ? ((margin/totalRev)*100).toFixed(1) : 0;
+
+    msg = `📊 *SAKU KITCHEN — WEEKLY REPORT*
+📅 Week: ${weekLabel}
+━━━━━━━━━━━━━━━━━━━
+*DAY-BY-DAY SUMMARY*
+${lines.join('\n')}
+━━━━━━━━━━━━━━━━━━━
+*THALI* | ${totalThaliQty} full thalis | Revenue: ₹${totalThaliRev.toLocaleString('en-IN')}
+*BOWL* | ${totalBowlSold} bowls sold | Revenue: ₹${totalBowlRev.toLocaleString('en-IN')}
+━━━━━━━━━━━━━━━━━━━
+💰 Total Revenue: *₹${totalRev.toLocaleString('en-IN')}*
+💸 Total Expenses: *₹${totalExp.toLocaleString('en-IN')}*
+📈 Net Margin: *₹${margin.toLocaleString('en-IN')} (${pct}%)*
+━━━━━━━━━━━━━━━━━━━
+_Saku Kitchen Ops · Kothrud, Pune_`;
+  }
+
+  document.getElementById('wa-preview').textContent = msg;
+}
+
+function sendWhatsApp() {
+  const msg = document.getElementById('wa-preview').textContent;
+  const encoded = encodeURIComponent(msg);
+  window.open(`https://wa.me/${DIRECTOR_WA}?text=${encoded}`, '_blank');
+  closeWaModal();
+}
+
+// ═══════════════════════════════════ BILL PHOTOS ═══════════════════════════════════
+
+function attachBillPhoto(type, idx, input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const rows = type === 'thali' ? thaliExpRows : bowlExpRows;
+    if (rows[idx]) {
+      rows[idx].photo = e.target.result;
+      rows[idx].photoName = file.name;
+      renderExpList(type);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('photo-lightbox').classList.add('open');
+}
+
+function closeLightbox() {
+  document.getElementById('photo-lightbox').classList.remove('open');
+  document.getElementById('lightbox-img').src = '';
+}
+
+// Close modals on overlay click
+document.getElementById('wa-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeWaModal();
+});
+document.getElementById('photo-lightbox').addEventListener('click', function(e) {
+  if (e.target === this) closeLightbox();
+});
+
+// ═══════════════════════════════════ TOAST ═══════════════════════════════════
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = `position:fixed;bottom:24px;right:24px;background:var(--gray-900);color:white;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);font-family:var(--font)`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2500);
+}
+
+// ═══════════════════════════════════ INIT ═══════════════════════════════════
+
+function init() {
+  load();
+
+  // Populate week selector
+  const sel = document.getElementById('globalWeek');
+  getWeeks().forEach(w => {
+    const opt = document.createElement('option');
+    opt.value = w.key;
+    opt.textContent = w.label;
+    if (w.key === state.currentWeek) opt.selected = true;
+    sel.appendChild(opt);
+  });
+
+  renderDashboard();
+}
+
+init();
+</script>
+</body>
+</html>
