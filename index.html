@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v5</title>
+<title>Saku Kitchen — Operations Platform v6</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -878,7 +878,7 @@ const THALI_ITEMS = [
   { id:'bhaji',              name:'Bhaji',                 price:20,  group:'extras'  },
   { id:'buttermilk',         name:'Buttermilk (paid)',     price:25,  group:'extras'  },
   { id:'sweet',              name:'Sweet',                 price:35,  group:'extras'  },
-  { id:'papad',              name:'Papad (extra)',         price:5,   group:'extras'  },
+  { id:'papad',              name:'Papad (extra)',         price:10,  group:'extras'  },
   { id:'full_thali_parcel',  name:'Full Thali — Parcel',  price:80,  group:'parcel'  },
   { id:'dal_rice_parcel',    name:'Dal Rice — Parcel',    price:45,  group:'parcel'  },
   { id:'chap_bhaji_parcel',  name:'Chapati Bhaji — Parcel',price:50, group:'parcel'  },
@@ -3007,7 +3007,7 @@ function formatSalesData(data) {
     Object.entries(days).forEach(([day, s]) => {
       const t = s.thali || {};
       const b = s.bowl || {};
-      const tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*35+(t.papad||0)*5;
+      const tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*35+(t.papad||0)*10;
       const bRev = (b.sold||0)*280;
       rows.push([week, day, t.full_thali||0, t.dal_rice||0, t.chap_bhaji||0, t.chapati||0, t.rice||0, t.dal||0, t.bhaji||0, t.buttermilk||0, t.sweet||0, t.papad||0, tRev, b.sold||0, b.free||0, bRev, tRev+bRev]);
     });
@@ -3515,7 +3515,7 @@ function formatSalesData(data) {
       var s = sales[week][day];
       var t = s.thali || {};
       var b = s.bowl || {};
-      var tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*35+(t.papad||0)*5;
+      var tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*35+(t.papad||0)*10;
       var bRev = (b.sold||0)*280;
       rows.push([week,day,t.full_thali||0,t.dal_rice||0,t.chap_bhaji||0,t.chapati||0,t.rice||0,t.dal||0,t.bhaji||0,t.buttermilk||0,t.sweet||0,t.papad||0,tRev,b.sold||0,b.free||0,bRev,tRev+bRev]);
     });
