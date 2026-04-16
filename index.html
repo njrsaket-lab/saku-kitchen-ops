@@ -2906,41 +2906,79 @@ function toggleAutoSync(checked) {
   showToast(checked ? 'Auto-sync enabled ✓' : 'Auto-sync disabled');
 }
 
+// ── JSONP-based sync — bypasses CORS completely ──
+function jsonpRequest(url, callbackName) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error('timeout'));
+    }, 10000);
+    function cleanup() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    window[callbackName] = function(data) {
+      cleanup();
+      resolve(data);
+    };
+    script.onerror = () => { cleanup(); reject(new Error('script error')); };
+    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + callbackName;
+    document.head.appendChild(script);
+  });
+}
+
 async function syncToSheets(silent) {
   const url = state.sheetsUrl;
   if (!url) {
     if (!silent) showSyncStatus('error', 'No Sheets URL set — go to Settings');
     return;
   }
-  showSyncStatus('syncing', 'Syncing to Google Sheets...');
+  showSyncStatus('syncing', '🔄 Syncing to Google Sheets...');
   try {
-    const payload = encodeURIComponent(JSON.stringify(state));
-    const res = await fetch(`${url}?action=sync&data=${payload}`);
-    const data = await res.json();
-    if (data.status === 'ok') {
+    // Strip photos from state to keep payload small
+    const syncState = JSON.parse(JSON.stringify(state));
+    if (syncState.expenses) {
+      Object.keys(syncState.expenses).forEach(week => {
+        Object.keys(syncState.expenses[week]).forEach(day => {
+          const e = syncState.expenses[week][day];
+          ['thali_purchases','bowl_purchases'].forEach(key => {
+            if (e[key]) e[key].forEach(p => { delete p.photo; delete p.photoName; });
+          });
+        });
+      });
+    }
+    const payload = encodeURIComponent(JSON.stringify(syncState));
+    const cbName = 'sakuSyncCb_' + Date.now();
+    const data = await jsonpRequest(`${url}?action=sync&data=${payload}`, cbName);
+    if (data && data.status === 'ok') {
       state.lastSync = new Date().toISOString();
       save();
-      showSyncStatus('ok', '✅ Synced to Google Sheets — ' + data.synced);
+      showSyncStatus('ok', '✅ Synced — ' + (data.synced || 'done'));
       if (!silent) showToast('Synced to Google Sheets ✓');
       const lastEl = document.getElementById('last-sync-time');
       if (lastEl) lastEl.textContent = 'Last synced: ' + new Date(state.lastSync).toLocaleString('en-IN');
     } else {
-      showSyncStatus('error', '❌ Sync failed: ' + (data.message || 'Unknown error'));
+      showSyncStatus('error', '❌ Sync error: ' + (data && data.message ? data.message : 'Unknown'));
     }
   } catch(e) {
-    showSyncStatus('error', '❌ Could not reach Sheets — check URL or internet');
+    showSyncStatus('error', '❌ Could not reach Sheets — check URL & redeploy');
   }
 }
 
 async function testSheetConnection() {
   const url = document.getElementById('sheets-url').value.trim();
   if (!url) return showToast('Enter a URL first');
-  showSyncStatus('syncing', 'Testing connection...');
+  showSyncStatus('syncing', '🔄 Testing connection...');
   try {
-    const res = await fetch(`${url}?action=test`);
-    const data = await res.json();
-    if (data.status === 'ok') showSyncStatus('ok', '✅ Connected! ' + data.message);
-    else showSyncStatus('error', '❌ ' + (data.message || 'Connection failed'));
+    const cbName = 'sakuTestCb_' + Date.now();
+    const data = await jsonpRequest(`${url}?action=test`, cbName);
+    if (data && data.status === 'ok') {
+      showSyncStatus('ok', '✅ Connected! ' + (data.message || ''));
+    } else {
+      showSyncStatus('error', '❌ ' + (data && data.message ? data.message : 'Connection failed'));
+    }
   } catch(e) {
     showSyncStatus('error', '❌ Cannot connect — check URL');
   }
@@ -3217,6 +3255,17 @@ function autoSync() {
       <div style="margin-bottom:8px"><strong>Step 4</strong> — Click <strong>Deploy → New deployment → Web App</strong> · Set "Who has access" to <strong>Anyone</strong> · Deploy</div>
       <div style="margin-bottom:12px"><strong>Step 5</strong> — Copy the Web App URL · Paste it above · Click Save URL</div>
       <div style="background:var(--gray-900);color:#a8ff78;border-radius:var(--radius-sm);padding:14px;font-family:monospace;font-size:11px;overflow-x:auto;white-space:pre;line-height:1.6;user-select:all" id="apps-script-code">function doGet(e) {
+  var callback = e.parameter.callback;
+  var result = handleRequest(e);
+  if (callback) {
+    return ContentService.createTextOutput(callback + "(" + result + ")")
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return ContentService.createTextOutput(result)
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function handleRequest(e) {
   try {
     var action = e.parameter.action;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
