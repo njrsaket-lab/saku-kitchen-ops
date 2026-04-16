@@ -296,6 +296,60 @@ textarea { resize: vertical; min-height: 70px; }
   .bottom-nav { display: none !important; }
 }
 
+
+/* ─── PURCHASE LIST ─── */
+.purchase-ingredient {
+  background: white; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  padding: 12px 14px; display: flex; align-items: center; gap: 10px;
+  transition: all .15s; cursor: pointer;
+}
+.purchase-ingredient.selected { border-color: var(--blue); background: var(--blue-pale); }
+.purchase-ingredient.manual { border-color: var(--amber); background: var(--amber-pale); }
+.pi-check { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--gray-300); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all .15s; }
+.purchase-ingredient.selected .pi-check { background: var(--blue); border-color: var(--blue); color: white; }
+.pi-name { flex: 1; }
+.pi-en { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.pi-mr { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+.pi-qty { display: flex; align-items: center; gap: 4px; }
+.pi-qty input { width: 65px; padding: 5px 6px; font-size: 13px; text-align:center; border: 1.5px solid var(--gray-200); border-radius: 6px; font-family: var(--font); }
+.pi-qty select { padding: 5px 4px; font-size: 12px; border: 1.5px solid var(--gray-200); border-radius: 6px; font-family: var(--font); background: white; }
+.pi-suggested { font-size: 10px; color: var(--blue); font-weight: 600; margin-top: 3px; }
+
+/* ─── SUBSCRIPTIONS ─── */
+.sub-card {
+  background: white; border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+  padding: 16px; margin-bottom: 12px; position: relative;
+}
+.sub-card.active-sub { border-color: var(--green); }
+.sub-card.expiring { border-color: var(--amber); }
+.sub-card.expired { border-color: var(--red); background: var(--red-pale); }
+.sub-name { font-size: 15px; font-weight: 800; color: var(--gray-900); }
+.sub-meta { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.sub-progress { height: 6px; background: var(--gray-200); border-radius: 3px; margin: 10px 0; overflow: hidden; }
+.sub-progress-bar { height: 100%; border-radius: 3px; background: var(--green); transition: width .3s; }
+.sub-progress-bar.warn { background: var(--amber); }
+.sub-progress-bar.danger { background: var(--red); }
+.day-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px; font-size: 11px; font-weight: 700;
+  border: 1.5px solid var(--gray-200); cursor: pointer; transition: all .15s; margin: 2px;
+}
+.day-pill.delivered { background: var(--green); border-color: var(--green); color: white; }
+.day-pill.skipped { background: var(--amber-pale); border-color: var(--amber); color: #92400e; }
+.day-pill.pending { background: white; color: var(--gray-400); }
+.day-pill.today { border-color: var(--blue); border-width: 2px; color: var(--blue); font-weight: 800; }
+.day-pill.future { background: var(--gray-50); color: var(--gray-300); cursor: default; }
+
+/* ─── SHEETS SYNC ─── */
+.sync-bar {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  background: var(--green-pale); border: 1px solid var(--green); border-radius: var(--radius-sm);
+  margin-bottom: 12px; font-size: 12px; font-weight: 600; color: var(--green-dark);
+}
+.sync-bar.error { background: var(--red-pale); border-color: var(--red); color: var(--red); }
+.sync-bar.syncing { background: var(--blue-pale); border-color: var(--blue); color: var(--blue); }
+.sync-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
 /* ─── UTILS ─── */
 .gap-12 { display: flex; flex-direction: column; gap: 12px; }
 .gap-16 { display: flex; flex-direction: column; gap: 16px; }
@@ -320,11 +374,14 @@ textarea { resize: vertical; min-height: 70px; }
   </div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showScreen('dashboard')">Dashboard</button>
-    <button class="nav-tab" onclick="showScreen('menu')">Weekly Menu</button>
-    <button class="nav-tab" onclick="showScreen('daily')">Daily Entry</button>
+    <button class="nav-tab" onclick="showScreen('menu')">Menu</button>
+    <button class="nav-tab" onclick="showScreen('daily')">Sales</button>
+    <button class="nav-tab" onclick="showScreen('purchase')">Purchase</button>
+    <button class="nav-tab" onclick="showScreen('subscriptions')">Subs</button>
     <button class="nav-tab" onclick="showScreen('expenses')">Expenses</button>
     <button class="nav-tab" onclick="showScreen('stock')">Stock</button>
-    <button class="nav-tab" onclick="showScreen('report')">Weekly Report</button>
+    <button class="nav-tab" onclick="showScreen('report')">Report</button>
+    <button class="nav-tab" onclick="showScreen('settings')">⚙️</button>
   </div>
   <div style="display:flex;align-items:center;gap:8px">
     <button class="btn btn-whatsapp btn-sm" onclick="openWaModal()" style="font-size:11px;padding:5px 10px">📲 Report</button>
@@ -826,7 +883,12 @@ let state = {
   sales: {},
   expenses: {},
   stock: [],
-  millLog: []
+  millLog: [],
+  purchases: {},
+  subscribers: [],
+  sheetsUrl: '',
+  autoSync: false,
+  lastSync: null,
 };
 
 function getWeeks() {
@@ -899,6 +961,9 @@ function showScreen(name) {
   if (name === 'expenses') renderExpenseDays();
   if (name === 'stock') renderStock();
   if (name === 'report') generateReport();
+  if (name === 'purchase') renderPurchaseDays();
+  if (name === 'subscriptions') renderSubscriptions();
+  if (name === 'settings') renderSettingsScreen();
 }
 
 function onWeekChange() {
@@ -1886,12 +1951,14 @@ function closeLightbox() {
   document.getElementById('lightbox-img').src = '';
 }
 
-// Close modals on overlay click
-document.getElementById('wa-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeWaModal();
-});
-document.getElementById('photo-lightbox').addEventListener('click', function(e) {
-  if (e.target === this) closeLightbox();
+// Close modals on overlay click — DOMContentLoaded ensures modal HTML exists
+document.addEventListener('DOMContentLoaded', function() {
+  const waModal = document.getElementById('wa-modal');
+  const lightbox = document.getElementById('photo-lightbox');
+  const subModal = document.getElementById('sub-modal');
+  if (waModal)  waModal.addEventListener('click',  function(e) { if (e.target === this) closeWaModal(); });
+  if (lightbox) lightbox.addEventListener('click', function(e) { if (e.target === this) closeLightbox(); });
+  if (subModal) subModal.addEventListener('click',  function(e) { if (e.target === this) closeSubModal(); });
 });
 
 // ═══════════════════════════════════ TOAST ═══════════════════════════════════
@@ -1922,34 +1989,1376 @@ function init() {
   renderDashboard();
 }
 
-init();
+document.addEventListener('DOMContentLoaded', init);
+
+
+
+// ═══════════════════════════════════════════════════════
+// MARATHI INGREDIENT MAP
+// ═══════════════════════════════════════════════════════
+const MARATHI = {
+  'Wheat Spaghetti':'गहू स्पघेटी','Paneer':'पनीर','Sweet Potato':'रताळे',
+  'Capsicum':'सिमला मिरची','Spring Onion':'कांदापात','Garlic':'लसूण',
+  'Ginger':'आले','Soy Sauce':'सोया सॉस','Lemon':'लिंबू','Sesame Oil':'तीळ तेल',
+  'Roasted Beans':'भाजलेले सोयाबीन','Khare Shengdana':'खारे शेंगदाणे',
+  'Grapes':'द्राक्षे','Date Paste':'खजूर पेस्ट','Mustard':'मोहरी',
+  'Saunf':'बडीशेप','Rajma':'राजमा','Coconut':'नारळ','Peanuts':'शेंगदाणे',
+  'Podi Masala':'पोडी मसाला','Quinoa':'क्विनोआ','Beans':'शेंगा','Peas':'मटार',
+  'Cauliflower':'फुलकोबी','Onion':'कांदा','Lettuce':'कोशिंबिरीची पाने',
+  'Ragi Cracker':'नाचणी क्रॅकर','Raisins':'मनुका','Hung Curd':'चक्का',
+  'Mayo':'मेयोनेज','Basil':'तुळस','Coconut Slivers':'नारळ काप',
+  'Sesame':'तीळ','Val Beans':'वाल','Harbara':'हरभरा','Peanut Butter':'शेंगदाणा लोणी',
+  'Zucchini Noodles':'झुकिनी नूडल्स','Cauliflower Rice':'फुलकोबी भात',
+  'Carrot':'गाजर','Beetroot':'बीट','Cucumber':'काकडी','Mixed Nuts':'मिश्र सुकामेवा',
+  'Peanut Crush':'शेंगदाणा भुगा','Apple Puree':'सफरचंद प्युरी',
+  'Lal Math':'लाल माठ','Apple Slices':'सफरचंद काप','Curry Leaves':'कढीपत्ता',
+  'Vinegar':'व्हिनेगर','Coriander':'कोथिंबीर','Tomato':'टोमॅटो',
+  'Oil':'तेल','Salt':'मीठ','Pepper':'मिरपूड','Chilli':'मिरची',
+  'Turmeric':'हळद','Cumin':'जिरे','Rice':'तांदूळ','Wheat Flour':'गव्हाचे पीठ',
+  'Milk':'दूध','Butter':'लोणी','Cream':'क्रीम','Eggs':'अंडी',
+};
+
+function getMr(en) {
+  // Try exact match first, then partial
+  if (MARATHI[en]) return MARATHI[en];
+  for (const [k,v] of Object.entries(MARATHI)) {
+    if (en.toLowerCase().includes(k.toLowerCase())) return v;
+  }
+  return '';
+}
+
+// ═══════════════════════════════════════════════════════
+// PURCHASE LIST
+// ═══════════════════════════════════════════════════════
+let purchaseState = { day: null, bowlIngredients: [], thaliItems: [], otherItems: [] };
+
+function renderPurchaseDays() {
+  const week = state.currentWeek;
+  const container = document.getElementById('purchase-days');
+  const purchases = state.purchases || {};
+  container.innerHTML = DAYS.map((day, i) => {
+    const hasList = purchases[week] && purchases[week][day];
+    return `<div class="day-card ${hasList?'has-data':''}" onclick="selectPurchaseDay('${day}')">
+      <div class="day-name">${day.slice(0,3)}</div>
+      <div class="day-date">${getDayDate(week, i)}</div>
+      ${hasList ? '<span class="day-sales-badge">List saved ✓</span>' : '<div style="font-size:10px;color:var(--gray-400);margin-top:4px">Tap to build list</div>'}
+    </div>`;
+  }).join('');
+}
+
+function selectPurchaseDay(day) {
+  purchaseState.day = day;
+  const week = state.currentWeek;
+  const menu = state.menu[week] || DEFAULT_MENU;
+  const bowlMenu = (menu.bowl || {})[day] || {};
+  const saved = (state.purchases || {})[week]?.[day] || {};
+
+  document.getElementById('purchase-entry-area').style.display = 'block';
+  document.getElementById('purchase-day-label').textContent = day;
+  document.getElementById('purchase-day-date').textContent = getDayDate(week, DAYS.indexOf(day));
+  document.getElementById('purchase-bowl-name').textContent = bowlMenu.name || 'No bowl set for ' + day;
+  document.getElementById('purchase-bowl-count').value = saved.bowlCount || 20;
+
+  // Parse bowl ingredients from menu
+  const rawIngredients = bowlMenu.ingredients || '';
+  purchaseState.bowlIngredients = rawIngredients ? rawIngredients.split('·').map(s => {
+    const trimmed = s.trim();
+    // Parse "Paneer 80g" → {name, qty, unit}
+    const match = trimmed.match(/^(.+?)\s+([\d.]+)\s*(g|gm|kg|ml|l)?$/i);
+    if (match) {
+      const rawQty = parseFloat(match[2]);
+      const rawUnit = (match[3] || 'g').toLowerCase();
+      return { name: match[1].trim(), perBowlQty: rawQty, perBowlUnit: rawUnit, selected: true };
+    }
+    return { name: trimmed, perBowlQty: 0, perBowlUnit: 'gm', selected: true };
+  }) : [];
+
+  // Restore saved selections
+  if (saved.bowlIngredients) {
+    purchaseState.bowlIngredients = saved.bowlIngredients;
+  }
+  purchaseState.thaliItems = saved.thaliItems || [];
+  purchaseState.otherItems = saved.otherItems || [];
+
+  renderBowlIngredients();
+  renderThaliManual();
+  renderOtherManual();
+  updatePurchaseTotal();
+  document.getElementById('purchase-entry-area').scrollIntoView({behavior:'smooth', block:'nearest'});
+  renderPurchaseDays();
+}
+
+function closePurchaseDay() {
+  document.getElementById('purchase-entry-area').style.display = 'none';
+  purchaseState.day = null;
+  renderPurchaseDays();
+  window.scrollTo({top:0});
+}
+
+function renderBowlIngredients() {
+  const count = parseInt(document.getElementById('purchase-bowl-count').value) || 20;
+  const container = document.getElementById('purchase-bowl-ingredients');
+  if (!purchaseState.bowlIngredients.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px">No ingredients found — set the bowl menu first</div>';
+    return;
+  }
+  container.innerHTML = purchaseState.bowlIngredients.map((ing, i) => {
+    const mr = getMr(ing.name);
+    const suggestedRaw = ing.perBowlQty * count;
+    let suggested = suggestedRaw, suggestedUnit = ing.perBowlUnit;
+    // Convert grams to kg if >= 1000
+    if ((suggestedUnit === 'g' || suggestedUnit === 'gm') && suggested >= 1000) {
+      suggested = (suggested / 1000).toFixed(2); suggestedUnit = 'kg';
+    } else {
+      suggested = suggested % 1 === 0 ? suggested : suggested.toFixed(1);
+    }
+    const buyQty = ing.buyQty !== undefined ? ing.buyQty : suggested;
+    const buyUnit = ing.buyUnit || suggestedUnit;
+
+    return `<div class="purchase-ingredient ${ing.selected ? 'selected' : ''}" onclick="togglePurchaseIng(${i})" id="ping-${i}">
+      <div class="pi-check">${ing.selected ? '✓' : ''}</div>
+      <div class="pi-name">
+        <div class="pi-en">${ing.name}</div>
+        ${mr ? `<div class="pi-mr">${mr}</div>` : ''}
+        ${ing.perBowlQty ? `<div class="pi-suggested">${ing.perBowlQty}${ing.perBowlUnit} × ${count} bowls = ${suggested} ${suggestedUnit}</div>` : ''}
+      </div>
+      <div class="pi-qty" onclick="event.stopPropagation()">
+        <input type="number" value="${buyQty}" min="0" step="0.1"
+          oninput="updateIngQty(${i},'qty',this.value)" style="width:65px">
+        <select onchange="updateIngQty(${i},'unit',this.value)">
+          <option value="g" ${buyUnit==='g'?'selected':''}>g</option>
+          <option value="gm" ${buyUnit==='gm'?'selected':''}>gm</option>
+          <option value="kg" ${buyUnit==='kg'?'selected':''}>kg</option>
+          <option value="pcs" ${buyUnit==='pcs'?'selected':''}>pcs</option>
+          <option value="bunch" ${buyUnit==='bunch'?'selected':''}>bunch</option>
+          <option value="packet" ${buyUnit==='packet'?'selected':''}>pkt</option>
+        </select>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function togglePurchaseIng(i) {
+  purchaseState.bowlIngredients[i].selected = !purchaseState.bowlIngredients[i].selected;
+  renderBowlIngredients();
+  updatePurchaseTotal();
+}
+
+function updateIngQty(i, field, val) {
+  if (field === 'qty') purchaseState.bowlIngredients[i].buyQty = parseFloat(val) || 0;
+  else purchaseState.bowlIngredients[i].buyUnit = val;
+  updatePurchaseTotal();
+}
+
+function recalcPurchaseSuggestions() {
+  renderBowlIngredients();
+  updatePurchaseTotal();
+}
+
+function renderThaliManual() {
+  const container = document.getElementById('purchase-thali-manual');
+  if (!purchaseState.thaliItems.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px">Tap "+ Add Item" to add thali purchases</div>';
+    return;
+  }
+  container.innerHTML = purchaseState.thaliItems.map((item, i) => renderManualPurchaseRow(item, i, 'thali')).join('');
+}
+
+function renderOtherManual() {
+  const container = document.getElementById('purchase-other-manual');
+  if (!purchaseState.otherItems.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px">No extra items</div>';
+    return;
+  }
+  container.innerHTML = purchaseState.otherItems.map((item, i) => renderManualPurchaseRow(item, i, 'other')).join('');
+}
+
+function renderManualPurchaseRow(item, i, type) {
+  const mr = getMr(item.name || '');
+  return `<div class="purchase-ingredient manual">
+    <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;gap:6px">
+        <input type="text" placeholder="Item name (English)" value="${item.name||''}"
+          oninput="updateManualItem('${type}',${i},'name',this.value)" style="flex:1;font-size:13px">
+        <input type="text" placeholder="मराठी नाव" value="${item.nameMr||mr}"
+          oninput="updateManualItem('${type}',${i},'nameMr',this.value)" style="flex:1;font-size:12px">
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="number" placeholder="Qty" value="${item.qty||''}" min="0" step="0.1"
+          oninput="updateManualItem('${type}',${i},'qty',this.value)" style="width:70px">
+        <select onchange="updateManualItem('${type}',${i},'unit',this.value)" style="padding:6px;border:1.5px solid var(--gray-200);border-radius:6px;font-family:var(--font);font-size:12px">
+          <option value="kg" ${(item.unit||'kg')==='kg'?'selected':''}>kg</option>
+          <option value="gm" ${item.unit==='gm'?'selected':''}>gm</option>
+          <option value="pcs" ${item.unit==='pcs'?'selected':''}>pcs</option>
+          <option value="bunch" ${item.unit==='bunch'?'selected':''}>bunch</option>
+          <option value="packet" ${item.unit==='packet'?'selected':''}>pkt</option>
+          <option value="litre" ${item.unit==='litre'?'selected':''}>litre</option>
+        </select>
+        <input type="number" placeholder="₹ Est." value="${item.estPrice||''}" min="0"
+          oninput="updateManualItem('${type}',${i},'estPrice',parseFloat(this.value)||0); updatePurchaseTotal()"
+          style="width:70px;color:var(--blue);font-weight:700">
+        <button class="btn btn-danger btn-sm" onclick="removeManualItem('${type}',${i})" style="padding:4px 8px">✕</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function addManualPurchaseItem() {
+  purchaseState.thaliItems.push({ name:'', nameMr:'', qty:'', unit:'kg', estPrice:0 });
+  renderThaliManual();
+}
+function addOtherPurchaseItem() {
+  purchaseState.otherItems.push({ name:'', nameMr:'', qty:'', unit:'kg', estPrice:0 });
+  renderOtherManual();
+}
+function updateManualItem(type, i, field, val) {
+  const arr = type==='thali' ? purchaseState.thaliItems : purchaseState.otherItems;
+  if (arr[i]) arr[i][field] = val;
+  if (field==='name') {
+    const mr = getMr(val);
+    if (mr && !arr[i].nameMr) arr[i].nameMr = mr;
+  }
+  updatePurchaseTotal();
+}
+function removeManualItem(type, i) {
+  if (type==='thali') purchaseState.thaliItems.splice(i,1);
+  else purchaseState.otherItems.splice(i,1);
+  renderThaliManual();
+  renderOtherManual();
+  updatePurchaseTotal();
+}
+
+function updatePurchaseTotal() {
+  const selectedBowl = purchaseState.bowlIngredients.filter(i => i.selected).length;
+  const thaliCount = purchaseState.thaliItems.length;
+  const otherCount = purchaseState.otherItems.length;
+  const total = [
+    ...purchaseState.thaliItems,
+    ...purchaseState.otherItems,
+  ].reduce((sum, item) => sum + (parseFloat(item.estPrice)||0), 0);
+  const totalEl = document.getElementById('purchase-grand-total');
+  const countEl = document.getElementById('purchase-item-count');
+  if (totalEl) totalEl.textContent = '₹' + total.toLocaleString('en-IN');
+  if (countEl) countEl.textContent = `${selectedBowl} bowl items · ${thaliCount + otherCount} manual items`;
+}
+
+function savePurchaseList() {
+  const week = state.currentWeek;
+  const day = purchaseState.day;
+  if (!day) return;
+  if (!state.purchases) state.purchases = {};
+  if (!state.purchases[week]) state.purchases[week] = {};
+  state.purchases[week][day] = {
+    bowlCount: parseInt(document.getElementById('purchase-bowl-count').value) || 20,
+    bowlIngredients: purchaseState.bowlIngredients,
+    thaliItems: purchaseState.thaliItems,
+    otherItems: purchaseState.otherItems,
+    savedAt: new Date().toISOString(),
+  };
+  save();
+  autoSync();
+  showToast('Purchase list saved ✓');
+  renderPurchaseDays();
+}
+
+function sharePurchaseList() {
+  const day = purchaseState.day || 'Today';
+  const week = state.currentWeek;
+  const bowlCount = parseInt(document.getElementById('purchase-bowl-count')?.value) || 20;
+  const bowlName = document.getElementById('purchase-bowl-name')?.textContent || '';
+  let msg = `🛒 *SAKU KITCHEN — PURCHASE LIST*
+📅 ${day}, ${getDayDate(week, DAYS.indexOf(day))}
+━━━━━━━━━━━━━━━━━━━
+`;
+
+  const selectedBowlIngs = purchaseState.bowlIngredients.filter(i => i.selected);
+  if (selectedBowlIngs.length) {
+    msg += `
+🥗 *BOWL INGREDIENTS* (${bowlCount} bowls — ${bowlName})
+`;
+    selectedBowlIngs.forEach(ing => {
+      const mr = getMr(ing.name);
+      const qty = ing.buyQty !== undefined ? ing.buyQty : (ing.perBowlQty * bowlCount);
+      const unit = ing.buyUnit || ing.perBowlUnit;
+      msg += `• ${ing.name}${mr ? ' / ' + mr : ''} — ${qty} ${unit}
+`;
+    });
+  }
+  if (purchaseState.thaliItems.length) {
+    msg += `
+🍱 *THALI PURCHASES*
+`;
+    purchaseState.thaliItems.forEach(item => {
+      if (item.name) msg += `• ${item.name}${item.nameMr ? ' / ' + item.nameMr : ''} — ${item.qty} ${item.unit}${item.estPrice ? ' (₹' + item.estPrice + ')' : ''}
+`;
+    });
+  }
+  if (purchaseState.otherItems.length) {
+    msg += `
+🛒 *OTHER ITEMS*
+`;
+    purchaseState.otherItems.forEach(item => {
+      if (item.name) msg += `• ${item.name}${item.nameMr ? ' / ' + item.nameMr : ''} — ${item.qty} ${item.unit}${item.estPrice ? ' (₹' + item.estPrice + ')' : ''}
+`;
+    });
+  }
+  msg += `
+━━━━━━━━━━━━━━━━━━━
+_Saku Kitchen · Kothrud, Pune_`;
+  window.open(`https://wa.me/${DIRECTOR_WA}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ═══════════════════════════════════════════════════════
+// SUBSCRIPTIONS
+// ═══════════════════════════════════════════════════════
+let subFilter = 'all';
+
+const SUB_PRICES = {
+  thali: { '6': {1:420, 2:840}, '12': {1:840, 2:1680}, '24': {1:1680, 2:3360} },
+  bowl:  { '6': {1:1680, 2:3360}, '12': {1:3360, 2:6720}, '24': {1:6720, 2:13440} },
+};
+
+function calcSubEndDate(startDate, planDays, mealsPerDay) {
+  // Count planDays working days (no Sundays), starting from startDate
+  const d = new Date(startDate);
+  let remaining = planDays;
+  while (remaining > 0) {
+    d.setDate(d.getDate() + 1);
+    if (d.getDay() !== 0) remaining--; // skip Sundays
+  }
+  return d.toISOString().split('T')[0];
+}
+
+function calcSubSuggestedPrice(service, plan, meals) {
+  return (SUB_PRICES[service]?.[plan]?.[meals]) || 0;
+}
+
+function renderSubscriptions() {
+  const subs = state.subscribers || [];
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('today-delivery-date').textContent = new Date().toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'short'});
+
+  // Summary bar
+  const active = subs.filter(s => s.endDate >= today && s.startDate <= today);
+  const expiring = active.filter(s => {
+    const d = new Date(s.endDate); const t = new Date(today);
+    return (d - t) / 86400000 <= 3;
+  });
+  const pending = subs.filter(s => s.payment === 'pending' || s.payment === 'partial');
+  document.getElementById('sub-summary-bar').innerHTML = `
+    <div style="background:var(--green-pale);border-radius:var(--radius-sm);padding:10px;text-align:center">
+      <div style="font-size:20px;font-weight:800;color:var(--green-dark)">${active.length}</div>
+      <div style="font-size:10px;font-weight:700;color:var(--green-dark);text-transform:uppercase">Active</div>
+    </div>
+    <div style="background:var(--amber-pale);border-radius:var(--radius-sm);padding:10px;text-align:center">
+      <div style="font-size:20px;font-weight:800;color:#92400e">${expiring.length}</div>
+      <div style="font-size:10px;font-weight:700;color:#92400e;text-transform:uppercase">Expiring</div>
+    </div>
+    <div style="background:var(--red-pale);border-radius:var(--radius-sm);padding:10px;text-align:center">
+      <div style="font-size:20px;font-weight:800;color:var(--red)">${pending.length}</div>
+      <div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase">Pending ₹</div>
+    </div>
+    <div style="background:var(--blue-pale);border-radius:var(--radius-sm);padding:10px;text-align:center">
+      <div style="font-size:20px;font-weight:800;color:var(--blue)">${subs.length}</div>
+      <div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase">Total</div>
+    </div>`;
+
+  // Filter
+  let filtered = subs;
+  if (subFilter === 'thali') filtered = subs.filter(s => s.service === 'thali');
+  else if (subFilter === 'bowl') filtered = subs.filter(s => s.service === 'bowl');
+  else if (subFilter === 'active') filtered = active;
+  else if (subFilter === 'expiring') filtered = expiring;
+
+  if (!filtered.length) {
+    document.getElementById('sub-list').innerHTML = `<div style="text-align:center;padding:28px;color:var(--gray-400)"><div style="font-size:28px;margin-bottom:8px">👥</div><div style="font-size:14px;font-weight:600">No customers yet</div><div style="font-size:12px;margin-top:4px">Tap "+ Add Customer" to get started</div></div>`;
+  } else {
+    document.getElementById('sub-list').innerHTML = filtered.map(sub => renderSubCard(sub, today)).join('');
+  }
+
+  // Today's deliveries
+  renderTodayDeliveries(today);
+}
+
+function renderSubCard(sub, today) {
+  const delivered = (sub.deliveryLog || []).filter(d => d.status === 'delivered').length;
+  const skipped = (sub.deliveryLog || []).filter(d => d.status === 'skipped').length;
+  const totalDays = parseInt(sub.plan);
+  const pct = Math.round((delivered / totalDays) * 100);
+  const daysLeft = totalDays - delivered;
+  const isExpired = sub.endDate < today;
+  const isExpiring = !isExpired && sub.endDate <= new Date(new Date(today).getTime() + 3*86400000).toISOString().split('T')[0];
+  const statusClass = isExpired ? 'expired' : isExpiring ? 'expiring' : 'active-sub';
+  const payBadge = sub.payment === 'paid' ? '<span style="background:var(--green-pale);color:var(--green-dark);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">PAID</span>'
+    : sub.payment === 'partial' ? '<span style="background:var(--amber-pale);color:#92400e;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">PARTIAL</span>'
+    : '<span style="background:var(--red-pale);color:var(--red);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px">PENDING ₹</span>';
+
+  return `<div class="sub-card ${statusClass}">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">
+      <div>
+        <div class="sub-name">${sub.name}</div>
+        <div class="sub-meta">${sub.phone} · ${sub.service === 'thali' ? '🍱 Thali' : '🥗 Bowl'} · ${sub.plan}-day · ${sub.meals}/day · ${payBadge}</div>
+        ${sub.building ? `<div class="sub-meta" style="margin-top:2px">📍 ${sub.building}${sub.floor ? ', '+sub.floor : ''}${sub.landmark ? ' · '+sub.landmark : ''}</div>` : ''}
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-outline btn-sm" onclick="editSubscriber('${sub.id}')" style="padding:4px 8px">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteSubscriber('${sub.id}')" style="padding:4px 8px">🗑</button>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-600);margin-bottom:6px">
+      <span>Start: ${sub.startDate}</span>
+      <span>End: ${sub.endDate}</span>
+      <span style="font-weight:700;color:${isExpired?'var(--red)':isExpiring?'var(--amber)':'var(--green-dark)'}">${isExpired ? 'EXPIRED' : daysLeft + ' days left'}</span>
+    </div>
+    <div class="sub-progress">
+      <div class="sub-progress-bar ${pct>80?'warn':''} ${isExpired?'danger':''}" style="width:${pct}%"></div>
+    </div>
+    <div style="font-size:11px;color:var(--gray-400);margin-bottom:10px">${delivered}/${totalDays} delivered · ${skipped} skipped · ₹${(sub.price||0).toLocaleString('en-IN')}</div>
+    <!-- Day pills -->
+    <div style="display:flex;flex-wrap:wrap;gap:2px" id="pills-${sub.id}">
+      ${renderDayPills(sub, today)}
+    </div>
+  </div>`;
+}
+
+function renderDayPills(sub, today) {
+  const totalDays = parseInt(sub.plan);
+  const log = sub.deliveryLog || [];
+  // Build scheduled delivery dates (no Sundays) from start
+  const dates = [];
+  const d = new Date(sub.startDate);
+  while (dates.length < totalDays + (sub.extraDays || 0)) {
+    if (d.getDay() !== 0) dates.push(d.toISOString().split('T')[0]);
+    d.setDate(d.getDate() + 1);
+    if (dates.length > totalDays * 3) break; // safety
+  }
+
+  return dates.map((date, i) => {
+    const entry = log.find(l => l.date === date);
+    const status = entry ? entry.status : (date < today ? 'pending' : date === today ? 'today' : 'future');
+    const label = new Date(date).getDate();
+    let cls = 'day-pill ';
+    if (entry?.status === 'delivered') cls += 'delivered';
+    else if (entry?.status === 'skipped') cls += 'skipped';
+    else if (date === today) cls += 'today';
+    else if (date > today) cls += 'future';
+    else cls += 'pending';
+
+    const canAct = date <= today && !entry;
+    const isDelivered = entry?.status === 'delivered';
+    const isSkipped = entry?.status === 'skipped';
+
+    if (canAct || isDelivered || isSkipped) {
+      return `<div class="${cls}" title="${date}" onclick="markDelivery('${sub.id}','${date}','${entry?.status||''}')">${label}</div>`;
+    }
+    return `<div class="${cls}" title="${date}">${label}</div>`;
+  }).join('');
+}
+
+function markDelivery(subId, date, currentStatus) {
+  const sub = (state.subscribers || []).find(s => s.id === subId);
+  if (!sub) return;
+  if (!sub.deliveryLog) sub.deliveryLog = [];
+  const existing = sub.deliveryLog.find(l => l.date === date);
+
+  if (!existing) {
+    // Prompt: delivered or skipped?
+    const choice = confirm(`Mark ${date} as DELIVERED?
+
+OK = Delivered ✅
+Cancel = Skipped ⏭`);
+    const status = choice ? 'delivered' : 'skipped';
+    sub.deliveryLog.push({ date, status });
+    if (status === 'skipped') {
+      sub.extraDays = (sub.extraDays || 0) + 1;
+      // Recalculate end date
+      sub.endDate = calcSubEndDate(sub.startDate, parseInt(sub.plan) + (sub.extraDays || 0), sub.meals);
+    }
+    // Auto-add to day sales if delivered
+    if (status === 'delivered') {
+      addDeliveryToSales(sub, date);
+    }
+  } else if (existing.status === 'delivered') {
+    if (!confirm('Remove delivered mark?')) return;
+    sub.deliveryLog = sub.deliveryLog.filter(l => l.date !== date);
+    removeDeliveryFromSales(sub, date);
+  } else if (existing.status === 'skipped') {
+    if (!confirm('Un-skip this day?')) return;
+    sub.deliveryLog = sub.deliveryLog.filter(l => l.date !== date);
+    sub.extraDays = Math.max(0, (sub.extraDays || 0) - 1);
+    sub.endDate = calcSubEndDate(sub.startDate, parseInt(sub.plan) + (sub.extraDays || 0), sub.meals);
+  }
+
+  save();
+  autoSync();
+  renderSubscriptions();
+}
+
+function addDeliveryToSales(sub, date) {
+  // Map date to week key and day name
+  const d = new Date(date);
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Monday of that week
+  const weekKey = monday.toISOString().split('T')[0];
+  const dayName = DAYS[d.getDay() - 1];
+  if (!dayName) return;
+  if (!state.sales[weekKey]) state.sales[weekKey] = {};
+  if (!state.sales[weekKey][dayName]) state.sales[weekKey][dayName] = {};
+  if (sub.service === 'thali') {
+    if (!state.sales[weekKey][dayName].thali) state.sales[weekKey][dayName].thali = {};
+    state.sales[weekKey][dayName].thali.full_thali = (state.sales[weekKey][dayName].thali.full_thali || 0) + parseInt(sub.meals);
+  } else {
+    if (!state.sales[weekKey][dayName].bowl) state.sales[weekKey][dayName].bowl = { sold: 0, free: 0 };
+    state.sales[weekKey][dayName].bowl.sold = (state.sales[weekKey][dayName].bowl.sold || 0) + parseInt(sub.meals);
+  }
+}
+
+function removeDeliveryFromSales(sub, date) {
+  const d = new Date(date);
+  const monday = new Date(d);
+  monday.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+  const weekKey = monday.toISOString().split('T')[0];
+  const dayName = DAYS[d.getDay() - 1];
+  if (!dayName) return;
+  if (!state.sales[weekKey]?.[dayName]) return;
+  if (sub.service === 'thali') {
+    if (state.sales[weekKey][dayName].thali?.full_thali) {
+      state.sales[weekKey][dayName].thali.full_thali = Math.max(0, state.sales[weekKey][dayName].thali.full_thali - parseInt(sub.meals));
+    }
+  } else {
+    if (state.sales[weekKey][dayName].bowl?.sold) {
+      state.sales[weekKey][dayName].bowl.sold = Math.max(0, state.sales[weekKey][dayName].bowl.sold - parseInt(sub.meals));
+    }
+  }
+}
+
+function renderTodayDeliveries(today) {
+  const subs = state.subscribers || [];
+  const d = new Date(today);
+  if (d.getDay() === 0) {
+    document.getElementById('today-deliveries').innerHTML = '<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px">🙏 Sunday — No deliveries today</div>';
+    return;
+  }
+  // Find subs scheduled today
+  const todaySubs = subs.filter(sub => {
+    const log = sub.deliveryLog || [];
+    const alreadyMarked = log.find(l => l.date === today);
+    if (alreadyMarked) return false; // already handled
+    const dates = getSubDates(sub);
+    return dates.includes(today);
+  });
+
+  if (!todaySubs.length) {
+    document.getElementById('today-deliveries').innerHTML = '<div style="text-align:center;padding:16px;color:var(--green-dark);font-size:13px;font-weight:600">✅ All deliveries marked for today!</div>';
+    return;
+  }
+
+  document.getElementById('today-deliveries').innerHTML = todaySubs.map(sub => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);margin-bottom:8px">
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700">${sub.name}</div>
+        <div style="font-size:11px;color:var(--gray-400)">${sub.service === 'thali' ? '🍱' : '🥗'} ${sub.meals}x · ${sub.building||sub.address||''}</div>
+      </div>
+      <button class="btn btn-success btn-sm" onclick="markDelivery('${sub.id}','${today}','')">✅ Done</button>
+      <button class="btn btn-outline btn-sm" onclick="markDelivery('${sub.id}','${today}','')" style="color:var(--amber)">⏭ Skip</button>
+    </div>`).join('');
+}
+
+function getSubDates(sub) {
+  const totalDays = parseInt(sub.plan) + (sub.extraDays || 0);
+  const dates = [];
+  const d = new Date(sub.startDate);
+  while (dates.length < totalDays) {
+    if (d.getDay() !== 0) dates.push(d.toISOString().split('T')[0]);
+    d.setDate(d.getDate() + 1);
+    if (dates.length > totalDays * 3) break;
+  }
+  return dates;
+}
+
+function filterSubs(f, btn) {
+  subFilter = f;
+  document.querySelectorAll('#screen-subscriptions .tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderSubscriptions();
+}
+
+function openAddSubscriber() {
+  document.getElementById('sub-modal-title').textContent = 'Add New Customer';
+  document.getElementById('sub-edit-id').value = '';
+  document.getElementById('sub-name').value = '';
+  document.getElementById('sub-phone').value = '';
+  document.getElementById('sub-service').value = 'thali';
+  document.getElementById('sub-plan').value = '6';
+  document.getElementById('sub-meals').value = '1';
+  document.getElementById('sub-start-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('sub-price').value = '';
+  document.getElementById('sub-payment').value = 'pending';
+  document.getElementById('sub-address').value = '';
+  document.getElementById('sub-building').value = '';
+  document.getElementById('sub-floor').value = '';
+  document.getElementById('sub-landmark').value = '';
+  document.getElementById('sub-notes').value = '';
+  updateSubPreview();
+  document.getElementById('sub-modal').classList.add('open');
+  // Auto-calc price on change
+  ['sub-service','sub-plan','sub-meals'].forEach(id => {
+    document.getElementById(id).addEventListener('change', updateSubPreview);
+  });
+  document.getElementById('sub-start-date').addEventListener('change', updateSubPreview);
+}
+
+function updateSubPreview() {
+  const service = document.getElementById('sub-service').value;
+  const plan = document.getElementById('sub-plan').value;
+  const meals = parseInt(document.getElementById('sub-meals').value);
+  const startDate = document.getElementById('sub-start-date').value;
+  const suggestedPrice = calcSubSuggestedPrice(service, plan, meals);
+  const priceInput = document.getElementById('sub-price');
+  if (!priceInput.dataset.manuallySet) priceInput.value = suggestedPrice;
+  if (startDate) {
+    const endDate = calcSubEndDate(startDate, parseInt(plan), meals);
+    document.getElementById('sub-end-preview').style.display = 'block';
+    document.getElementById('sub-end-date-preview').textContent = new Date(endDate).toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+    document.getElementById('sub-total-deliveries').textContent = `${parseInt(plan) * meals} total deliveries`;
+  }
+}
+
+function closeSubModal() {
+  document.getElementById('sub-modal').classList.remove('open');
+}
+
+function saveSubscriber() {
+  const name = document.getElementById('sub-name').value.trim();
+  const phone = document.getElementById('sub-phone').value.trim();
+  if (!name || !phone) return alert('Name and phone are required');
+  const service = document.getElementById('sub-service').value;
+  const plan = document.getElementById('sub-plan').value;
+  const meals = parseInt(document.getElementById('sub-meals').value);
+  const startDate = document.getElementById('sub-start-date').value;
+  const endDate = calcSubEndDate(startDate, parseInt(plan), meals);
+  const editId = document.getElementById('sub-edit-id').value;
+
+  const subData = {
+    id: editId || 'sub_' + Date.now(),
+    name, phone, service, plan, meals,
+    startDate, endDate,
+    price: parseFloat(document.getElementById('sub-price').value) || calcSubSuggestedPrice(service, plan, meals),
+    payment: document.getElementById('sub-payment').value,
+    address: document.getElementById('sub-address').value,
+    building: document.getElementById('sub-building').value,
+    floor: document.getElementById('sub-floor').value,
+    landmark: document.getElementById('sub-landmark').value,
+    notes: document.getElementById('sub-notes').value,
+    extraDays: 0,
+    deliveryLog: [],
+    createdAt: new Date().toISOString(),
+  };
+
+  if (!state.subscribers) state.subscribers = [];
+  if (editId) {
+    const idx = state.subscribers.findIndex(s => s.id === editId);
+    if (idx >= 0) { subData.deliveryLog = state.subscribers[idx].deliveryLog || []; subData.extraDays = state.subscribers[idx].extraDays || 0; state.subscribers[idx] = subData; }
+  } else {
+    state.subscribers.push(subData);
+  }
+  save();
+  autoSync();
+  closeSubModal();
+  renderSubscriptions();
+  showToast((editId ? 'Customer updated' : 'Customer added') + ' ✓');
+}
+
+function editSubscriber(id) {
+  const sub = (state.subscribers || []).find(s => s.id === id);
+  if (!sub) return;
+  document.getElementById('sub-modal-title').textContent = 'Edit Customer';
+  document.getElementById('sub-edit-id').value = sub.id;
+  document.getElementById('sub-name').value = sub.name;
+  document.getElementById('sub-phone').value = sub.phone;
+  document.getElementById('sub-service').value = sub.service;
+  document.getElementById('sub-plan').value = sub.plan;
+  document.getElementById('sub-meals').value = sub.meals;
+  document.getElementById('sub-start-date').value = sub.startDate;
+  document.getElementById('sub-price').value = sub.price || '';
+  document.getElementById('sub-payment').value = sub.payment || 'pending';
+  document.getElementById('sub-address').value = sub.address || '';
+  document.getElementById('sub-building').value = sub.building || '';
+  document.getElementById('sub-floor').value = sub.floor || '';
+  document.getElementById('sub-landmark').value = sub.landmark || '';
+  document.getElementById('sub-notes').value = sub.notes || '';
+  updateSubPreview();
+  document.getElementById('sub-modal').classList.add('open');
+}
+
+function deleteSubscriber(id) {
+  if (!confirm('Delete this customer? This cannot be undone.')) return;
+  state.subscribers = (state.subscribers || []).filter(s => s.id !== id);
+  save();
+  renderSubscriptions();
+  showToast('Customer deleted');
+}
+
+function shareSubReport() {
+  const today = new Date().toISOString().split('T')[0];
+  const subs = state.subscribers || [];
+  const todayName = new Date().toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'short'});
+  const d = new Date();
+  if (d.getDay() === 0) { alert('Sunday — no deliveries!'); return; }
+
+  const thaliToday = subs.filter(s => s.service==='thali' && getSubDates(s).includes(today));
+  const bowlToday = subs.filter(s => s.service==='bowl' && getSubDates(s).includes(today));
+  const pending = subs.filter(s => s.payment !== 'paid');
+
+  let msg = `📦 *SAKU KITCHEN — DELIVERY REPORT*
+📅 ${todayName}
+━━━━━━━━━━━━━━━━━━━
+`;
+  if (thaliToday.length) {
+    msg += `
+🍱 *THALI DELIVERIES (${thaliToday.length} customers)*
+`;
+    thaliToday.forEach(s => {
+      const log = (s.deliveryLog||[]).find(l => l.date===today);
+      const status = log ? (log.status==='delivered' ? '✅' : '⏭') : '⏳';
+      msg += `${status} ${s.name} — ${s.meals}x — ${s.building||s.address||'—'}
+`;
+    });
+  }
+  if (bowlToday.length) {
+    msg += `
+🥗 *BOWL DELIVERIES (${bowlToday.length} customers)*
+`;
+    bowlToday.forEach(s => {
+      const log = (s.deliveryLog||[]).find(l => l.date===today);
+      const status = log ? (log.status==='delivered' ? '✅' : '⏭') : '⏳';
+      msg += `${status} ${s.name} — ${s.meals}x — ${s.building||s.address||'—'}
+`;
+    });
+  }
+  if (pending.length) {
+    msg += `
+⚠️ *PENDING PAYMENTS*
+`;
+    pending.forEach(s => msg += `• ${s.name} — ₹${(s.price||0).toLocaleString('en-IN')} (${s.payment})
+`);
+  }
+  msg += `
+━━━━━━━━━━━━━━━━━━━
+_Saku Kitchen Ops_`;
+  window.open(`https://wa.me/${DIRECTOR_WA}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ═══════════════════════════════════════════════════════
+// GOOGLE SHEETS SYNC
+// ═══════════════════════════════════════════════════════
+let autoSyncEnabled = false;
+let lastSyncTime = null;
+
+const APPS_SCRIPT_CODE = `function doGet(e) {
+  try {
+    const action = e.parameter.action;
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    if (action === 'test') {
+      return ContentService.createTextOutput(JSON.stringify({status:'ok', message:'Connected!'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    if (action === 'sync') {
+      const data = JSON.parse(decodeURIComponent(e.parameter.data));
+      
+      // Write sales data
+      writeSheet(ss, 'Sales', formatSalesData(data));
+      writeSheet(ss, 'Expenses', formatExpenseData(data));
+      writeSheet(ss, 'Stock', formatStockData(data));
+      writeSheet(ss, 'Subscribers', formatSubData(data));
+      writeSheet(ss, 'PurchaseLists', formatPurchaseData(data));
+      
+      // Log sync time
+      const logSheet = getOrCreateSheet(ss, 'SyncLog');
+      logSheet.appendRow([new Date().toLocaleString('en-IN'), 'Auto sync', data.currentWeek || '']);
+      
+      return ContentService.createTextOutput(JSON.stringify({status:'ok', synced: new Date().toLocaleString('en-IN')}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify({status:'error', message:'Unknown action'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:'error', message: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function getOrCreateSheet(ss, name) {
+  return ss.getSheetByName(name) || ss.insertSheet(name);
+}
+
+function writeSheet(ss, name, rows) {
+  const sheet = getOrCreateSheet(ss, name);
+  sheet.clearContents();
+  if (rows.length) sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+}
+
+function formatSalesData(data) {
+  const rows = [['Week', 'Day', 'Full Thali', 'Dal Rice', 'Chap Bhaji', 'Chapati', 'Rice', 'Dal', 'Bhaji', 'Buttermilk', 'Sweet', 'Papad', 'Thali Revenue', 'Bowls Sold', 'Bowls Free', 'Bowl Revenue', 'Total Revenue']];
+  const sales = data.sales || {};
+  Object.entries(sales).forEach(([week, days]) => {
+    Object.entries(days).forEach(([day, s]) => {
+      const t = s.thali || {};
+      const b = s.bowl || {};
+      const tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*35+(t.papad||0)*5;
+      const bRev = (b.sold||0)*280;
+      rows.push([week, day, t.full_thali||0, t.dal_rice||0, t.chap_bhaji||0, t.chapati||0, t.rice||0, t.dal||0, t.bhaji||0, t.buttermilk||0, t.sweet||0, t.papad||0, tRev, b.sold||0, b.free||0, bRev, tRev+bRev]);
+    });
+  });
+  return rows;
+}
+
+function formatExpenseData(data) {
+  const rows = [['Week', 'Day', 'Service', 'Item Name', 'Qty', 'Unit', 'Amount', 'Vendor', 'Notes']];
+  const exp = data.expenses || {};
+  Object.entries(exp).forEach(([week, days]) => {
+    Object.entries(days).forEach(([day, e]) => {
+      [...(e.thali_purchases||[]).map(p=>({...p,svc:'Thali'})), ...(e.bowl_purchases||[]).map(p=>({...p,svc:'Bowl'}))].forEach(p => {
+        rows.push([week, day, p.svc, p.name||'', p.qty||'', p.unit||'', p.amount||0, p.vendor||'', p.notes||'']);
+      });
+    });
+  });
+  return rows;
+}
+
+function formatStockData(data) {
+  const rows = [['ID', 'Name', 'Qty', 'Unit', 'Min Alert', 'Category', 'Service']];
+  (data.stock || []).forEach(s => rows.push([s.id, s.name, s.qty, s.unit, s.min, s.category, s.service]));
+  return rows;
+}
+
+function formatSubData(data) {
+  const rows = [['ID', 'Name', 'Phone', 'Service', 'Plan', 'Meals/Day', 'Start', 'End', 'Price', 'Payment', 'Building', 'Floor', 'Landmark', 'Address', 'Delivered', 'Skipped', 'Extra Days']];
+  (data.subscribers || []).forEach(s => {
+    const delivered = (s.deliveryLog||[]).filter(l=>l.status==='delivered').length;
+    const skipped = (s.deliveryLog||[]).filter(l=>l.status==='skipped').length;
+    rows.push([s.id, s.name, s.phone, s.service, s.plan, s.meals, s.startDate, s.endDate, s.price||0, s.payment, s.building||'', s.floor||'', s.landmark||'', s.address||'', delivered, skipped, s.extraDays||0]);
+  });
+  return rows;
+}
+
+function formatPurchaseData(data) {
+  const rows = [['Week', 'Day', 'Item', 'Marathi Name', 'Qty', 'Unit', 'Est Price', 'Type']];
+  const purchases = data.purchases || {};
+  Object.entries(purchases).forEach(([week, days]) => {
+    Object.entries(days).forEach(([day, p]) => {
+      (p.bowlIngredients||[]).filter(i=>i.selected).forEach(i => rows.push([week, day, i.name, '', i.buyQty||'', i.buyUnit||'', '', 'Bowl']));
+      (p.thaliItems||[]).forEach(i => rows.push([week, day, i.name, i.nameMr||'', i.qty||'', i.unit||'', i.estPrice||0, 'Thali']));
+      (p.otherItems||[]).forEach(i => rows.push([week, day, i.name, i.nameMr||'', i.qty||'', i.unit||'', i.estPrice||0, 'Other']));
+    });
+  });
+  return rows;
+}`;
+
+function renderSettingsScreen() {
+  const urlEl = document.getElementById('sheets-url');
+  const toggleEl = document.getElementById('auto-sync-toggle');
+  const trackEl = document.getElementById('sync-toggle-track');
+  const thumbEl = document.getElementById('sync-toggle-thumb');
+  if (urlEl) urlEl.value = state.sheetsUrl || '';
+  if (toggleEl) toggleEl.checked = state.autoSync || false;
+  if (trackEl) trackEl.style.background = (state.autoSync) ? 'var(--green)' : 'var(--gray-300)';
+  if (thumbEl) thumbEl.style.transform = (state.autoSync) ? 'translateX(20px)' : 'translateX(0)';
+  const lastEl = document.getElementById('last-sync-time');
+  if (lastEl) lastEl.textContent = state.lastSync ? 'Last synced: ' + new Date(state.lastSync).toLocaleString('en-IN') : 'Not synced yet';
+  // Inject script code
+  const codeEl = document.getElementById('apps-script-code');
+  if (codeEl) codeEl.textContent = APPS_SCRIPT_CODE;
+}
+
+function copyScriptCode() {
+  const code = document.getElementById('apps-script-code').textContent;
+  navigator.clipboard.writeText(code).then(() => showToast('Script code copied! Paste into Apps Script ✓'))
+    .catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = code;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Script code copied! Paste into Apps Script ✓');
+    });
+}
+
+function saveSheetUrl() {
+  const url = document.getElementById('sheets-url').value.trim();
+  state.sheetsUrl = url;
+  save();
+  showToast('Sheets URL saved ✓');
+}
+
+function toggleAutoSync(checked) {
+  state.autoSync = checked;
+  const trackEl = document.getElementById('sync-toggle-track');
+  const thumbEl = document.getElementById('sync-toggle-thumb');
+  if (trackEl) trackEl.style.background = checked ? 'var(--green)' : 'var(--gray-300)';
+  if (thumbEl) thumbEl.style.transform = checked ? 'translateX(20px)' : 'translateX(0)';
+  save();
+  showToast(checked ? 'Auto-sync enabled ✓' : 'Auto-sync disabled');
+}
+
+async function syncToSheets(silent) {
+  const url = state.sheetsUrl;
+  if (!url) {
+    if (!silent) showSyncStatus('error', 'No Sheets URL set — go to Settings');
+    return;
+  }
+  showSyncStatus('syncing', 'Syncing to Google Sheets...');
+  try {
+    const payload = encodeURIComponent(JSON.stringify(state));
+    const res = await fetch(`${url}?action=sync&data=${payload}`);
+    const data = await res.json();
+    if (data.status === 'ok') {
+      state.lastSync = new Date().toISOString();
+      save();
+      showSyncStatus('ok', '✅ Synced to Google Sheets — ' + data.synced);
+      if (!silent) showToast('Synced to Google Sheets ✓');
+      const lastEl = document.getElementById('last-sync-time');
+      if (lastEl) lastEl.textContent = 'Last synced: ' + new Date(state.lastSync).toLocaleString('en-IN');
+    } else {
+      showSyncStatus('error', '❌ Sync failed: ' + (data.message || 'Unknown error'));
+    }
+  } catch(e) {
+    showSyncStatus('error', '❌ Could not reach Sheets — check URL or internet');
+  }
+}
+
+async function testSheetConnection() {
+  const url = document.getElementById('sheets-url').value.trim();
+  if (!url) return showToast('Enter a URL first');
+  showSyncStatus('syncing', 'Testing connection...');
+  try {
+    const res = await fetch(`${url}?action=test`);
+    const data = await res.json();
+    if (data.status === 'ok') showSyncStatus('ok', '✅ Connected! ' + data.message);
+    else showSyncStatus('error', '❌ ' + (data.message || 'Connection failed'));
+  } catch(e) {
+    showSyncStatus('error', '❌ Cannot connect — check URL');
+  }
+}
+
+function showSyncStatus(type, msg) {
+  const bar = document.getElementById('sync-status-bar');
+  if (!bar) return;
+  bar.style.display = 'flex';
+  bar.className = 'sync-bar' + (type === 'error' ? ' error' : type === 'syncing' ? ' syncing' : '');
+  bar.innerHTML = `<div class="sync-dot"></div><span>${msg}</span>`;
+}
+
+function autoSync() {
+  if (state.autoSync && state.sheetsUrl) syncToSheets(true);
+}
+
 </script>
+
+<!-- ═══════════════════════════ PURCHASE LIST ═══════════════════════════ -->
+<div class="screen" id="screen-purchase">
+  <div class="section-header">
+    <div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('dashboard')" style="margin-bottom:8px;display:flex;align-items:center;gap:4px">🏠 Home</button>
+      <div class="section-title">Daily Purchase List</div>
+      <div class="section-sub" id="purchase-sub">Select day · Check ingredients · Share to WhatsApp</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <button class="btn btn-whatsapp btn-sm" onclick="sharePurchaseList()">📲 Share Purchase List</button>
+      <button class="btn btn-outline btn-sm" onclick="savePurchaseList()">💾 Save List</button>
+    </div>
+  </div>
+
+  <!-- Day selector -->
+  <div class="days-grid" id="purchase-days" style="margin-bottom:16px"></div>
+
+  <div id="purchase-entry-area" style="display:none">
+    <!-- Back bar -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:white;border-radius:var(--radius-sm);border:1px solid var(--gray-200)">
+      <button class="btn btn-outline btn-sm" onclick="closePurchaseDay()">← Back</button>
+      <span style="font-size:14px;font-weight:700" id="purchase-day-label">Monday</span>
+      <span style="font-size:12px;color:var(--gray-400)" id="purchase-day-date"></span>
+    </div>
+
+    <!-- Bowls planned today -->
+    <div style="background:var(--green-pale);border:1px solid var(--green);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:20px">🥗</span>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:700;color:var(--green-dark)" id="purchase-bowl-name">Bowl name</div>
+        <div style="font-size:11px;color:var(--gray-600);margin-top:2px">How many bowls planned today?</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <input type="number" id="purchase-bowl-count" min="1" value="20" style="width:60px;font-size:16px;font-weight:800;text-align:center;padding:6px;border:1.5px solid var(--green);border-radius:8px" oninput="recalcPurchaseSuggestions()">
+        <span style="font-size:12px;color:var(--green-dark);font-weight:600">bowls</span>
+      </div>
+    </div>
+
+    <!-- Bowl ingredients from menu -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header">
+        <span class="card-title">🥗 Bowl Ingredients</span>
+        <span style="font-size:11px;color:var(--gray-400)">Tap to select · Edit qty</span>
+      </div>
+      <div id="purchase-bowl-ingredients" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <!-- Thali ingredients (manual) -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header">
+        <span class="card-title">🍱 Thali Purchases</span>
+        <button class="btn btn-outline btn-sm" onclick="addManualPurchaseItem()">＋ Add Item</button>
+      </div>
+      <div id="purchase-thali-manual" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <!-- Other purchases -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-header">
+        <span class="card-title">🛒 Other / Extra Items</span>
+        <button class="btn btn-outline btn-sm" onclick="addOtherPurchaseItem()">＋ Add Item</button>
+      </div>
+      <div id="purchase-other-manual" style="display:flex;flex-direction:column;gap:8px">
+        <div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px">No extra items — tap "+ Add Item"</div>
+      </div>
+    </div>
+
+    <!-- Grand total -->
+    <div style="background:var(--gray-900);color:white;border-radius:var(--radius-sm);padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.7">Estimated Total</div>
+        <div style="font-size:11px;opacity:.5;margin-top:2px" id="purchase-item-count">0 items selected</div>
+      </div>
+      <div style="font-size:24px;font-weight:800;font-family:var(--mono)" id="purchase-grand-total">₹0</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SUBSCRIPTIONS ═══════════════════════════ -->
+<div class="screen" id="screen-subscriptions">
+  <div class="section-header">
+    <div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('dashboard')" style="margin-bottom:8px;display:flex;align-items:center;gap:4px">🏠 Home</button>
+      <div class="section-title">Subscriptions</div>
+      <div class="section-sub">Customer plans · Delivery tracking · Skip management</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <button class="btn btn-primary btn-sm" onclick="openAddSubscriber()">＋ Add Customer</button>
+      <button class="btn btn-whatsapp btn-sm" onclick="shareSubReport()">📲 Daily Report</button>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div class="tabs" style="margin-bottom:14px">
+    <button class="tab active" onclick="filterSubs('all',this)">All</button>
+    <button class="tab" onclick="filterSubs('thali',this)">🍱 Thali</button>
+    <button class="tab" onclick="filterSubs('bowl',this)">🥗 Bowl</button>
+    <button class="tab" onclick="filterSubs('active',this)">Active</button>
+    <button class="tab" onclick="filterSubs('expiring',this)">Expiring</button>
+  </div>
+
+  <!-- Summary bar -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px" id="sub-summary-bar"></div>
+
+  <!-- Customer list -->
+  <div id="sub-list"></div>
+
+  <!-- Today's delivery panel -->
+  <div class="card" style="margin-top:14px">
+    <div class="card-header">
+      <span class="card-title">📦 Today's Deliveries</span>
+      <span style="font-size:11px;color:var(--gray-400)" id="today-delivery-date"></span>
+    </div>
+    <div id="today-deliveries"></div>
+  </div>
+</div>
+
+<!-- Add/Edit Subscriber Modal -->
+<div class="modal-overlay" id="sub-modal">
+  <div class="modal-box" style="max-width:520px;max-height:90vh;overflow-y:auto">
+    <div class="modal-title" id="sub-modal-title">Add New Customer</div>
+    <input type="hidden" id="sub-edit-id">
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="form-group full">
+        <label>Full Name *</label>
+        <input type="text" id="sub-name" placeholder="Customer name">
+      </div>
+      <div class="form-group">
+        <label>Phone *</label>
+        <input type="tel" id="sub-phone" placeholder="10-digit number">
+      </div>
+      <div class="form-group">
+        <label>Service</label>
+        <select id="sub-service">
+          <option value="thali">🍱 Thali</option>
+          <option value="bowl">🥗 Bowl</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Plan</label>
+        <select id="sub-plan">
+          <option value="6">6 Days</option>
+          <option value="12">12 Days</option>
+          <option value="24">24 Days</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Meals Per Day</label>
+        <select id="sub-meals">
+          <option value="1">1 per day</option>
+          <option value="2">2 per day</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Start Date</label>
+        <input type="date" id="sub-start-date">
+      </div>
+      <div class="form-group">
+        <label>Price (₹)</label>
+        <input type="number" id="sub-price" placeholder="Auto-calculated">
+      </div>
+      <div class="form-group">
+        <label>Payment Status</label>
+        <select id="sub-payment">
+          <option value="paid">✅ Paid</option>
+          <option value="pending">⏳ Pending</option>
+          <option value="partial">🔶 Partial</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label>Address</label>
+        <input type="text" id="sub-address" placeholder="Street address">
+      </div>
+      <div class="form-group">
+        <label>Building / Society</label>
+        <input type="text" id="sub-building" placeholder="Building name">
+      </div>
+      <div class="form-group">
+        <label>Floor</label>
+        <input type="text" id="sub-floor" placeholder="e.g. 3rd Floor">
+      </div>
+      <div class="form-group">
+        <label>Landmark</label>
+        <input type="text" id="sub-landmark" placeholder="Near...">
+      </div>
+      <div class="form-group full">
+        <label>Delivery Notes</label>
+        <textarea id="sub-notes" placeholder="Special instructions, timing, etc." style="min-height:50px"></textarea>
+      </div>
+    </div>
+    <!-- Calculated end date preview -->
+    <div id="sub-end-preview" style="background:var(--blue-pale);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--blue);display:none">
+      📅 Estimated end date: <strong id="sub-end-date-preview">—</strong> &nbsp;·&nbsp; <span id="sub-total-deliveries">—</span> deliveries
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeSubModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSubscriber()">Save Customer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SETTINGS / SHEETS SYNC ═══════════════════════════ -->
+<div class="screen" id="screen-settings">
+  <div class="section-header">
+    <div>
+      <button class="btn btn-outline btn-sm" onclick="showScreen('dashboard')" style="margin-bottom:8px;display:flex;align-items:center;gap:4px">🏠 Home</button>
+      <div class="section-title">Settings & Sync</div>
+      <div class="section-sub">Google Sheets backup · App configuration</div>
+    </div>
+  </div>
+
+  <!-- Sync status -->
+  <div id="sync-status-bar" class="sync-bar" style="display:none"></div>
+
+  <!-- Google Sheets config -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-header"><span class="card-title">📊 Google Sheets Sync</span></div>
+    <div style="margin-bottom:12px">
+      <div class="form-group">
+        <label>Apps Script Web App URL</label>
+        <input type="url" id="sheets-url" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" style="font-size:12px">
+      </div>
+      <div style="font-size:11px;color:var(--gray-400);margin-top:6px">Paste the URL after deploying the Apps Script. See setup instructions below.</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-primary btn-sm" onclick="saveSheetUrl()">💾 Save URL</button>
+      <button class="btn btn-success btn-sm" onclick="syncToSheets()">🔄 Sync Now</button>
+      <button class="btn btn-outline btn-sm" onclick="testSheetConnection()">🔌 Test Connection</button>
+    </div>
+    <div style="margin-top:12px;font-size:12px;color:var(--gray-600)" id="last-sync-time"></div>
+  </div>
+
+  <!-- Auto-sync toggle -->
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:14px;font-weight:700">Auto-sync on Save</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:2px">Automatically syncs to Google Sheets every time you save sales, expenses, or stock</div>
+      </div>
+      <label style="position:relative;width:44px;height:24px;flex-shrink:0">
+        <input type="checkbox" id="auto-sync-toggle" onchange="toggleAutoSync(this.checked)" style="opacity:0;width:0;height:0;position:absolute">
+        <span id="sync-toggle-track" style="position:absolute;inset:0;border-radius:12px;background:var(--gray-300);transition:.2s;cursor:pointer"></span>
+        <span id="sync-toggle-thumb" style="position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:white;transition:.2s;pointer-events:none;box-shadow:0 1px 3px rgba(0,0,0,.2)"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Apps Script setup instructions -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">📋 Setup Instructions</span></div>
+    <div style="font-size:13px;color:var(--gray-700);line-height:1.8">
+      <div style="margin-bottom:8px"><strong>Step 1</strong> — Go to <a href="https://sheets.google.com" target="_blank" style="color:var(--blue)">sheets.google.com</a> · Create a new sheet · Name it <code style="background:var(--gray-100);padding:1px 5px;border-radius:3px">Saku Kitchen Data</code></div>
+      <div style="margin-bottom:8px"><strong>Step 2</strong> — In the sheet, go to <strong>Extensions → Apps Script</strong></div>
+      <div style="margin-bottom:8px"><strong>Step 3</strong> — Delete all existing code · Paste the script below · Click Save</div>
+      <div style="margin-bottom:8px"><strong>Step 4</strong> — Click <strong>Deploy → New deployment → Web App</strong> · Set "Who has access" to <strong>Anyone</strong> · Deploy</div>
+      <div style="margin-bottom:12px"><strong>Step 5</strong> — Copy the Web App URL · Paste it above · Click Save URL</div>
+      <div style="background:var(--gray-900);color:#a8ff78;border-radius:var(--radius-sm);padding:14px;font-family:monospace;font-size:11px;overflow-x:auto;white-space:pre;line-height:1.6;user-select:all" id="apps-script-code">function doGet(e) {
+  try {
+    var action = e.parameter.action;
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    if (action === 'test') {
+      return ContentService.createTextOutput(JSON.stringify({status:'ok', message:'Connected!'}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'sync') {
+      var data = JSON.parse(decodeURIComponent(e.parameter.data));
+      writeSheet(ss, 'Sales', formatSalesData(data));
+      writeSheet(ss, 'Expenses', formatExpenseData(data));
+      writeSheet(ss, 'Stock', formatStockData(data));
+      writeSheet(ss, 'Subscribers', formatSubData(data));
+      writeSheet(ss, 'PurchaseLists', formatPurchaseData(data));
+      var logSheet = getOrCreateSheet(ss, 'SyncLog');
+      logSheet.appendRow([new Date().toLocaleString('en-IN'), 'Sync', data.currentWeek || '']);
+      return ContentService.createTextOutput(JSON.stringify({status:'ok', synced: new Date().toLocaleString('en-IN')}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({status:'error', message:'Unknown action'}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:'error', message: err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function getOrCreateSheet(ss, name) {
+  return ss.getSheetByName(name) || ss.insertSheet(name);
+}
+
+function writeSheet(ss, name, rows) {
+  var sheet = getOrCreateSheet(ss, name);
+  sheet.clearContents();
+  if (rows.length > 0) {
+    sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+  }
+}
+
+function formatSalesData(data) {
+  var rows = [['Week','Day','Full Thali','Dal Rice','Chap Bhaji','Chapati','Rice','Dal','Bhaji','Buttermilk','Sweet','Papad','Thali Revenue','Bowls Sold','Bowls Free','Bowl Revenue','Total Revenue']];
+  var sales = data.sales || {};
+  Object.keys(sales).forEach(function(week) {
+    Object.keys(sales[week]).forEach(function(day) {
+      var s = sales[week][day];
+      var t = s.thali || {};
+      var b = s.bowl || {};
+      var tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*35+(t.papad||0)*5;
+      var bRev = (b.sold||0)*280;
+      rows.push([week,day,t.full_thali||0,t.dal_rice||0,t.chap_bhaji||0,t.chapati||0,t.rice||0,t.dal||0,t.bhaji||0,t.buttermilk||0,t.sweet||0,t.papad||0,tRev,b.sold||0,b.free||0,bRev,tRev+bRev]);
+    });
+  });
+  return rows;
+}
+
+function formatExpenseData(data) {
+  var rows = [['Week','Day','Service','Item Name','Qty','Unit','Amount','Vendor','Notes']];
+  var exp = data.expenses || {};
+  Object.keys(exp).forEach(function(week) {
+    Object.keys(exp[week]).forEach(function(day) {
+      var e = exp[week][day];
+      var thaliP = (e.thali_purchases || []).map(function(p) { return Object.assign({}, p, {svc:'Thali'}); });
+      var bowlP = (e.bowl_purchases || []).map(function(p) { return Object.assign({}, p, {svc:'Bowl'}); });
+      thaliP.concat(bowlP).forEach(function(p) {
+        rows.push([week,day,p.svc,p.name||'',p.qty||'',p.unit||'',p.amount||0,p.vendor||'',p.notes||'']);
+      });
+    });
+  });
+  return rows;
+}
+
+function formatStockData(data) {
+  var rows = [['ID','Name','Qty','Unit','Min Alert','Category','Service']];
+  (data.stock || []).forEach(function(s) {
+    rows.push([s.id,s.name,s.qty,s.unit,s.min,s.category,s.service]);
+  });
+  return rows;
+}
+
+function formatSubData(data) {
+  var rows = [['ID','Name','Phone','Service','Plan','Meals/Day','Start','End','Price','Payment','Building','Floor','Landmark','Address','Delivered','Skipped','Extra Days']];
+  (data.subscribers || []).forEach(function(s) {
+    var delivered = (s.deliveryLog||[]).filter(function(l){return l.status==='delivered';}).length;
+    var skipped = (s.deliveryLog||[]).filter(function(l){return l.status==='skipped';}).length;
+    rows.push([s.id,s.name,s.phone,s.service,s.plan,s.meals,s.startDate,s.endDate,s.price||0,s.payment,s.building||'',s.floor||'',s.landmark||'',s.address||'',delivered,skipped,s.extraDays||0]);
+  });
+  return rows;
+}
+
+function formatPurchaseData(data) {
+  var rows = [['Week','Day','Item','Marathi Name','Qty','Unit','Est Price','Type']];
+  var purchases = data.purchases || {};
+  Object.keys(purchases).forEach(function(week) {
+    Object.keys(purchases[week]).forEach(function(day) {
+      var p = purchases[week][day];
+      (p.bowlIngredients||[]).filter(function(i){return i.selected;}).forEach(function(i) {
+        rows.push([week,day,i.name,'',i.buyQty||'',i.buyUnit||'','','Bowl']);
+      });
+      (p.thaliItems||[]).forEach(function(i) {
+        rows.push([week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'',i.estPrice||0,'Thali']);
+      });
+      (p.otherItems||[]).forEach(function(i) {
+        rows.push([week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'',i.estPrice||0,'Other']);
+      });
+    });
+  });
+  return rows;
+}</div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button onclick="copyScriptCode()" style="padding:7px 14px;background:#a8ff78;color:#111;border:none;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;font-family:monospace">📋 Copy Script Code</button>
+        <span style="font-size:11px;color:var(--gray-400);padding-top:8px">Select All + Copy, then paste into Apps Script editor</span>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ─── BOTTOM NAV ─── -->
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-inner">
     <button class="bnav-btn active" id="bnav-dashboard" onclick="showScreen('dashboard')">
-      <span class="bnav-icon">🏠</span>
-      <span class="bnav-label">Home</span>
+      <span class="bnav-icon">🏠</span><span class="bnav-label">Home</span>
     </button>
     <button class="bnav-btn" id="bnav-daily" onclick="showScreen('daily')">
-      <span class="bnav-icon">✏️</span>
-      <span class="bnav-label">Sales</span>
+      <span class="bnav-icon">✏️</span><span class="bnav-label">Sales</span>
+    </button>
+    <button class="bnav-btn" id="bnav-purchase" onclick="showScreen('purchase')">
+      <span class="bnav-icon">🛒</span><span class="bnav-label">Purchase</span>
+    </button>
+    <button class="bnav-btn" id="bnav-subscriptions" onclick="showScreen('subscriptions')">
+      <span class="bnav-icon">👥</span><span class="bnav-label">Subs</span>
     </button>
     <button class="bnav-btn" id="bnav-expenses" onclick="showScreen('expenses')">
-      <span class="bnav-icon">🧾</span>
-      <span class="bnav-label">Expenses</span>
-    </button>
-    <button class="bnav-btn" id="bnav-stock" onclick="showScreen('stock')">
-      <span class="bnav-icon">📦</span>
-      <span class="bnav-label">Stock</span>
-    </button>
-    <button class="bnav-btn" id="bnav-menu" onclick="showScreen('menu')">
-      <span class="bnav-icon">🍱</span>
-      <span class="bnav-label">Menu</span>
+      <span class="bnav-icon">🧾</span><span class="bnav-label">Expenses</span>
     </button>
     <button class="bnav-btn" id="bnav-report" onclick="showScreen('report')">
-      <span class="bnav-icon">📊</span>
-      <span class="bnav-label">Report</span>
+      <span class="bnav-icon">📊</span><span class="bnav-label">Report</span>
+    </button>
+    <button class="bnav-btn" id="bnav-settings" onclick="showScreen('settings')">
+      <span class="bnav-icon">⚙️</span><span class="bnav-label">Settings</span>
     </button>
   </div>
 </nav>
