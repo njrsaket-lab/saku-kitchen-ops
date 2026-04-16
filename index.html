@@ -1254,11 +1254,10 @@ function renderDailyEntry(day) {
   if (dl) dl.textContent = day;
   if (dd) dd.textContent = dateStr;
 
-  // Bowl info + checklist
+  // Bowl info
   const bowl = (menu.bowl || {})[day] || {};
-  const bowlNameEl = document.getElementById('bowl-today-name');
-  if (bowlNameEl) bowlNameEl.textContent = bowl.name || 'No bowl set for ' + day;
-  renderBowlChecklist(bowl, day, week);
+  document.getElementById('bowl-today-name').textContent = bowl.name || 'No bowl set for this day';
+  document.getElementById('bowl-today-ingredients').textContent = bowl.ingredients || '—';
 
   // Thali table
   const thaliSaved = sales.thali || {};
@@ -1285,29 +1284,6 @@ function renderDailyEntry(day) {
   document.getElementById('bowl-sold').value = (sales.bowl || {}).sold || 0;
   document.getElementById('bowl-free').value = (sales.bowl || {}).free || 0;
   document.getElementById('bowl-notes').value = sales.bowl_notes || '';
-
-  // Payment fields
-  const thaliCash = document.getElementById('thali-cash');
-  const thaliOnline = document.getElementById('thali-online');
-  const bowlCash = document.getElementById('bowl-cash');
-  const bowlOnline = document.getElementById('bowl-online');
-  if (thaliCash) thaliCash.value = sales.thali_cash || '';
-  if (thaliOnline) thaliOnline.value = sales.thali_online || '';
-  if (bowlCash) bowlCash.value = sales.bowl_cash || '';
-  if (bowlOnline) bowlOnline.value = sales.bowl_online || '';
-
-  // Today's menu quick-edit
-  const todayMenu = (menu.thali || {})[day] || {};
-  const menuFields = ['dal','rice','bhaji','koshimbir','side','sweet_or_tak'];
-  const menuLabels = ['Dal / Liquid','Rice / Grain','Bhaji / Sabzi','Koshimbir','Side','Sweet or Taak'];
-  const menuEdit = document.getElementById('today-menu-edit');
-  if (menuEdit) {
-    menuEdit.innerHTML = menuFields.map((f,i) => `
-      <div class="form-group" style="margin:0">
-        <label style="font-size:9px">${menuLabels[i]}</label>
-        <input type="text" id="tmenu_${f}" value="${todayMenu[f]||''}" placeholder="${menuLabels[i]}" style="font-size:12px;padding:5px 8px">
-      </div>`).join('');
-  }
 
   calcThaliTotal();
   calcBowlTotal();
