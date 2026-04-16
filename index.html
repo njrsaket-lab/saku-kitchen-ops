@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform</title>
+<title>Saku Kitchen — Operations Platform v5</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1234,8 +1234,12 @@ function selectDay(day, context) {
   if (context === 'daily') {
     renderDailyDays();
     renderDailyEntry(day);
-    document.getElementById('daily-entry-area').style.display = 'block';
-    document.getElementById('daily-entry-area').scrollIntoView({behavior:'smooth', block:'nearest'});
+    const area = document.getElementById('daily-entry-area');
+    area.style.display = 'block';
+    area.style.visibility = 'visible';
+    setTimeout(() => {
+      area.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 50);
   }
 }
 
