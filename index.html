@@ -518,15 +518,43 @@ textarea { resize: vertical; min-height: 70px; }
           <tbody id="thali-sales-body"></tbody>
           <tfoot>
             <tr class="total-row">
-              <td colspan="2">Total Thali Revenue</td>
+              <td colspan="2">Total Revenue</td>
               <td id="thali-total-qty">—</td>
               <td id="thali-total-rev">₹0</td>
             </tr>
           </tfoot>
         </table>
+        <!-- Payment split -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+          <div style="background:var(--blue-pale);border-radius:var(--radius-sm);padding:10px 12px">
+            <div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">💵 Cash Received</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:14px;font-weight:700;color:var(--blue)">₹</span>
+              <input type="number" id="thali-cash" min="0" placeholder="0"
+                style="flex:1;font-size:16px;font-weight:800;color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;padding:5px 8px;font-family:var(--font)"
+                oninput="calcPaymentSplit('thali')">
+            </div>
+          </div>
+          <div style="background:var(--green-pale);border-radius:var(--radius-sm);padding:10px 12px">
+            <div style="font-size:10px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📱 Online Received</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:14px;font-weight:700;color:var(--green-dark)">₹</span>
+              <input type="number" id="thali-online" min="0" placeholder="0"
+                style="flex:1;font-size:16px;font-weight:800;color:var(--green-dark);border:1.5px solid var(--green);border-radius:6px;padding:5px 8px;font-family:var(--font)"
+                oninput="calcPaymentSplit('thali')">
+            </div>
+          </div>
+        </div>
+        <div id="thali-payment-note" style="font-size:11px;color:var(--gray-400);margin-top:6px;text-align:right"></div>
         <div class="divider"></div>
+        <!-- Today's menu quick-edit -->
+        <div style="background:var(--amber-pale);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;border:1px solid var(--amber)">
+          <div style="font-size:10px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">🔄 Update Today's Menu (optional)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="today-menu-edit"></div>
+          <button class="btn btn-sm" onclick="saveTodayMenu()" style="margin-top:8px;background:var(--amber);color:white;font-size:11px">💾 Save & Send Updated Menu</button>
+        </div>
         <div class="form-group">
-          <label>Notes (e.g. special requests, cancellations)</label>
+          <label>Notes</label>
           <textarea id="thali-notes" placeholder="Optional notes for today's thali service..."></textarea>
         </div>
         <div style="margin-top:12px">
@@ -542,9 +570,11 @@ textarea { resize: vertical; min-height: 70px; }
         </div>
         <div class="gap-16" style="margin-bottom:16px">
           <div style="background:var(--green-pale); border-radius:var(--radius-sm); padding:14px; border:1px solid var(--green);">
-            <div style="font-size:12px; font-weight:700; color:var(--green-dark); margin-bottom:8px">TODAY'S BOWL</div>
-            <div id="bowl-today-name" style="font-size:16px; font-weight:800; color:var(--gray-900)">—</div>
-            <div id="bowl-today-ingredients" style="font-size:11px; color:var(--gray-600); margin-top:4px; line-height:1.5">—</div>
+            <div style="font-size:12px; font-weight:700; color:var(--green-dark); margin-bottom:4px">TODAY'S BOWL</div>
+            <div id="bowl-today-name" style="font-size:16px; font-weight:800; color:var(--gray-900);margin-bottom:10px">—</div>
+            <div style="font-size:11px;font-weight:700;color:var(--green-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">🛒 Ingredient Purchase Checklist</div>
+            <div id="bowl-ingredient-checklist" style="display:flex;flex-direction:column;gap:5px"></div>
+            <button class="btn btn-success btn-sm" onclick="addBowlIngsToPurchase()" style="margin-top:10px;font-size:11px;width:100%;justify-content:center">➕ Add Selected to Purchase List</button>
           </div>
           <table class="sales-table">
             <thead>
@@ -577,6 +607,28 @@ textarea { resize: vertical; min-height: 70px; }
             <textarea id="bowl-notes" placeholder="e.g. ingredient substitutions, customer feedback..."></textarea>
           </div>
         </div>
+        <!-- Bowl payment split -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div style="background:var(--blue-pale);border-radius:var(--radius-sm);padding:10px 12px">
+            <div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">💵 Cash</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:13px;font-weight:700;color:var(--blue)">₹</span>
+              <input type="number" id="bowl-cash" min="0" placeholder="0"
+                style="flex:1;font-size:15px;font-weight:800;color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;padding:5px 8px;font-family:var(--font)"
+                oninput="calcPaymentSplit('bowl')">
+            </div>
+          </div>
+          <div style="background:var(--green-pale);border-radius:var(--radius-sm);padding:10px 12px">
+            <div style="font-size:10px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📱 Online</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:13px;font-weight:700;color:var(--green-dark)">₹</span>
+              <input type="number" id="bowl-online" min="0" placeholder="0"
+                style="flex:1;font-size:15px;font-weight:800;color:var(--green-dark);border:1.5px solid var(--green);border-radius:6px;padding:5px 8px;font-family:var(--font)"
+                oninput="calcPaymentSplit('bowl')">
+            </div>
+          </div>
+        </div>
+        <div id="bowl-payment-note" style="font-size:11px;color:var(--gray-400);margin-bottom:10px;text-align:right"></div>
         <button class="btn btn-success" onclick="saveBowlSales()">💾 Save Bowl Sales</button>
       </div>
     </div>
@@ -817,16 +869,20 @@ const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DAY_DATES_APR = ['20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr'];
 
 const THALI_ITEMS = [
-  { id:'full_thali',    name:'Full Thali',       price:70  },
-  { id:'dal_rice',      name:'Dal Rice',          price:40  },
-  { id:'chap_bhaji',   name:'Chapati Bhaji',     price:45  },
-  { id:'chapati',      name:'Chapati',            price:10  },
-  { id:'rice',         name:'Rice',              price:20  },
-  { id:'dal',          name:'Dal',               price:15  },
-  { id:'bhaji',        name:'Bhaji',             price:20  },
-  { id:'buttermilk',   name:'Buttermilk (paid)', price:25  },
-  { id:'sweet',        name:'Sweet',             price:35  },
-  { id:'papad',        name:'Papad (extra)',      price:5   },
+  { id:'full_thali',         name:'Full Thali',            price:70,  group:'dine-in' },
+  { id:'dal_rice',           name:'Dal Rice',              price:40,  group:'dine-in' },
+  { id:'chap_bhaji',         name:'Chapati Bhaji',         price:45,  group:'dine-in' },
+  { id:'chapati',            name:'Chapati',               price:10,  group:'extras'  },
+  { id:'rice',               name:'Rice',                  price:20,  group:'extras'  },
+  { id:'dal',                name:'Dal',                   price:15,  group:'extras'  },
+  { id:'bhaji',              name:'Bhaji',                 price:20,  group:'extras'  },
+  { id:'buttermilk',         name:'Buttermilk (paid)',     price:25,  group:'extras'  },
+  { id:'sweet',              name:'Sweet',                 price:35,  group:'extras'  },
+  { id:'papad',              name:'Papad (extra)',         price:5,   group:'extras'  },
+  { id:'full_thali_parcel',  name:'Full Thali — Parcel',  price:80,  group:'parcel'  },
+  { id:'dal_rice_parcel',    name:'Dal Rice — Parcel',    price:45,  group:'parcel'  },
+  { id:'chap_bhaji_parcel',  name:'Chapati Bhaji — Parcel',price:50, group:'parcel'  },
+  { id:'sharbat',            name:'Sharbat',              price:30,  group:'drinks'  },
 ];
 
 const DEFAULT_STOCK = [
@@ -885,6 +941,7 @@ let state = {
   stock: [],
   millLog: [],
   purchases: {},
+  todayMenuOverride: {},
   subscribers: [],
   sheetsUrl: '',
   autoSync: false,
@@ -1204,15 +1261,23 @@ function renderDailyEntry(day) {
 
   // Thali table
   const thaliSaved = sales.thali || {};
-  document.getElementById('thali-sales-body').innerHTML = THALI_ITEMS.map(item => {
-    const qty = thaliSaved[item.id] || 0;
-    return `<tr>
-      <td>${item.name}</td>
-      <td class="price-col">₹${item.price}</td>
-      <td><input type="number" id="ti_${item.id}" min="0" value="${qty}" oninput="calcThaliTotal()"></td>
-      <td class="total-col" id="tt_${item.id}">₹${qty*item.price}</td>
-    </tr>`;
-  }).join('');
+  const groups = [
+    { key:'dine-in', label:'Dine-In',  icon:'🍽', color:'var(--blue-pale)',   textColor:'var(--blue)'      },
+    { key:'parcel',  label:'Parcel',   icon:'📦', color:'var(--amber-pale)',  textColor:'#92400e'           },
+    { key:'extras',  label:'Extras',   icon:'➕', color:'var(--gray-50)',     textColor:'var(--gray-600)'  },
+    { key:'drinks',  label:'Drinks',   icon:'🥤', color:'var(--green-pale)', textColor:'var(--green-dark)' },
+  ];
+  let tableHtml = '';
+  groups.forEach(g => {
+    const items = THALI_ITEMS.filter(i => i.group === g.key);
+    if (!items.length) return;
+    tableHtml += '<tr><td colspan="4" style="background:' + g.color + ';color:' + g.textColor + ';font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:6px 12px">' + g.icon + ' ' + g.label + '</td></tr>';
+    items.forEach(item => {
+      const qty = thaliSaved[item.id] || 0;
+      tableHtml += '<tr><td>' + item.name + '</td><td class="price-col">₹' + item.price + '</td><td><input type="number" id="ti_' + item.id + '" min="0" value="' + qty + '" oninput="calcThaliTotal()"></td><td class="total-col" id="tt_' + item.id + '">₹' + (qty*item.price) + '</td></tr>';
+    });
+  });
+  document.getElementById('thali-sales-body').innerHTML = tableHtml;
   document.getElementById('thali-notes').value = sales.thali_notes || '';
 
   // Bowl
@@ -1223,6 +1288,106 @@ function renderDailyEntry(day) {
   calcThaliTotal();
   calcBowlTotal();
 }
+
+function renderBowlChecklist(bowl, day, week) {
+  const container = document.getElementById('bowl-ingredient-checklist');
+  if (!container) return;
+  const rawIngredients = bowl.ingredients || '';
+  if (!rawIngredients) {
+    container.innerHTML = '<div style="font-size:11px;color:var(--gray-400)">No ingredients set — edit bowl menu first</div>';
+    return;
+  }
+  const saved = (state.purchases || {})[week]?.[day]?.bowlIngredients || [];
+  const ingredients = rawIngredients.split('·').map(s => s.trim()).filter(Boolean);
+  container.innerHTML = ingredients.map((ing, i) => {
+    const namePart = ing.replace(/\s+[\d.]+.*$/, '').trim();
+    const mr = getMr(namePart);
+    const savedItem = saved.find(s => s.name && ing.toLowerCase().includes(s.name.toLowerCase()));
+    const isChecked = savedItem ? savedItem.selected !== false : false;
+    return `<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:white;border-radius:6px;border:1px solid var(--gray-200);cursor:pointer">
+      <input type="checkbox" id="bing_${i}" ${isChecked?'checked':''} style="width:16px;height:16px;accent-color:var(--green);cursor:pointer">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:var(--gray-900)">${ing}</div>
+        ${mr ? `<div style="font-size:10px;color:var(--gray-400)">${mr}</div>` : ''}
+      </div>
+    </label>`;
+  }).join('');
+}
+
+function addBowlIngsToPurchase() {
+  const week = state.currentWeek;
+  const day = state.selectedDay;
+  if (!day) return;
+  const menu = state.menu[week] || DEFAULT_MENU;
+  const bowl = (menu.bowl || {})[day] || {};
+  const rawIngredients = bowl.ingredients || '';
+  if (!rawIngredients) return showToast('No bowl ingredients set for this day');
+  const ingredients = rawIngredients.split('·').map(s => s.trim()).filter(Boolean);
+  const selected = ingredients.filter((ing, i) => {
+    const cb = document.getElementById('bing_' + i);
+    return cb && cb.checked;
+  });
+  if (!selected.length) return showToast('Please check at least one ingredient first');
+  if (!state.purchases) state.purchases = {};
+  if (!state.purchases[week]) state.purchases[week] = {};
+  if (!state.purchases[week][day]) state.purchases[week][day] = { bowlIngredients:[], thaliItems:[], otherItems:[] };
+  selected.forEach(ing => {
+    const match = ing.match(/^(.+?)\s+([\d.]+)\s*(g|gm|kg|ml)?$/i);
+    const name = match ? match[1].trim() : ing;
+    const perBowlQty = match ? parseFloat(match[2]) : 0;
+    const perBowlUnit = match ? (match[3] || 'g').toLowerCase() : 'gm';
+    const existing = state.purchases[week][day].bowlIngredients.find(b => b.name === name);
+    if (!existing) {
+      state.purchases[week][day].bowlIngredients.push({ name, perBowlQty, perBowlUnit, selected: true, buyQty: '', buyUnit: perBowlUnit });
+    }
+  });
+  save();
+  showToast(selected.length + ' ingredient(s) added to Purchase List ✓');
+  setTimeout(() => { showScreen('purchase'); setTimeout(() => selectPurchaseDay(day), 300); }, 800);
+}
+
+function saveTodayMenu() {
+  const week = state.currentWeek;
+  const day = state.selectedDay;
+  if (!day) return;
+  const fields = ['dal','rice','bhaji','koshimbir','side','sweet_or_tak'];
+  const labels = ['Dal/Liquid','Rice/Grain','Bhaji','Koshimbir','Side','Sweet/Taak'];
+  const updated = {};
+  fields.forEach(f => { const el = document.getElementById('tmenu_' + f); if (el) updated[f] = el.value; });
+  if (!state.todayMenuOverride) state.todayMenuOverride = {};
+  if (!state.todayMenuOverride[week]) state.todayMenuOverride[week] = {};
+  state.todayMenuOverride[week][day] = updated;
+  if (!state.menu[week]) state.menu[week] = JSON.parse(JSON.stringify(DEFAULT_MENU));
+  if (!state.menu[week].thali) state.menu[week].thali = {};
+  state.menu[week].thali[day] = Object.assign({}, state.menu[week].thali[day], updated);
+  save();
+  const msg = '*SAKU KITCHEN — UPDATED MENU*\n' +
+    'Date: ' + day + ', ' + getDayDate(week, DAYS.indexOf(day)) + '\n' +
+    '━━━━━━━━━━━━━━━━━━━\n' +
+    'Thali Menu (Updated)\n' +
+    fields.map((f,i) => '• ' + labels[i] + ': ' + (updated[f]||'—')).join('\n') +
+    '\n━━━━━━━━━━━━━━━━━━━\n_Updated by kitchen_';
+  window.open('https://wa.me/' + DIRECTOR_WA + '?text=' + encodeURIComponent(msg), '_blank');
+  showToast('Menu saved & WhatsApp opened ✓');
+}
+
+function calcPaymentSplit(type) {
+  const totalEl = document.getElementById(type + '-total-rev');
+  const cashEl = document.getElementById(type + '-cash');
+  const onlineEl = document.getElementById(type + '-online');
+  const noteEl = document.getElementById(type + '-payment-note');
+  if (!totalEl || !cashEl || !onlineEl || !noteEl) return;
+  const total = parseInt(totalEl.textContent.replace(/[₹,]/g,'')) || 0;
+  const cash = parseFloat(cashEl.value) || 0;
+  const online = parseFloat(onlineEl.value) || 0;
+  const collected = cash + online;
+  const diff = total - collected;
+  if (collected === 0) { noteEl.textContent = ''; return; }
+  if (diff === 0) noteEl.innerHTML = '<span style="color:var(--green-dark);font-weight:700">✅ Fully collected</span>';
+  else if (diff > 0) noteEl.innerHTML = '<span style="color:var(--red);font-weight:700">⚠️ ₹' + diff + ' still pending</span>';
+  else noteEl.innerHTML = '<span style="color:var(--amber);font-weight:700">⚠️ ₹' + Math.abs(diff) + ' excess collected</span>';
+}
+
 
 function calcThaliTotal() {
   let total = 0, totalQty = 0;
@@ -1259,7 +1424,10 @@ function saveThaliSales() {
   });
   state.sales[week][day].thali = data;
   state.sales[week][day].thali_notes = document.getElementById('thali-notes').value;
+  state.sales[week][day].thali_cash = parseFloat(document.getElementById('thali-cash').value) || 0;
+  state.sales[week][day].thali_online = parseFloat(document.getElementById('thali-online').value) || 0;
   save();
+  autoSync();
   showToast('Thali sales saved ✓');
   renderDailyDays();
 }
@@ -1275,7 +1443,10 @@ function saveBowlSales() {
     free: parseInt(document.getElementById('bowl-free').value) || 0,
   };
   state.sales[week][day].bowl_notes = document.getElementById('bowl-notes').value;
+  state.sales[week][day].bowl_cash = parseFloat(document.getElementById('bowl-cash').value) || 0;
+  state.sales[week][day].bowl_online = parseFloat(document.getElementById('bowl-online').value) || 0;
   save();
+  autoSync();
   showToast('Bowl sales saved ✓');
   renderDailyDays();
 }
