@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v15</title>
+<title>Saku Kitchen — Operations Platform v16</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -3324,10 +3324,25 @@ function removeBowlOrder(i) {
 }
 
 function updateBowlOrder(i, field, val) {
-  const orders = getBowlOrders();
+  var orders = getBowlOrders();
   if (orders[i]) orders[i][field] = val;
   saveBowlOrders();
   syncBowlOrdersToSales();
+}
+
+function setBowlSize(i, isHalf) {
+  var orders = getBowlOrders();
+  if (orders[i]) orders[i].size = isHalf ? 'half' : 'full';
+  saveBowlOrders();
+  syncBowlOrdersToSales();
+  renderBowlCustomerOrders();
+}
+
+function toggleJuice(i) {
+  var orders = getBowlOrders();
+  if (orders[i]) orders[i].juice = !orders[i].juice;
+  saveBowlOrders();
+  renderBowlCustomerOrders();
 }
 
 function saveBowlOrders() {
