@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v13</title>
+<title>Saku Kitchen — Operations Platform v15</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -3235,46 +3235,75 @@ function renderBowlCustomerOrders() {
   var orders = getBowlOrders();
   var container = document.getElementById('bowl-customer-orders');
   if (!container) return;
-
   if (!orders.length) {
     container.innerHTML = '<div style="font-size:12px;color:var(--gray-400);text-align:center;padding:8px">No customer orders yet</div>';
     return;
   }
-
   var html = '';
   for (var i = 0; i < orders.length; i++) {
     var o = orders[i];
     var fullBg  = o.size === 'full' ? 'background:var(--green);color:white;border-color:var(--green)' : 'background:white;color:var(--gray-600);border-color:var(--gray-200)';
     var halfBg  = o.size === 'half' ? 'background:var(--green);color:white;border-color:var(--green)' : 'background:white;color:var(--gray-600);border-color:var(--gray-200)';
     var juiceBg = o.juice ? 'background:var(--amber);color:white;border-color:var(--amber)' : 'background:white;color:var(--gray-600);border-color:var(--gray-200)';
-    var juiceLabel = o.juice ? '🍹 Juice ✓ ₹70' : '🍹 Juice + ₹70';
+    var pickupBg = !o.delivery ? 'background:var(--blue);color:white;border-color:var(--blue)' : 'background:white;color:var(--gray-600);border-color:var(--gray-200)';
+    var delivBg  =  o.delivery ? 'background:var(--blue);color:white;border-color:var(--blue)' : 'background:white;color:var(--gray-600);border-color:var(--gray-200)';
+    var juiceLabel = o.juice ? 'Juice on' : 'Juice +70';
     var orderTotal = 280 + (o.juice ? 70 : 0);
-    var sizeNote = o.size === 'half' ? ' · Half Bowl' : '';
-    var juiceNote = o.juice ? ' + Digestive Juice' : '';
     var nameVal = (o.name || '').replace(/"/g, '&quot;');
-    var idx = i;
+    var addrVal = (o.address || '').replace(/"/g, '&quot;');
+    var phoneVal = (o.phone || '').replace(/"/g, '&quot;');
+    var landmarkVal = (o.landmark || '').replace(/"/g, '&quot;');
+    var sizeNote = o.size === 'half' ? ' Half' : ' Full';
+    var delivTag = o.delivery ? ' Delivery' : ' Pickup';
 
-    html += '<div style="background:white;border-radius:var(--radius-sm);padding:10px 12px;border:1.5px solid var(--gray-200)">';
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">';
-    html += '<div style="flex:1"><input type="text" value="' + nameVal + '" placeholder="Customer name"';
-    html += ' oninput="updateBowlOrderName(' + idx + ',this.value)"';
-    html += ' style="font-size:13px;font-weight:700;padding:4px 8px;border:1.5px solid var(--gray-200);border-radius:6px;width:100%;font-family:var(--font)"></div>';
-    html += '<button class="btn btn-danger btn-sm" onclick="removeBowlOrder(' + idx + ')" style="padding:3px 8px;font-size:11px;flex-shrink:0">✕</button>';
+    html += '<div style="background:white;border-radius:8px;padding:10px 12px;border:1.5px solid #e5e7eb;margin-bottom:6px">';
+    
+    // Name + remove
+    html += '<div style="display:flex;gap:8px;margin-bottom:8px">';
+    html += '<input type="text" value="' + nameVal + '" placeholder="Customer name" ';
+    html += 'oninput="bowlOrderSetName(' + i + ',this.value)" ';
+    html += 'style="flex:1;font-size:13px;font-weight:700;padding:4px 8px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
+    html += '<button onclick="removeBowlOrder(' + i + ')" style="padding:3px 10px;background:#fee2e2;color:#ef4444;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:11px">X</button>';
     html += '</div>';
-    html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
-    html += '<button onclick="setBowlSize(' + idx + ',0)" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;font-family:var(--font);' + fullBg + '">🥗 Full ₹280</button>';
-    html += '<button onclick="setBowlSize(' + idx + ',1)" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;font-family:var(--font);' + halfBg + '">🥗 Half ₹280</button>';
-    html += '<button onclick="toggleJuice(' + idx + ')" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;font-family:var(--font);' + juiceBg + '">' + juiceLabel + '</button>';
+
+    // Bowl size + juice
+    html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">';
+    html += '<button onclick="setBowlSize(' + i + ',0)" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + fullBg + '">Full 280</button>';
+    html += '<button onclick="setBowlSize(' + i + ',1)" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + halfBg + '">Half 280</button>';
+    html += '<button onclick="toggleJuice(' + i + ')" style="padding:5px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + juiceBg + '">' + juiceLabel + '</button>';
     html += '</div>';
-    html += '<div style="margin-top:6px;font-size:11px;color:var(--blue);font-weight:700">Total: ₹' + orderTotal + sizeNote + juiceNote + '</div>';
+
+    // Pickup / Delivery
+    html += '<div style="display:flex;gap:6px;margin-bottom:8px">';
+    html += '<button onclick="setDelivery(' + i + ',0)" style="flex:1;padding:6px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + pickupBg + '">Pickup</button>';
+    html += '<button onclick="setDelivery(' + i + ',1)" style="flex:1;padding:6px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + delivBg + '">Delivery</button>';
+    html += '</div>';
+
+    // Delivery fields
+    if (o.delivery) {
+      html += '<div style="background:#e8eeff;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-bottom:6px">';
+      html += '<input type="tel" value="' + phoneVal + '" placeholder="Phone number" oninput="bowlOrderSetField(' + i + ',0,this.value)" style="font-size:12px;padding:5px 8px;border:1.5px solid #0843C7;border-radius:6px;font-family:Montserrat,sans-serif">';
+      html += '<input type="text" value="' + addrVal + '" placeholder="Delivery address" oninput="bowlOrderSetField(' + i + ',1,this.value)" style="font-size:12px;padding:5px 8px;border:1.5px solid #0843C7;border-radius:6px;font-family:Montserrat,sans-serif">';
+      html += '<input type="text" value="' + landmarkVal + '" placeholder="Landmark (near...)" oninput="bowlOrderSetField(' + i + ',2,this.value)" style="font-size:12px;padding:5px 8px;border:1.5px solid #0843C7;border-radius:6px;font-family:Montserrat,sans-serif">';
+      html += '</div>';
+    }
+
+    html += '<div style="font-size:11px;color:#0843C7;font-weight:700">Rs.' + orderTotal + sizeNote + ' |' + delivTag + '</div>';
     html += '</div>';
   }
   container.innerHTML = html;
 }
 
-function updateBowlOrderName(i, val) { updateBowlOrder(i, 'name', val); }
-function setBowlSize(i, isHalf) { updateBowlOrder(i, 'size', isHalf ? 'half' : 'full'); renderBowlCustomerOrders(); }
-function toggleJuice(i) { var orders = getBowlOrders(); if(orders[i]) { orders[i].juice = !orders[i].juice; saveBowlOrders(); } renderBowlCustomerOrders(); }
+function bowlOrderSetName(i, val) { updateBowlOrder(i, 'name', val); }
+function bowlOrderSetField(i, fieldIdx, val) {
+  var fields = ['phone', 'address', 'landmark'];
+  updateBowlOrder(i, fields[fieldIdx], val);
+}
+function setDelivery(i, isDelivery) {
+  var orders = getBowlOrders();
+  if (orders[i]) { orders[i].delivery = !!isDelivery; saveBowlOrders(); }
+  renderBowlCustomerOrders();
+}
 
 
 function addBowlCustomer() {
@@ -3319,50 +3348,72 @@ function syncBowlOrdersToSales() {
 }
 
 function viewPackingList() {
-  const orders = getBowlOrders();
-  const day = state.selectedDay || '—';
-  const week = state.currentWeek;
-  const bowlMenu = ((state.menu[week]||{}).bowl||{})[day] || {};
-  const container = document.getElementById('packing-list-content');
-  const view = document.getElementById('packing-list-view');
+  var orders = getBowlOrders();
+  var day = state.selectedDay || '';
+  var week = state.currentWeek;
+  var bowlMenu = ((state.menu[week]||{}).bowl||{})[day] || {};
+  var container = document.getElementById('packing-list-content');
+  var view = document.getElementById('packing-list-view');
   if (!container || !view) return;
-
   if (!orders.length) {
-    container.innerHTML = '<div style="text-align:center;color:var(--gray-400);padding:16px;font-size:13px">No orders yet</div>';
+    container.innerHTML = '<div style="text-align:center;color:#9ca3af;padding:16px;font-size:13px">No orders yet</div>';
     view.style.display = 'block';
     return;
   }
+  var pickups = orders.filter(function(o){ return !o.delivery; });
+  var deliveries = orders.filter(function(o){ return o.delivery; });
+  var totalRev = orders.reduce(function(s,o){ return s+280+(o.juice?70:0); }, 0);
+  var juiceCount = orders.filter(function(o){ return o.juice; }).length;
+  var halfCount = orders.filter(function(o){ return o.size==='half'; }).length;
 
-  const totalBowls = orders.length;
-  const juiceCount = orders.filter(function(o){return o.juice;}).length;
-  const halfCount = orders.filter(function(o){return o.size==='half';}).length;
-  const fullCount = orders.filter(function(o){return o.size==='full';}).length;
-  const totalRev = orders.reduce(function(s,o){return s+280+(o.juice?70:0);}, 0);
-
-  let html = '';
-  html += '<div style="background:var(--green-pale);border-radius:6px;padding:10px;margin-bottom:12px;font-size:12px">';
-  html += '<div style="font-weight:800;color:var(--green-dark);margin-bottom:4px">' + (bowlMenu.name||'Bowl of the Day') + ' · ' + day + '</div>';
-  html += '<div style="color:var(--gray-600)">' + totalBowls + ' orders · ' + fullCount + ' full · ' + halfCount + ' half · ' + juiceCount + ' with juice · Total ₹' + totalRev.toLocaleString('en-IN') + '</div>';
+  var html = '';
+  html += '<div style="background:#eaf5eb;border-radius:6px;padding:10px;margin-bottom:12px;font-size:12px">';
+  html += '<div style="font-weight:800;color:#5a9e5e;margin-bottom:4px">' + (bowlMenu.name||'Bowl of the Day') + ' - ' + day + '</div>';
+  html += '<div style="color:#4b5563">' + orders.length + ' orders | ' + pickups.length + ' pickup | ' + deliveries.length + ' delivery | ' + juiceCount + ' juice | Total Rs.' + totalRev.toLocaleString('en-IN') + '</div>';
   html += '</div>';
 
-  orders.forEach(function(o, i) {
-    const name = o.name || ('Customer ' + (i+1));
-    const sizeLabel = o.size === 'half' ? '🥗 Half Bowl' : '🥗 Full Bowl';
-    const juiceLabel = o.juice ? ' + 🍹 Digestive Juice · ₹70' : '';
-    const orderTotal = 280 + (o.juice ? 70 : 0);
-    html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;margin-bottom:6px;background:white">';
-    html += '<div style="width:28px;height:28px;background:var(--blue);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">' + (i+1) + '</div>';
-    html += '<div style="flex:1">';
-    html += '<div style="font-size:14px;font-weight:800;color:var(--gray-900)">' + name + '</div>';
-    html += '<div style="font-size:11px;color:var(--gray-600);margin-top:2px">' + sizeLabel + ' · ₹280' + juiceLabel + '</div>';
-    html += '</div>';
-    html += '<div style="font-size:13px;font-weight:800;color:var(--blue)">₹' + orderTotal + '</div>';
-    html += '</div>';
-  });
+  function orderCard(o, num) {
+    var name = o.name || ('Customer ' + num);
+    var sizeLabel = o.size === 'half' ? 'Half Bowl' : 'Full Bowl';
+    var total = 280 + (o.juice ? 70 : 0);
+    var juiceStr = o.juice ? ' + Juice Rs.70' : '';
+    var borderColor = o.delivery ? '#0843C7' : '#82BD85';
+    var tagBg = o.delivery ? '#0843C7' : '#82BD85';
+    var tag = o.delivery ? 'DELIVERY' : 'PICKUP';
+    var h = '';
+    h += '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid ' + borderColor + ';border-radius:8px;margin-bottom:8px;background:white">';
+    h += '<div style="width:28px;height:28px;background:' + tagBg + ';color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">' + num + '</div>';
+    h += '<div style="flex:1">';
+    h += '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">';
+    h += '<span style="font-size:14px;font-weight:800;color:#111827">' + name + '</span>';
+    h += '<span style="font-size:9px;font-weight:800;background:' + tagBg + ';color:white;padding:2px 6px;border-radius:4px">' + tag + '</span>';
+    h += '</div>';
+    h += '<div style="font-size:11px;color:#4b5563">' + sizeLabel + ' Rs.280' + juiceStr + '</div>';
+    if (o.delivery) {
+      h += '<div style="font-size:11px;color:#0843C7;margin-top:4px;background:#e8eeff;border-radius:4px;padding:4px 6px">';
+      if (o.phone) h += 'Phone: ' + o.phone + '<br>';
+      if (o.address) h += 'Address: ' + o.address + '<br>';
+      if (o.landmark) h += 'Landmark: ' + o.landmark;
+      h += '</div>';
+    }
+    h += '</div>';
+    h += '<div style="font-size:13px;font-weight:800;color:#0843C7">Rs.' + total + '</div>';
+    h += '</div>';
+    return h;
+  }
 
-  html += '<div style="margin-top:10px;padding:10px;background:var(--blue-pale);border-radius:6px;display:flex;justify-content:space-between">';
-  html += '<span style="font-size:12px;font-weight:700;color:var(--blue)">Total Revenue</span>';
-  html += '<span style="font-size:16px;font-weight:800;color:var(--blue);font-family:var(--mono)">₹' + totalRev.toLocaleString('en-IN') + '</span>';
+  if (pickups.length) {
+    html += '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#5a9e5e;letter-spacing:.5px;margin-bottom:6px">Pickup Orders (' + pickups.length + ')</div>';
+    for (var i = 0; i < pickups.length; i++) { html += orderCard(pickups[i], i+1); }
+  }
+  if (deliveries.length) {
+    html += '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#0843C7;letter-spacing:.5px;margin:10px 0 6px">Delivery Orders (' + deliveries.length + ')</div>';
+    for (var i = 0; i < deliveries.length; i++) { html += orderCard(deliveries[i], i+1); }
+  }
+
+  html += '<div style="margin-top:10px;padding:10px;background:#e8eeff;border-radius:6px;display:flex;justify-content:space-between">';
+  html += '<span style="font-size:12px;font-weight:700;color:#0843C7">Total Revenue</span>';
+  html += '<span style="font-size:16px;font-weight:800;color:#0843C7">Rs.' + totalRev.toLocaleString('en-IN') + '</span>';
   html += '</div>';
 
   container.innerHTML = html;
@@ -3377,31 +3428,45 @@ function sharePackingList() {
   var bowlMenu = ((state.menu[week]||{}).bowl||{})[day] || {};
   var dateStr = getDayDate(week, DAYS.indexOf(day));
   if (!orders.length) return showToast('No customer orders to share');
-  var totalBowls = orders.length;
-  var juiceCount = orders.filter(function(o){return o.juice;}).length;
-  var halfCount = orders.filter(function(o){return o.size==='half';}).length;
-  var totalRev = orders.reduce(function(s,o){return s+280+(o.juice?70:0);}, 0);
+  var pickups = orders.filter(function(o){ return !o.delivery; });
+  var deliveries = orders.filter(function(o){ return o.delivery; });
+  var totalRev = orders.reduce(function(s,o){ return s+280+(o.juice?70:0); }, 0);
+  var juiceCount = orders.filter(function(o){ return o.juice; }).length;
+  var halfCount = orders.filter(function(o){ return o.size==='half'; }).length;
+  var nl = String.fromCharCode(10);
   var sep = '-------------------';
-  var nl = '\n';
   var msg = 'SAKU KITCHEN - PACKING LIST' + nl;
   msg += (bowlMenu.name || 'Bowl of the Day') + nl;
   msg += day + ', ' + dateStr + nl;
   msg += sep + nl;
-  msg += totalBowls + ' ORDERS TO PACK' + nl + nl;
-  for (var i = 0; i < orders.length; i++) {
-    var o = orders[i];
-    var name = o.name || ('Customer ' + (i+1));
-    var sizeLabel = o.size === 'half' ? 'Half Bowl' : 'Full Bowl';
-    var orderTotal = 280 + (o.juice ? 70 : 0);
-    msg += (i+1) + '. ' + name + nl;
-    msg += '   ' + sizeLabel + ' - Rs.280';
-    if (o.juice) msg += ' + Digestive Juice - Rs.70';
-    msg += nl + '   Total: Rs.' + orderTotal + nl + nl;
+  msg += orders.length + ' TOTAL ORDERS' + nl + nl;
+  if (pickups.length) {
+    msg += 'PICKUP ORDERS (' + pickups.length + ')' + nl;
+    for (var i = 0; i < pickups.length; i++) {
+      var o = pickups[i];
+      var name = o.name || ('Customer ' + (i+1));
+      var sizeLabel = o.size === 'half' ? 'Half Bowl' : 'Full Bowl';
+      msg += (i+1) + '. ' + name + nl;
+      msg += '   ' + sizeLabel + ' Rs.280' + (o.juice ? ' + Juice Rs.70' : '') + nl;
+      msg += '   Total: Rs.' + (280+(o.juice?70:0)) + nl + nl;
+    }
+  }
+  if (deliveries.length) {
+    msg += 'DELIVERY ORDERS (' + deliveries.length + ')' + nl;
+    for (var i = 0; i < deliveries.length; i++) {
+      var o = deliveries[i];
+      var name = o.name || ('Customer ' + (i+1));
+      var sizeLabel = o.size === 'half' ? 'Half Bowl' : 'Full Bowl';
+      msg += (i+1) + '. ' + name + nl;
+      msg += '   ' + sizeLabel + ' Rs.280' + (o.juice ? ' + Juice Rs.70' : '') + nl;
+      if (o.phone) msg += '   Phone: ' + o.phone + nl;
+      if (o.address) msg += '   Address: ' + o.address + nl;
+      if (o.landmark) msg += '   Landmark: ' + o.landmark + nl;
+      msg += '   Total: Rs.' + (280+(o.juice?70:0)) + nl + nl;
+    }
   }
   msg += sep + nl;
-  msg += 'Full Bowls: ' + (totalBowls - halfCount) + nl;
-  msg += 'Half Bowls: ' + halfCount + nl;
-  msg += 'With Juice: ' + juiceCount + nl;
+  msg += 'Full: ' + (orders.length - halfCount) + ' | Half: ' + halfCount + ' | Juice: ' + juiceCount + nl;
   msg += 'Total Revenue: Rs.' + totalRev.toLocaleString('en-IN') + nl;
   msg += sep + nl;
   msg += 'Saku Kitchen - Pack and label each order';
