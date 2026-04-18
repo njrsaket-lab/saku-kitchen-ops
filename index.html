@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v16</title>
+<title>Saku Kitchen — Operations Platform v18</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -744,7 +744,13 @@ textarea { resize: vertical; min-height: 70px; }
       <div class="section-title">Stock Management</div>
       <div class="section-sub">Long shelf-life items — auto-deducted on daily usage entry</div>
     </div>
-    <button class="btn btn-primary btn-sm" onclick="saveStock()">💾 Save Stock</button>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-outline btn-sm" onclick="resetStock()" style="color:var(--red)">↺ Reset Defaults</button>
+      <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm" onclick="resetStockToDefaults()" style="color:var(--red);border-color:var(--red)">↺ Reset</button>
+      <button class="btn btn-primary btn-sm" onclick="saveStock()">💾 Save Stock</button>
+    </div>
+    </div>
   </div>
 
   <!-- Wheat Mill Section -->
@@ -1012,7 +1018,12 @@ function load() {
     }
   } catch(e) {}
   // Ensure defaults
-  if (!state.stock || state.stock.length === 0) state.stock = JSON.parse(JSON.stringify(DEFAULT_STOCK));
+  // Always ensure all default stock items exist
+  if (!state.stock) state.stock = [];
+  DEFAULT_STOCK.forEach(function(def) {
+    var exists = state.stock.find(function(s){ return s.id === def.id; });
+    if (!exists) state.stock.push(JSON.parse(JSON.stringify(def)));
+  });
   if (!state.menu[state.currentWeek]) state.menu[state.currentWeek] = JSON.parse(JSON.stringify(DEFAULT_MENU));
   if (!state.sales) state.sales = {};
   if (!state.expenses) state.expenses = {};
@@ -1841,6 +1852,14 @@ function logMillRun() {
   showToast(`Mill run logged: ${grain}kg grain → ${flour}kg flour ✓`);
 }
 
+function resetStockToDefaults() {
+  if (!confirm('Reset all stock to default values? Your custom quantities will be lost.')) return;
+  state.stock = JSON.parse(JSON.stringify(DEFAULT_STOCK));
+  save();
+  renderStock();
+  showToast('Stock reset to defaults');
+}
+
 function addStockItem() {
   const name = prompt('Stock item name:');
   if (!name) return;
@@ -1853,6 +1872,14 @@ function addStockItem() {
   state.stock.push({ id, name, qty, unit, min, category, service });
   saveStock();
   renderStock();
+}
+
+function resetStock() {
+  if (!confirm('Reset stock to defaults? Your current quantities will be lost.')) return;
+  state.stock = JSON.parse(JSON.stringify(DEFAULT_STOCK));
+  save();
+  renderStock();
+  showToast('Stock reset to defaults ✓');
 }
 
 function saveStock() {
@@ -3899,6 +3926,9 @@ function formatPurchaseData(data) {
     </button>
     <button class="bnav-btn" id="bnav-expenses" onclick="showScreen('expenses')">
       <span class="bnav-icon">🧾</span><span class="bnav-label">Expenses</span>
+    </button>
+    <button class="bnav-btn" id="bnav-stock" onclick="showScreen('stock')">
+      <span class="bnav-icon">📦</span><span class="bnav-label">Stock</span>
     </button>
     <button class="bnav-btn" id="bnav-report" onclick="showScreen('report')">
       <span class="bnav-icon">📊</span><span class="bnav-label">Report</span>
