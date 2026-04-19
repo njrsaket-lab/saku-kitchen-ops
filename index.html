@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v20</title>
+<title>Saku Kitchen — Operations Platform v21</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -381,6 +381,7 @@ textarea { resize: vertical; min-height: 70px; }
     <button class="nav-tab" onclick="showScreen('expenses')">Expenses</button>
     <button class="nav-tab" onclick="showScreen('stock')">Stock</button>
     <button class="nav-tab" onclick="showScreen('report')">Report</button>
+    <button class="nav-tab" onclick="showScreen('employee')">👷 Employee</button>
     <button class="nav-tab" onclick="showScreen('settings')">⚙️</button>
   </div>
   <div style="display:flex;align-items:center;gap:8px">
@@ -1051,6 +1052,7 @@ function showScreen(name) {
   if (name === 'purchase') renderPurchaseDays();
   if (name === 'subscriptions') renderSubscriptions();
   if (name === 'settings') renderSettingsScreen();
+  if (name === 'employee') renderEmployeeScreen();
 }
 
 function onWeekChange() {
@@ -2565,7 +2567,7 @@ function sharePurchaseList() {
   msg += `
 ━━━━━━━━━━━━━━━━━━━
 _Saku Kitchen · Kothrud, Pune_`;
-  window.open(`https://wa.me/${DIRECTOR_WA}?text=${encodeURIComponent(msg)}`, '_blank');
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 // ═══════════════════════════════════════════════════════
@@ -3520,9 +3522,205 @@ function sharePackingList() {
   msg += 'Total Revenue: Rs.' + totalRev.toLocaleString('en-IN') + nl;
   msg += sep + nl;
   msg += 'Saku Kitchen - Pack and label each order';
-  window.open('https://wa.me/' + DIRECTOR_WA + '?text=' + encodeURIComponent(msg), '_blank');
+  var encoded = encodeURIComponent(msg);
+  window.open('https://wa.me/?text=' + encoded, '_blank');
 }
 
+
+// ═══════════════════════════════════════════════════════
+// EMPLOYEE VIEW
+// ═══════════════════════════════════════════════════════
+
+function renderEmployeeScreen() {
+  var week = state.currentWeek;
+  var today = new Date();
+  var dayIdx = today.getDay() - 1; // 0=Mon
+  if (dayIdx < 0 || dayIdx > 5) dayIdx = 0;
+
+  var label = document.getElementById('emp-date-label');
+  if (label) label.textContent = getWeekLabel(week);
+
+  // Render day pills
+  var container = document.getElementById('emp-days');
+  if (!container) return;
+  container.innerHTML = DAYS.map(function(day, i) {
+    return '<div class="day-card" onclick="selectEmpDay(\''+day+'\')" id="empday_'+day+'">'
+      + '<div class="day-name">'+day.slice(0,3)+'</div>'
+      + '<div class="day-date">'+getDayDate(week, i)+'</div>'
+      + '</div>';
+  }).join('');
+
+  // Auto-select today if weekday
+  if (dayIdx >= 0 && dayIdx <= 5) {
+    selectEmpDay(DAYS[dayIdx]);
+  }
+}
+
+function selectEmpDay(day) {
+  var week = state.currentWeek;
+  // Highlight selected day
+  DAYS.forEach(function(d) {
+    var el = document.getElementById('empday_'+d);
+    if (el) el.classList.toggle('active', d === day);
+  });
+
+  var sales = ((state.sales[week]||{})[day]||{});
+  var orders = sales.bowlOrders || [];
+  var purchases = ((state.purchases[week]||{})[day])||{};
+  var bowlMenu = ((state.menu[week]||{}).bowl||{})[day]||{};
+  var thaliMenu = ((state.menu[week]||{}).thali||{})[day]||{};
+
+  // ── Customer Orders ──
+  var noOrders = document.getElementById('emp-no-orders');
+  var countBadge = document.getElementById('emp-order-count');
+  var pickupSection = document.getElementById('emp-pickup-section');
+  var deliverySection = document.getElementById('emp-delivery-section');
+  var summaryDiv = document.getElementById('emp-order-summary');
+
+  if (!orders.length) {
+    noOrders.style.display = 'block';
+    noOrders.textContent = 'No bowl orders for ' + day + ' yet';
+    if (pickupSection) pickupSection.style.display = 'none';
+    if (deliverySection) deliverySection.style.display = 'none';
+    if (summaryDiv) summaryDiv.style.display = 'none';
+    if (countBadge) countBadge.textContent = '0 orders';
+  } else {
+    noOrders.style.display = 'none';
+    if (countBadge) countBadge.textContent = orders.length + ' orders';
+
+    var pickups = orders.filter(function(o){ return !o.delivery; });
+    var deliveries = orders.filter(function(o){ return o.delivery; });
+    var juiceCount = orders.filter(function(o){ return o.juice; }).length;
+    var halfCount = orders.filter(function(o){ return o.size==='half'; }).length;
+
+    function buildOrderCard(o, num, isDelivery) {
+      var name = o.name || ('Customer '+num);
+      var sizeLabel = o.size === 'half' ? 'HALF BOWL' : 'FULL BOWL';
+      var borderCol = isDelivery ? '#0843C7' : '#82BD85';
+      var h = '<div style="border:2px solid '+borderCol+';border-radius:10px;padding:12px 14px;margin-bottom:8px;background:white">';
+      h += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
+      h += '<div style="display:flex;align-items:center;gap:8px">';
+      h += '<div style="width:30px;height:30px;background:'+borderCol+';color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800">'+num+'</div>';
+      h += '<div style="font-size:16px;font-weight:800;color:#111827">'+name+'</div>';
+      h += '</div>';
+      h += '<span style="font-size:10px;font-weight:800;background:'+borderCol+';color:white;padding:3px 8px;border-radius:4px">'+(isDelivery?'DELIVERY':'PICKUP')+'</span>';
+      h += '</div>';
+      h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px">';
+      h += '<span style="background:#eaf5eb;color:#5a9e5e;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px">'+sizeLabel+'</span>';
+      if (o.juice) h += '<span style="background:#fef3c7;color:#92400e;font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px">DIGESTIVE JUICE</span>';
+      h += '</div>';
+      if (isDelivery) {
+        h += '<div style="background:#e8eeff;border-radius:6px;padding:8px 10px;font-size:12px;color:#0843C7">';
+        if (o.phone) h += '<div><strong>Phone:</strong> '+o.phone+'</div>';
+        if (o.address) h += '<div><strong>Address:</strong> '+o.address+'</div>';
+        if (o.landmark) h += '<div><strong>Landmark:</strong> '+o.landmark+'</div>';
+        h += '</div>';
+      }
+      h += '</div>';
+      return h;
+    }
+
+    if (pickupSection) {
+      if (pickups.length) {
+        pickupSection.style.display = 'block';
+        var pl = document.getElementById('emp-pickup-list');
+        if (pl) pl.innerHTML = pickups.map(function(o,i){ return buildOrderCard(o,i+1,false); }).join('');
+      } else {
+        pickupSection.style.display = 'none';
+      }
+    }
+    if (deliverySection) {
+      if (deliveries.length) {
+        deliverySection.style.display = 'block';
+        var dl = document.getElementById('emp-delivery-list');
+        if (dl) dl.innerHTML = deliveries.map(function(o,i){ return buildOrderCard(o,i+1,true); }).join('');
+      } else {
+        deliverySection.style.display = 'none';
+      }
+    }
+    if (summaryDiv) {
+      summaryDiv.style.display = 'block';
+      summaryDiv.innerHTML = '<strong>Summary:</strong> '
+        + orders.length + ' total | '
+        + (orders.length - halfCount) + ' full bowl | '
+        + halfCount + ' half bowl | '
+        + juiceCount + ' with juice | '
+        + pickups.length + ' pickup | '
+        + deliveries.length + ' delivery';
+    }
+  }
+
+  // ── Purchase List ──
+  var noPurchase = document.getElementById('emp-no-purchase');
+  var purchaseList = document.getElementById('emp-purchase-list');
+  var purchaseCount = document.getElementById('emp-purchase-count');
+
+  var bowlIngs = (purchases.bowlIngredients||[]).filter(function(i){ return i.selected; });
+  var thaliItems = purchases.thaliItems || [];
+  var otherItems = purchases.otherItems || [];
+  var totalItems = bowlIngs.length + thaliItems.length + otherItems.length;
+
+  if (!totalItems) {
+    noPurchase.style.display = 'block';
+    noPurchase.textContent = 'No purchase list for ' + day + ' yet';
+    if (purchaseList) purchaseList.style.display = 'none';
+    if (purchaseCount) purchaseCount.textContent = '0 items';
+  } else {
+    noPurchase.style.display = 'none';
+    if (purchaseCount) purchaseCount.textContent = totalItems + ' items';
+    var html = '';
+
+    if (bowlIngs.length) {
+      html += '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--green-dark);letter-spacing:.5px;margin-bottom:8px">';
+      html += 'Bowl Ingredients — ' + (bowlMenu.name||'Bowl of the Day') + '</div>';
+      bowlIngs.forEach(function(ing, i) {
+        var mr = getMr(ing.name);
+        var qty = ing.buyQty || '';
+        var unit = ing.buyUnit || ing.perBowlUnit || 'g';
+        html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:6px;background:white">';
+        html += '<div style="width:24px;height:24px;background:var(--green);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">'+(i+1)+'</div>';
+        html += '<div style="flex:1"><div style="font-size:13px;font-weight:700">'+ing.name+'</div>';
+        if (mr) html += '<div style="font-size:10px;color:var(--gray-400)">'+mr+'</div>';
+        html += '</div>';
+        html += '<div style="font-size:14px;font-weight:800;color:var(--green-dark)">'+qty+' '+unit+'</div>';
+        html += '</div>';
+      });
+    }
+
+    if (thaliItems.length) {
+      html += '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--blue);letter-spacing:.5px;margin:12px 0 8px">';
+      html += 'Thali Purchases</div>';
+      thaliItems.forEach(function(item, i) {
+        if (!item.name) return;
+        html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:6px;background:white">';
+        html += '<div style="width:24px;height:24px;background:var(--blue);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">'+(i+1)+'</div>';
+        html += '<div style="flex:1"><div style="font-size:13px;font-weight:700">'+item.name+'</div>';
+        if (item.nameMr) html += '<div style="font-size:10px;color:var(--gray-400)">'+item.nameMr+'</div>';
+        html += '</div>';
+        html += '<div style="font-size:14px;font-weight:800;color:var(--blue)">'+item.qty+' '+item.unit+'</div>';
+        html += '</div>';
+      });
+    }
+
+    if (otherItems.length) {
+      html += '<div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#92400e;letter-spacing:.5px;margin:12px 0 8px">';
+      html += 'Other Items</div>';
+      otherItems.forEach(function(item, i) {
+        if (!item.name) return;
+        html += '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:6px;background:white">';
+        html += '<div style="width:24px;height:24px;background:var(--amber);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">'+(i+1)+'</div>';
+        html += '<div style="flex:1"><div style="font-size:13px;font-weight:700">'+item.name+'</div></div>';
+        html += '<div style="font-size:14px;font-weight:800;color:#92400e">'+item.qty+' '+item.unit+'</div>';
+        html += '</div>';
+      });
+    }
+
+    if (purchaseList) {
+      purchaseList.innerHTML = html;
+      purchaseList.style.display = 'block';
+    }
+  }
+}
 
 function autoSync() {
   if (state.autoSync && state.sheetsUrl) syncToSheets(true);
@@ -3917,6 +4115,58 @@ function formatPurchaseData(data) {
   </div>
 </div>
 
+
+<!-- ═══════════════════════════ EMPLOYEE VIEW ═══════════════════════════ -->
+<div class="screen" id="screen-employee">
+  <div class="section-header">
+    <div>
+      <div class="section-title">👷 Employee View</div>
+      <div class="section-sub">Today's packing orders & purchase list</div>
+    </div>
+    <div class="nav-week" style="background:var(--green-pale);border-radius:8px;padding:4px 12px">
+      <span style="font-size:12px;font-weight:700;color:var(--green-dark)" id="emp-date-label"></span>
+    </div>
+  </div>
+
+  <!-- Day selector for employee -->
+  <div class="days-grid" id="emp-days" style="margin-bottom:16px"></div>
+
+  <!-- Customer Orders Section -->
+  <div class="card" style="margin-bottom:14px" id="emp-orders-card">
+    <div class="card-header">
+      <span class="card-title">📦 Customer Orders to Pack</span>
+      <span class="badge badge-green" id="emp-order-count">0 orders</span>
+    </div>
+    <div id="emp-no-orders" style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px">
+      Select a day above to see orders
+    </div>
+    <!-- Pickup orders -->
+    <div id="emp-pickup-section" style="display:none">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--green-dark);letter-spacing:.5px;margin-bottom:8px;padding:6px 0;border-bottom:1px solid var(--gray-100)">🏃 Pickup Orders</div>
+      <div id="emp-pickup-list"></div>
+    </div>
+    <!-- Delivery orders -->
+    <div id="emp-delivery-section" style="display:none;margin-top:12px">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--blue);letter-spacing:.5px;margin-bottom:8px;padding:6px 0;border-bottom:1px solid var(--gray-100)">🚚 Delivery Orders</div>
+      <div id="emp-delivery-list"></div>
+    </div>
+    <!-- Summary -->
+    <div id="emp-order-summary" style="display:none;margin-top:12px;padding:10px 14px;background:var(--gray-50);border-radius:var(--radius-sm);font-size:12px;color:var(--gray-600)"></div>
+  </div>
+
+  <!-- Purchase List Section -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🛒 Today's Purchase List</span>
+      <span class="badge badge-amber" id="emp-purchase-count">0 items</span>
+    </div>
+    <div id="emp-no-purchase" style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px">
+      Select a day to see purchase list
+    </div>
+    <div id="emp-purchase-list" style="display:none"></div>
+  </div>
+</div>
+
 <!-- ─── BOTTOM NAV ─── -->
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-inner">
@@ -3940,6 +4190,9 @@ function formatPurchaseData(data) {
     </button>
     <button class="bnav-btn" id="bnav-report" onclick="showScreen('report')">
       <span class="bnav-icon">📊</span><span class="bnav-label">Report</span>
+    </button>
+    <button class="bnav-btn" id="bnav-employee" onclick="showScreen('employee')">
+      <span class="bnav-icon">👷</span><span class="bnav-label">Pack</span>
     </button>
     <button class="bnav-btn" id="bnav-settings" onclick="showScreen('settings')">
       <span class="bnav-icon">⚙️</span><span class="bnav-label">Settings</span>
