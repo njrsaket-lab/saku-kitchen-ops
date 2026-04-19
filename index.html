@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v23</title>
+<title>Saku Kitchen — Operations Platform v27</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -901,116 +901,155 @@ var BOWL_INGREDIENTS = {
     { en: 'Chavali (Lobhia)', mr: 'चवळी (लोबिया)' },
     { en: 'Kala Mung', mr: 'काळा मूग' },
     { en: 'Peanut Butter', mr: 'शेंगदाणा बटर' },
-    { en: 'Orange Juice (Fresh)', mr: 'ताज्या संत्र्याचा रस' },
-    { en: 'Lemon', mr: 'लिंबू' },
+    { en: 'Fresh Orange Juice', mr: 'ताज्या संत्र्याचा रस' },
+    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
     { en: 'Smoked Paprika', mr: 'स्मोक्ड पाप्रिका' },
+    { en: 'Oil', mr: 'तेल' },
     { en: 'Mustard Seeds', mr: 'मोहरी' },
     { en: 'Curry Leaves', mr: 'कढीपत्ता' },
     { en: 'Green Chilli', mr: 'हिरवी मिरची' },
-    { en: 'Lal Math (Amaranth)', mr: 'लाल माठ' },
-    { en: 'Besan', mr: 'बेसन' },
+    { en: 'Lal Math (Amaranth Leaves)', mr: 'लाल माठ' },
+    { en: 'Besan (Chickpea Flour)', mr: 'बेसन' },
     { en: 'Garlic', mr: 'लसूण' },
-    { en: 'Shengdana Chikki', mr: 'शेंगदाणा चिक्की' },
-    { en: 'Varai (Barnyard Millet)', mr: 'वरई' },
+    { en: 'Shengdana Chikki (Peanut Brittle)', mr: 'शेंगदाणा चिक्की' },
+    { en: 'Varai (Barnyard Millet)', mr: 'वरई (सांवा)' },
     { en: 'Curd', mr: 'दही' },
     { en: 'Kashmiri Red Chilli', mr: 'काश्मिरी लाल तिखट' },
     { en: 'Nutmeg Powder', mr: 'जायफळ पूड' },
+    { en: 'Oregano', mr: 'ओरेगानो' },
     { en: 'Cucumber', mr: 'काकडी' },
     { en: 'Carrot', mr: 'गाजर' },
-    { en: 'Pomegranate', mr: 'डाळिंब' },
-    { en: 'Fresh Berries', mr: 'ताज्या बेरीज' },
+    { en: 'Pomegranate Seeds', mr: 'डाळिंब दाणे' },
+    { en: 'Fresh Berries (optional)', mr: 'ताज्या बेरीज (ऐच्छिक)' },
     { en: 'Coriander', mr: 'कोथिंबीर' },
-    { en: 'Pudina (Mint)', mr: 'पुदीना' },
+    { en: 'Mint (Pudina)', mr: 'पुदीना' },
+    { en: 'Salt', mr: 'मीठ' },
   ],
   Tuesday: [
-    { en: 'Rajma (Kidney Beans)', mr: 'राजमा' },
-    { en: 'Chole (Chickpeas)', mr: 'छोले' },
-    { en: 'Mung Sprouts', mr: 'मोड आलेले मूग' },
+    { en: 'Boiled Rajma (Kidney Beans)', mr: 'उकडलेले राजमा' },
+    { en: 'Boiled Kabuli Chana (Chole)', mr: 'उकडलेले काबुली चणे (छोले)' },
+    { en: 'Sprouted Mung', mr: 'मोड आलेले मूग' },
     { en: 'Tamarind Chutney', mr: 'चिंचेची चटणी' },
     { en: 'Green Chutney', mr: 'हिरवी चटणी' },
     { en: 'Chaat Masala', mr: 'चाट मसाला' },
+    { en: 'Red Chilli Powder', mr: 'लाल तिखट' },
     { en: 'Black Salt', mr: 'काळं मीठ' },
-    { en: 'Ragi Murmura', mr: 'रागी मुरमुरा' },
+    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
+    { en: 'Ragi Puffs / Ragi Murmura', mr: 'रागी पफ्स / रागी मुरमुरा' },
     { en: 'Roasted Peanuts', mr: 'भाजलेले शेंगदाणे' },
+    { en: 'Curry Leaves', mr: 'कढीपत्ता' },
+    { en: 'Mustard Seeds', mr: 'मोहरी' },
     { en: 'Ghee', mr: 'तूप' },
+    { en: 'Turmeric', mr: 'हळद' },
     { en: 'Iceberg Lettuce', mr: 'आइसबर्ग लेट्यूस' },
     { en: 'French Beans', mr: 'फ्रेंच बीन्स' },
     { en: 'Sweet Corn', mr: 'स्वीट कॉर्न' },
-    { en: 'Potato (Boiled)', mr: 'उकडलेला बटाटा' },
+    { en: 'Boiled Potato', mr: 'उकडलेला बटाटा' },
     { en: 'Sambhar Powder', mr: 'सांबार पावडर' },
-    { en: 'Roasted Walnuts', mr: 'भाजलेले अक्रोड' },
+    { en: 'Roasted Walnuts', mr: 'अक्रोड (भाजलेले)' },
     { en: 'Bel Candy', mr: 'बेल कँडी' },
     { en: 'Thick Curd', mr: 'घट्ट दही' },
     { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पूड' },
     { en: 'Dry Red Chilli', mr: 'सुक्या लाल मिरच्या' },
+    { en: 'Salt', mr: 'मीठ' },
   ],
   Wednesday: [
     { en: 'Paneer', mr: 'पनीर' },
     { en: 'Olive Oil', mr: 'ऑलिव्ह ऑईल' },
     { en: 'Garlic', mr: 'लसूण' },
-    { en: 'Zaatar / Oregano', mr: 'झातार / ओरेगानो' },
-    { en: 'Lemon', mr: 'लिंबू' },
-    { en: 'Brown Rice', mr: 'ब्राऊन तांदूळ' },
+    { en: 'Zaatar / Dry Oregano', mr: 'झातार / सुकं ओरिगॅनो' },
+    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
+    { en: 'Black Pepper Powder', mr: 'काळी मिरी पूड' },
+    { en: 'Brown Rice (cooked)', mr: 'ब्राऊन तांदूळ (शिजवलेले)' },
     { en: 'Ambat Chuka (Sorrel)', mr: 'आंबट चूका' },
     { en: 'Boiled Peanuts', mr: 'उकडलेले शेंगदाणे' },
-    { en: 'Capsicum', mr: 'ढोबळी मिरची' },
+    { en: 'Mustard Seeds', mr: 'मोहरी' },
+    { en: 'Curry Leaves', mr: 'कढीपत्ता' },
+    { en: 'Green Chilli', mr: 'हिरवी मिरची' },
+    { en: 'Turmeric', mr: 'हळद' },
+    { en: 'Capsicum / Bell Pepper', mr: 'ढोबळी मिरची' },
     { en: 'Carrot', mr: 'गाजर' },
     { en: 'Beetroot', mr: 'बीट' },
     { en: 'Rasam Powder', mr: 'रसम पावडर' },
     { en: 'Pineapple', mr: 'अननस' },
-    { en: 'Roasted Harbara (Crushed)', mr: 'भाजलेला हरभरा (कुटलेला)' },
-    { en: 'Fresh Coconut', mr: 'ताजा नारळ' },
-    { en: 'Green Chilli', mr: 'हिरवी मिरची' },
+    { en: 'Roasted Harbara / Futana (crushed)', mr: 'भाजलेला हरभरा (फुटाणा)' },
+    { en: 'Fresh Coconut (grated)', mr: 'ताजा नारळ (खवलेला)' },
+    { en: 'Salt', mr: 'मीठ' },
   ],
   Thursday: [
     { en: 'Kabuli Chana (Chickpeas)', mr: 'काबुली चणे' },
     { en: 'Ginger', mr: 'आलं' },
     { en: 'Garlic', mr: 'लसूण' },
-    { en: 'Soy Sauce', mr: 'सोया सॉस' },
-    { en: 'Chilli Sauce', mr: 'चिली सॉस' },
+    { en: 'Green Chilli', mr: 'हिरवी मिरची' },
+    { en: 'Soy Sauce (low sodium)', mr: 'सोया सॉस (लो सोडियम)' },
+    { en: 'Black Pepper Powder', mr: 'काळी मिरी पूड' },
+    { en: 'Red Chilli Sauce / Paste', mr: 'रेड चिली सॉस / पेस्ट' },
     { en: 'Spring Onion', mr: 'स्प्रिंग ऑनियन' },
+    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
     { en: 'Cabbage', mr: 'पत्ता कोबी' },
     { en: 'Baby Corn', mr: 'बेबी कॉर्न' },
-    { en: 'Capsicum', mr: 'ढोबळी मिरची' },
+    { en: 'Capsicum', mr: 'सिमला मिरची' },
     { en: 'Vinegar', mr: 'व्हिनेगर' },
-    { en: 'Fenugreek (Methi)', mr: 'ताजी मेथी' },
+    { en: 'Fenugreek Leaves (Methi)', mr: 'ताजी मेथी' },
     { en: 'Red Rice / Millet Noodles / Daliya', mr: 'लाल तांदूळ / मिलेट नूडल्स / दलिया' },
     { en: 'Sweet Potato', mr: 'रताळे' },
     { en: 'Onion', mr: 'कांदा' },
+    { en: 'Curd', mr: 'दही' },
+    { en: 'Red Chilli Flakes', mr: 'रेड चिली फ्लेक्स' },
+    { en: 'Oil', mr: 'तेल' },
+    { en: 'Salt', mr: 'मीठ' },
   ],
   Friday: [
     { en: 'Whole Masoor Dal', mr: 'अख्खा मसूर' },
-    { en: 'Green Harbara', mr: 'हिरवा हरभरा' },
+    { en: 'Green Harbara (Green Chana)', mr: 'हिरवा हरभरा' },
+    { en: 'Ginger-Garlic Paste', mr: 'आलं-लसूण पेस्ट' },
+    { en: 'Cumin Seeds', mr: 'जिरे' },
+    { en: 'Curry Leaves', mr: 'कढीपत्ता' },
+    { en: 'Turmeric', mr: 'हळद' },
+    { en: 'Red Chilli Powder', mr: 'लाल तिखट' },
     { en: 'Goda Masala', mr: 'गोडा मसाला' },
-    { en: 'Tamarind', mr: 'चिंच' },
-    { en: 'Jaggery', mr: 'गूळ' },
-    { en: 'Shepu (Dill)', mr: 'शेपू' },
-    { en: 'Peanuts', mr: 'शेंगदाणे' },
+    { en: 'Tamarind-Jaggery Chutney', mr: 'चिंच-गुळ चटणी' },
+    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
+    { en: 'Coriander', mr: 'कोथिंबीर' },
+    { en: 'Shepu (Dill Leaves)', mr: 'शेपू' },
+    { en: 'Peanuts (roasted, crushed)', mr: 'शेंगदाणे (भाजून कुटलेले)' },
     { en: 'Cucumber', mr: 'काकडी' },
-    { en: 'Cabbage', mr: 'कोबी' },
+    { en: 'Cabbage', mr: 'पत्ता कोबी' },
     { en: 'Carrot', mr: 'गाजर' },
     { en: 'Bhakri Crisp / Jowar Flakes', mr: 'भाकरी क्रिस्प / ज्वारी फ्लेक्स' },
     { en: 'Raisins (Manuka)', mr: 'मनुका' },
     { en: 'Chikoo', mr: 'चिकू' },
-    { en: 'Hung Curd', mr: 'हँग कर्ड (चक्का)' },
+    { en: 'Hung Curd (Chakka)', mr: 'हँग कर्ड (चक्का)' },
     { en: 'Tomato Puree', mr: 'टोमॅटो प्युरी' },
-    { en: 'Cumin Seeds', mr: 'जिरे' },
+    { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पावडर' },
+    { en: 'Garlic Paste', mr: 'लसूण पेस्ट' },
+    { en: 'Jaggery (optional)', mr: 'गूळ (ऐच्छिक)' },
+    { en: 'Dry Red Chilli Flakes', mr: 'सुक्या लाल मिरच्या फ्लेक्स' },
+    { en: 'Smoked Paprika (optional)', mr: 'स्मोक्ड पाप्रिका (ऐच्छिक)' },
+    { en: 'Salt', mr: 'मीठ' },
   ],
   Saturday: [
     { en: 'Yellow Peas (Vatane)', mr: 'पिवळे वाटाणे' },
-    { en: 'Green Harbara', mr: 'हिरवे हरभरे' },
+    { en: 'Green Harbara (Green Chana)', mr: 'हिरवे हरभरे' },
     { en: 'Onion', mr: 'कांदा' },
     { en: 'Olive Oil', mr: 'ऑलिव्ह ऑईल' },
-    { en: 'Vinegar', mr: 'व्हिनेगर' },
+    { en: 'Apple / Plain Vinegar', mr: 'सफरचंद व्हिनेगर / साधा व्हिनेगर' },
+    { en: 'Mustard Seeds', mr: 'राई (मोहरी)' },
+    { en: 'Black Pepper Powder', mr: 'काळी मिरी पूड' },
     { en: 'Quinoa', mr: 'क्विनोआ' },
     { en: 'Zucchini', mr: 'झुकिनी' },
-    { en: 'Capsicum', mr: 'ढोबळी मिरची' },
+    { en: 'Capsicum (Bell Pepper)', mr: 'ढोबळी मिरची' },
     { en: 'Cauliflower', mr: 'फ्लॉवर' },
-    { en: 'Lollo Rosso Lettuce', mr: 'लोलो रोसो लेट्यूस' },
-    { en: 'Mixed Seeds', mr: 'मिक्स बिया' },
+    { en: 'Garlic Powder', mr: 'लसूण पावडर' },
+    { en: 'Lollo Rosso Lettuce', mr: 'लोलो रोसो पाने' },
+    { en: 'Mixed Seeds (Pumpkin+Sunflower+Flax)', mr: 'मिक्स बिया (भोपळा+सूर्यफूल+अळशी)' },
     { en: 'Papaya / Muskmelon', mr: 'पपई / खरबूज' },
-    { en: 'Ambat Chuka (Sorrel)', mr: 'आंबट चूका' },
+    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
+    { en: 'Ambat Chuka (Sorrel) puree', mr: 'अंबट चुका प्युरी' },
     { en: 'Kokum', mr: 'कोकम' },
+    { en: 'Garlic', mr: 'लसूण' },
+    { en: 'Jaggery', mr: 'गूळ' },
+    { en: 'Salt', mr: 'मीठ' },
   ],
 };
 
@@ -1021,7 +1060,8 @@ var JUICE_INGREDIENTS = {
     { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पावडर' },
     { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
     { en: 'Black Salt', mr: 'काळं मीठ' },
-    { en: 'Sabja Seeds', mr: 'भिजवलेले सब्जा बी' },
+    { en: 'Sabja Seeds (soaked)', mr: 'भिजवलेले सब्जा बी' },
+    { en: 'Cold Water', mr: 'थंड पाणी' },
   ],
   Tuesday: [
     { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
@@ -1030,14 +1070,15 @@ var JUICE_INGREDIENTS = {
     { en: 'Ajwain Water', mr: 'अजवाइन पाणी' },
     { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
     { en: 'Black Salt', mr: 'काळं मीठ' },
-    { en: 'Mishri', mr: 'मिश्री' },
+    { en: 'Mishri (Rock Sugar)', mr: 'मिश्री' },
+    { en: 'Cold Water', mr: 'थंड पाणी' },
   ],
   Wednesday: [
     { en: 'Thin Coconut Milk', mr: 'पातळ नारळाचे दूध' },
     { en: 'Amla Juice', mr: 'आवळ्याचा रस' },
     { en: 'Cardamom Powder', mr: 'वेलची पावडर' },
-    { en: 'Saffron (Optional)', mr: 'केशर (ऐच्छिक)' },
-    { en: 'Mishri', mr: 'मिश्री' },
+    { en: 'Saffron (optional)', mr: 'केशर (ऐच्छिक)' },
+    { en: 'Mishri (Rock Sugar)', mr: 'मिश्री' },
   ],
   Thursday: [
     { en: 'Cucumber Juice', mr: 'काकडीचा रस' },
@@ -1052,7 +1093,7 @@ var JUICE_INGREDIENTS = {
     { en: 'Gulkand', mr: 'गुलकंद' },
     { en: 'Fennel Powder (Badishep)', mr: 'बडीशेप पावडर' },
     { en: 'Rose Water', mr: 'गुलाब पाणी' },
-    { en: 'Sabja Seeds', mr: 'भिजवलेले सब्जा बी' },
+    { en: 'Sabja Seeds (soaked)', mr: 'भिजवलेले सब्जा बी' },
   ],
   Saturday: [
     { en: 'Kokum Water', mr: 'कोकम पाणी' },
@@ -1062,6 +1103,7 @@ var JUICE_INGREDIENTS = {
     { en: 'Honey', mr: 'मध' },
   ],
 };
+
 
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DAY_DATES_APR = ['20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr'];
@@ -2482,10 +2524,10 @@ function renderPurchaseDays() {
 
 function selectPurchaseDay(day) {
   purchaseState.day = day;
-  const week = state.currentWeek;
-  const menu = state.menu[week] || DEFAULT_MENU;
-  const bowlMenu = (menu.bowl || {})[day] || {};
-  const saved = (state.purchases || {})[week]?.[day] || {};
+  var week = state.currentWeek;
+  var menu = state.menu[week] || DEFAULT_MENU;
+  var bowlMenu = ((menu.bowl || {})[day]) || {};
+  var saved = ((state.purchases || {})[week] || {})[day] || {};
 
   document.getElementById('purchase-entry-area').style.display = 'block';
   document.getElementById('purchase-day-label').textContent = day;
@@ -2493,24 +2535,25 @@ function selectPurchaseDay(day) {
   document.getElementById('purchase-bowl-name').textContent = bowlMenu.name || 'No bowl set for ' + day;
   document.getElementById('purchase-bowl-count').value = saved.bowlCount || 20;
 
-  // Parse bowl ingredients from menu
-  const rawIngredients = bowlMenu.ingredients || '';
-  purchaseState.bowlIngredients = rawIngredients ? rawIngredients.split('·').map(s => {
-    const trimmed = s.trim();
-    // Parse "Paneer 80g" → {name, qty, unit}
-    const match = trimmed.match(/^(.+?)\s+([\d.]+)\s*(g|gm|kg|ml|l)?$/i);
-    if (match) {
-      const rawQty = parseFloat(match[2]);
-      const rawUnit = (match[3] || 'g').toLowerCase();
-      return { name: match[1].trim(), perBowlQty: rawQty, perBowlUnit: rawUnit, selected: true };
-    }
-    return { name: trimmed, perBowlQty: 0, perBowlUnit: 'gm', selected: true };
-  }) : [];
-
-  // Restore saved selections
-  if (saved.bowlIngredients) {
+  // Use BOWL_INGREDIENTS data (full Marathi ingredient list per day)
+  var dayIngs = BOWL_INGREDIENTS[day] || [];
+  if (!saved.bowlIngredients || saved.bowlIngredients.length === 0) {
+    // Build from BOWL_INGREDIENTS — no perBowlQty since these are full recipe amounts
+    purchaseState.bowlIngredients = dayIngs.map(function(ing) {
+      return { name: ing.en, nameMr: ing.mr, perBowlQty: 0, perBowlUnit: 'gm', selected: true, buyQty: '', buyUnit: 'gm' };
+    });
+  } else {
+    // Restore saved, but merge in any new ingredients from BOWL_INGREDIENTS
     purchaseState.bowlIngredients = saved.bowlIngredients;
+    // Add any missing ingredients
+    dayIngs.forEach(function(ing) {
+      var exists = purchaseState.bowlIngredients.find(function(b){ return b.name === ing.en; });
+      if (!exists) {
+        purchaseState.bowlIngredients.push({ name: ing.en, nameMr: ing.mr, perBowlQty: 0, perBowlUnit: 'gm', selected: false, buyQty: '', buyUnit: 'gm' });
+      }
+    });
   }
+
   purchaseState.thaliItems = saved.thaliItems || [];
   purchaseState.otherItems = saved.otherItems || [];
 
@@ -2530,46 +2573,49 @@ function closePurchaseDay() {
 }
 
 function renderBowlIngredients() {
-  const count = parseInt(document.getElementById('purchase-bowl-count').value) || 20;
-  const container = document.getElementById('purchase-bowl-ingredients');
-  if (!purchaseState.bowlIngredients.length) {
-    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px">No ingredients found — set the bowl menu first</div>';
+  var count = parseInt(document.getElementById('purchase-bowl-count').value) || 20;
+  var container = document.getElementById('purchase-bowl-ingredients');
+  if (!purchaseState.bowlIngredients || !purchaseState.bowlIngredients.length) {
+    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px">No ingredients for this day</div>';
     return;
   }
-  container.innerHTML = purchaseState.bowlIngredients.map((ing, i) => {
-    const mr = getMr(ing.name);
-    const suggestedRaw = ing.perBowlQty * count;
-    let suggested = suggestedRaw, suggestedUnit = ing.perBowlUnit;
-    // Convert grams to kg if >= 1000
+  var html = '';
+  purchaseState.bowlIngredients.forEach(function(ing, i) {
+    var mr = ing.nameMr || getMr(ing.name);
+    var suggestedRaw = ing.perBowlQty ? ing.perBowlQty * count : 0;
+    var suggested = suggestedRaw;
+    var suggestedUnit = ing.perBowlUnit || 'gm';
     if ((suggestedUnit === 'g' || suggestedUnit === 'gm') && suggested >= 1000) {
-      suggested = (suggested / 1000).toFixed(2); suggestedUnit = 'kg';
-    } else {
+      suggested = (suggested / 1000).toFixed(2);
+      suggestedUnit = 'kg';
+    } else if (suggested > 0) {
       suggested = suggested % 1 === 0 ? suggested : suggested.toFixed(1);
     }
-    const buyQty = ing.buyQty !== undefined ? ing.buyQty : suggested;
-    const buyUnit = ing.buyUnit || suggestedUnit;
+    var buyQty = (ing.buyQty !== undefined && ing.buyQty !== '') ? ing.buyQty : (ing.perBowlQty ? suggested : '');
+    var buyUnit = ing.buyUnit || suggestedUnit;
+    var isSelected = ing.selected ? 'selected' : '';
+    var checkMark = ing.selected ? '<span style="color:white;font-weight:800;font-size:14px">&#10003;</span>' : '';
 
-    return `<div class="purchase-ingredient ${ing.selected ? 'selected' : ''}" onclick="togglePurchaseIng(${i})" id="ping-${i}">
-      <div class="pi-check">${ing.selected ? '✓' : ''}</div>
-      <div class="pi-name">
-        <div class="pi-en">${ing.name}</div>
-        ${mr ? `<div class="pi-mr">${mr}</div>` : ''}
-        ${ing.perBowlQty ? `<div class="pi-suggested">${ing.perBowlQty}${ing.perBowlUnit} × ${count} bowls = ${suggested} ${suggestedUnit}</div>` : ''}
-      </div>
-      <div class="pi-qty" onclick="event.stopPropagation()">
-        <input type="number" value="${buyQty}" min="0" step="0.1"
-          oninput="updateIngQty(${i},'qty',this.value)" style="width:65px">
-        <select onchange="updateIngQty(${i},'unit',this.value)">
-          <option value="g" ${buyUnit==='g'?'selected':''}>g</option>
-          <option value="gm" ${buyUnit==='gm'?'selected':''}>gm</option>
-          <option value="kg" ${buyUnit==='kg'?'selected':''}>kg</option>
-          <option value="pcs" ${buyUnit==='pcs'?'selected':''}>pcs</option>
-          <option value="bunch" ${buyUnit==='bunch'?'selected':''}>bunch</option>
-          <option value="packet" ${buyUnit==='packet'?'selected':''}>pkt</option>
-        </select>
-      </div>
-    </div>`;
-  }).join('');
+    html += '<div class="purchase-ingredient ' + isSelected + '" onclick="togglePurchaseIng(' + i + ')" id="ping-' + i + '">';
+    html += '<div class="pi-check">' + checkMark + '</div>';
+    html += '<div class="pi-name">';
+    html += '<div class="pi-en">' + ing.name + '</div>';
+    if (mr) html += '<div class="pi-mr">' + mr + '</div>';
+    if (ing.perBowlQty) html += '<div class="pi-suggested">' + ing.perBowlQty + ing.perBowlUnit + ' × ' + count + ' bowls = ' + suggested + ' ' + suggestedUnit + '</div>';
+    html += '</div>';
+    // Qty controls
+    html += '<div class="pi-qty" onclick="event.stopPropagation()">';
+    html += '<input type="number" value="' + buyQty + '" min="0" step="0.1" oninput="updateIngQty(' + i + ',0,this.value)" style="width:65px">';
+    html += '<select onchange="updateIngQty(' + i + ',1,this.value)">';
+    var units = ['g','gm','kg','pcs','bunch','packet'];
+    units.forEach(function(u) {
+      html += '<option value="' + u + '"' + (buyUnit===u?' selected':'') + '>' + u + '</option>';
+    });
+    html += '</select>';
+    html += '</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
 }
 
 function togglePurchaseIng(i) {
@@ -2578,8 +2624,8 @@ function togglePurchaseIng(i) {
   updatePurchaseTotal();
 }
 
-function updateIngQty(i, field, val) {
-  if (field === 'qty') purchaseState.bowlIngredients[i].buyQty = parseFloat(val) || 0;
+function updateIngQty(i, fieldIdx, val) {
+  if (fieldIdx === 0) purchaseState.bowlIngredients[i].buyQty = val;
   else purchaseState.bowlIngredients[i].buyUnit = val;
   updatePurchaseTotal();
 }
@@ -3901,9 +3947,91 @@ function switchEmpIngTab(tab, btn) {
   btn.classList.add('active');
   document.getElementById('emp-bowl-ings').style.display = tab === 'bowl' ? 'block' : 'none';
   document.getElementById('emp-juice-ings').style.display = tab === 'juice' ? 'block' : 'none';
+  document.getElementById('emp-thali-ings').style.display = tab === 'thali' ? 'block' : 'none';
+  updateEmpSelectedCount();
+}
+
+var empThaliItems = [];
+
+function addEmpThaliItem() {
+  empThaliItems.push({ name: '', nameMr: '', qty: '', unit: 'kg' });
+  renderEmpThaliItems();
+}
+
+function removeEmpThaliItem(i) {
+  empThaliItems.splice(i, 1);
+  renderEmpThaliItems();
+  updateEmpSelectedCount();
+}
+
+function updateEmpThaliItem(i, fieldIdx, val) {
+  var fields = ['name','nameMr','qty','unit'];
+  if (empThaliItems[i]) empThaliItems[i][fields[fieldIdx]] = val;
+  updateEmpSelectedCount();
+}
+
+function renderEmpThaliItems() {
+  var container = document.getElementById('emp-thali-items-list');
+  if (!container) return;
+  if (!empThaliItems.length) {
+    container.innerHTML = '<div style="text-align:center;padding:12px;color:var(--gray-400);font-size:12px">No thali items yet</div>';
+    return;
+  }
+  var html = '';
+  var units = ['kg','gm','litre','pcs','bunch','packet'];
+  for (var i = 0; i < empThaliItems.length; i++) {
+    var item = empThaliItems[i];
+    var nv = (item.name || '').replace(/"/g, '&quot;');
+    var mv = (item.nameMr || '').replace(/"/g, '&quot;');
+    var qv = (item.qty || '');
+    var unitOpts = '';
+    for (var u = 0; u < units.length; u++) {
+      unitOpts += '<option value="' + units[u] + '"' + (item.unit===units[u] ? ' selected' : '') + '>' + units[u] + '</option>';
+    }
+    html += '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:10px;margin-bottom:8px;background:white">';
+    html += '<div style="display:flex;gap:6px;margin-bottom:6px">';
+    html += '<input type="text" value="' + nv + '" placeholder="Item name" oninput="updateEmpThaliItem(' + i + ',0,this.value)" style="flex:1;font-size:13px;padding:5px 8px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
+    html += '<input type="text" value="' + mv + '" placeholder="Marathi name" oninput="updateEmpThaliItem(' + i + ',1,this.value)" style="flex:1;font-size:12px;padding:5px 8px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
+    html += '</div>';
+    html += '<div style="display:flex;gap:6px;align-items:center">';
+    html += '<input type="text" value="' + qv + '" placeholder="Qty" oninput="updateEmpThaliItem(' + i + ',2,this.value)" style="width:70px;font-size:13px;padding:5px 8px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
+    html += '<select onchange="updateEmpThaliItem(' + i + ',3,this.value)" style="padding:6px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif;font-size:12px">' + unitOpts + '</select>';
+    html += '<button onclick="removeEmpThaliItem(' + i + ')" style="padding:5px 10px;background:#fee2e2;color:#ef4444;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:11px;margin-left:auto">X</button>';
+    html += '</div>';
+    html += '</div>';
+  }
+  container.innerHTML = html;
+}
+
+function updateEmpSelectedCount() {
+  var day = null;
+  DAYS.forEach(function(d) {
+    var el = document.getElementById('empday_'+d);
+    if (el && el.classList.contains('active')) day = d;
+  });
+  var bowlIngs = day ? (BOWL_INGREDIENTS[day] || []) : [];
+  var juiceIngs = day ? (JUICE_INGREDIENTS[day] || []) : [];
+  var bowlCount = 0, juiceCount = 0;
+  bowlIngs.forEach(function(ing, i) {
+    var cb = document.getElementById('bowl_cb_'+i);
+    if (cb && cb.checked) bowlCount++;
+  });
+  juiceIngs.forEach(function(ing, i) {
+    var cb = document.getElementById('juice_cb_'+i);
+    if (cb && cb.checked) juiceCount++;
+  });
+  var thaliCount = empThaliItems.filter(function(t){ return t.name; }).length;
+  var total = bowlCount + juiceCount + thaliCount;
+  var summary = document.getElementById('emp-selected-summary');
+  var countEl = document.getElementById('emp-selected-count');
+  if (summary) summary.style.display = total > 0 ? 'block' : 'none';
+  if (countEl) countEl.textContent = total + ' (' + bowlCount + ' bowl + ' + juiceCount + ' juice + ' + thaliCount + ' thali)';
 }
 
 function renderEmpIngredients(day) {
+  empThaliItems = [];
+  renderEmpThaliItems();
+
   var bowlIngs = BOWL_INGREDIENTS[day] || [];
   var juiceIngs = JUICE_INGREDIENTS[day] || [];
 
@@ -3914,14 +4042,14 @@ function renderEmpIngredients(day) {
       var cbId = prefix + '_cb_' + i;
       var qtyId = prefix + '_qty_' + i;
       html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:6px;background:white">';
-      html += '<input type="checkbox" id="' + cbId + '" style="width:18px;height:18px;accent-color:var(--green);cursor:pointer;flex-shrink:0">';
+      html += '<input type="checkbox" id="' + cbId + '" onchange="updateEmpSelectedCount()" style="width:18px;height:18px;accent-color:var(--green);cursor:pointer;flex-shrink:0">';
       html += '<div style="flex:1">';
       html += '<div style="font-size:13px;font-weight:700;color:#111827">' + ing.en + '</div>';
       html += '<div style="font-size:11px;color:#9ca3af">' + ing.mr + '</div>';
       html += '</div>';
-      html += '<input type="text" id="' + qtyId + '" placeholder="qty+unit" ';
-      html += 'onfocus="document.getElementById(' + String.fromCharCode(39) + cbId + String.fromCharCode(39) + ').checked=true" ';
-      html += 'style="width:85px;font-size:12px;padding:4px 8px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
+      html += '<input type="text" id="' + qtyId + '" placeholder="qty" ';
+      html += 'oninput="updateEmpSelectedCount()" ';
+      html += 'style="width:75px;font-size:12px;padding:4px 8px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
       html += '</div>';
     });
     return html;
@@ -3931,6 +4059,7 @@ function renderEmpIngredients(day) {
   var juiceEl = document.getElementById('emp-juice-ings');
   if (bowlEl) bowlEl.innerHTML = buildIngList(bowlIngs, 'bowl');
   if (juiceEl) juiceEl.innerHTML = buildIngList(juiceIngs, 'juice');
+  updateEmpSelectedCount();
 }
 
 function sendIngredientsToBuy() {
@@ -3943,59 +4072,68 @@ function sendIngredientsToBuy() {
 
   var bowlIngs = BOWL_INGREDIENTS[day] || [];
   var juiceIngs = JUICE_INGREDIENTS[day] || [];
-  var selected = [];
+  var bowlSelected = [], juiceSelected = [];
 
   bowlIngs.forEach(function(ing, i) {
     var cb = document.getElementById('bowl_cb_'+i);
     var qty = document.getElementById('bowl_qty_'+i);
-    if (cb && cb.checked) {
-      selected.push({ name: ing.en, mr: ing.mr, qty: qty ? qty.value : '', type: 'Bowl' });
-    }
+    if (cb && cb.checked) bowlSelected.push({ name: ing.en, mr: ing.mr, qty: qty ? qty.value : '' });
   });
   juiceIngs.forEach(function(ing, i) {
     var cb = document.getElementById('juice_cb_'+i);
     var qty = document.getElementById('juice_qty_'+i);
-    if (cb && cb.checked) {
-      selected.push({ name: ing.en, mr: ing.mr, qty: qty ? qty.value : '', type: 'Juice' });
-    }
+    if (cb && cb.checked) juiceSelected.push({ name: ing.en, mr: ing.mr, qty: qty ? qty.value : '' });
   });
+  var thaliSelected = empThaliItems.filter(function(t){ return t.name; });
 
-  if (!selected.length) return showToast('Please select at least one ingredient');
+  var total = bowlSelected.length + juiceSelected.length + thaliSelected.length;
+  if (!total) return showToast('Please select at least one ingredient');
 
   var week = state.currentWeek;
   var dateStr = getDayDate(week, DAYS.indexOf(day));
   var nl = String.fromCharCode(10);
-  var msg = 'SAKU KITCHEN - PURCHASE REQUEST' + nl;
-  msg += 'Employee purchase list for approval' + nl;
-  msg += day + ', ' + dateStr + nl;
-  msg += '-------------------' + nl + nl;
+  var sep = '-------------------';
 
-  var bowlSelected = selected.filter(function(s){ return s.type === 'Bowl'; });
-  var juiceSelected = selected.filter(function(s){ return s.type === 'Juice'; });
+  var msg = 'SAKU KITCHEN - PURCHASE REQUEST' + nl;
+  msg += day + ', ' + dateStr + nl;
+  msg += sep + nl + nl;
 
   if (bowlSelected.length) {
-    msg += 'BOWL INGREDIENTS' + nl;
+    msg += 'BOWL INGREDIENTS (' + bowlSelected.length + ')' + nl;
     bowlSelected.forEach(function(s, i) {
       msg += (i+1) + '. ' + s.name + ' / ' + s.mr;
-      if (s.qty) msg += ' - ' + s.qty;
+      if (s.qty) msg += '  -  ' + s.qty;
       msg += nl;
     });
     msg += nl;
   }
   if (juiceSelected.length) {
-    msg += 'JUICE INGREDIENTS' + nl;
+    msg += 'JUICE INGREDIENTS (' + juiceSelected.length + ')' + nl;
     juiceSelected.forEach(function(s, i) {
       msg += (i+1) + '. ' + s.name + ' / ' + s.mr;
-      if (s.qty) msg += ' - ' + s.qty;
+      if (s.qty) msg += '  -  ' + s.qty;
       msg += nl;
     });
     msg += nl;
   }
-  msg += '-------------------' + nl;
-  msg += 'Please approve and arrange purchase. - Saku Kitchen Employee';
+  if (thaliSelected.length) {
+    msg += 'THALI ITEMS (' + thaliSelected.length + ')' + nl;
+    thaliSelected.forEach(function(s, i) {
+      msg += (i+1) + '. ' + s.name;
+      if (s.nameMr) msg += ' / ' + s.nameMr;
+      if (s.qty) msg += '  -  ' + s.qty + ' ' + (s.unit||'');
+      msg += nl;
+    });
+    msg += nl;
+  }
+
+  msg += sep + nl;
+  msg += 'Total: ' + total + ' items' + nl;
+  msg += 'Please approve. - Saku Kitchen Employee';
 
   window.open('https://wa.me/' + DIRECTOR_WA + '?text=' + encodeURIComponent(msg), '_blank');
 }
+
 
 function autoSync() {
   if (state.autoSync && state.sheetsUrl) syncToSheets(true);
@@ -4441,25 +4579,46 @@ function formatPurchaseData(data) {
     <div id="emp-purchase-list" style="display:none"></div>
   </div>
 
-  <!-- Employee Ingredient Selection -->
+  <!-- Employee Purchase Builder -->
   <div class="card">
     <div class="card-header">
-      <span class="card-title">🧺 Select Ingredients to Buy</span>
-      <button class="btn btn-whatsapp btn-sm" onclick="sendIngredientsToBuy()">📲 Send to Director</button>
+      <span class="card-title">🧺 Build Purchase List</span>
     </div>
-    <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Select what you need to buy, enter qty, then send to director for approval.</div>
+    <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Select ingredients, add thali items, then send the full list to director.</div>
 
+    <!-- Tabs: Bowl / Juice / Thali -->
     <div class="tabs" style="margin-bottom:12px">
-      <button class="tab active" onclick="switchEmpIngTab('bowl',this)">🥗 Bowl</button>
-      <button class="tab" onclick="switchEmpIngTab('juice',this)">🍹 Juice</button>
+      <button class="tab active" id="emp-tab-bowl" onclick="switchEmpIngTab('bowl',this)">🥗 Bowl</button>
+      <button class="tab" id="emp-tab-juice" onclick="switchEmpIngTab('juice',this)">🍹 Juice</button>
+      <button class="tab" id="emp-tab-thali" onclick="switchEmpIngTab('thali',this)">🍱 Thali</button>
     </div>
 
+    <!-- Bowl ingredients -->
     <div id="emp-bowl-ings">
       <div style="text-align:center;padding:16px;color:var(--gray-400);font-size:12px">Select a day above first</div>
     </div>
+
+    <!-- Juice ingredients -->
     <div id="emp-juice-ings" style="display:none">
       <div style="text-align:center;padding:16px;color:var(--gray-400);font-size:12px">Select a day above first</div>
     </div>
+
+    <!-- Thali manual items -->
+    <div id="emp-thali-ings" style="display:none">
+      <div id="emp-thali-items-list"></div>
+      <button class="btn btn-outline btn-sm" onclick="addEmpThaliItem()" style="width:100%;justify-content:center;margin-top:8px">＋ Add Thali Item</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Summary of selected -->
+    <div id="emp-selected-summary" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--gray-600);display:none">
+      <strong>Selected:</strong> <span id="emp-selected-count">0</span> items ready to send
+    </div>
+
+    <button class="btn btn-whatsapp" onclick="sendIngredientsToBuy()" style="width:100%;justify-content:center">
+      📲 Send Full Purchase List to Director
+    </button>
   </div>
 </div>
 
