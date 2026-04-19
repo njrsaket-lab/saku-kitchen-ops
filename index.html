@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v18</title>
+<title>Saku Kitchen — Operations Platform v20</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -746,10 +746,7 @@ textarea { resize: vertical; min-height: 70px; }
     </div>
     <div style="display:flex;gap:6px">
       <button class="btn btn-outline btn-sm" onclick="resetStock()" style="color:var(--red)">↺ Reset Defaults</button>
-      <div style="display:flex;gap:8px">
-      <button class="btn btn-outline btn-sm" onclick="resetStockToDefaults()" style="color:var(--red);border-color:var(--red)">↺ Reset</button>
       <button class="btn btn-primary btn-sm" onclick="saveStock()">💾 Save Stock</button>
-    </div>
     </div>
   </div>
 
@@ -792,7 +789,8 @@ textarea { resize: vertical; min-height: 70px; }
 
   <div class="stock-grid" id="stock-grid"></div>
 
-  <div style="margin-top:16px; text-align:right">
+  <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center">
+    <button class="btn btn-outline btn-sm" onclick="resetStockToDefaults()" style="font-size:11px;color:var(--gray-400);border-color:var(--gray-200)">↺ Restore Defaults</button>
     <button class="btn btn-outline btn-sm" onclick="addStockItem()">＋ Add New Stock Item</button>
   </div>
 </div>
@@ -1823,33 +1821,50 @@ function filterStock(cat, btn) {
 }
 
 function updateStockQty(id) {
-  const item = state.stock.find(s => s.id === id);
-  const inp = document.getElementById('sq_'+id);
-  if (item && inp) { item.qty = parseFloat(inp.value) || 0; saveStock(); renderStock(); }
+  var item = state.stock.find(function(s){ return s.id === id; });
+  var inp = document.getElementById('sq_'+id);
+  if (!item || !inp) return;
+  var newQty = parseFloat(inp.value);
+  if (isNaN(newQty) || newQty < 0) { showToast('Invalid quantity'); return; }
+  item.qty = newQty;
+  save();
+  renderStock();
+  showToast(item.name + ' updated to ' + newQty + ' ' + item.unit + ' ✓');
 }
 
 function updateStockMin(id) {
-  const item = state.stock.find(s => s.id === id);
-  const inp = document.getElementById('sm_'+id);
-  if (item && inp) { item.min = parseFloat(inp.value) || 0; saveStock(); renderStock(); }
+  var item = state.stock.find(function(s){ return s.id === id; });
+  var inp = document.getElementById('sm_'+id);
+  if (!item || !inp) return;
+  item.min = parseFloat(inp.value) || 0;
+  save();
+  renderStock();
+  showToast(item.name + ' min set to ' + item.min + ' ' + item.unit + ' ✓');
 }
 
 function logMillRun() {
-  const grain = parseFloat(document.getElementById('wheat-sent').value) || 0;
-  const flour = parseFloat(document.getElementById('wheat-flour-received').value) || 0;
+  var grainInput = document.getElementById('wheat-grain-stock');
+  var sentInput = document.getElementById('wheat-sent');
+  var flourRecInput = document.getElementById('wheat-flour-received');
+  var flourStockInput = document.getElementById('wheat-flour-stock');
+  var grain = parseFloat(sentInput ? sentInput.value : 0) || 0;
+  var flour = parseFloat(flourRecInput ? flourRecInput.value : 0) || 0;
   if (!grain) return alert('Enter kg of grain sent to mill');
 
-  // Deduct grain from stock, add flour
-  const wg = state.stock.find(s => s.id === 'wheat_grain');
-  const wf = state.stock.find(s => s.id === 'wheat_flour');
-  if (wg) wg.qty = Math.max(0, wg.qty - grain);
+  var wg = state.stock.find(function(s){ return s.id === 'wheat_grain'; });
+  var wf = state.stock.find(function(s){ return s.id === 'wheat_flour'; });
+  if (wg) {
+    // Also read from grain stock input if user updated it
+    var grainStock = grainInput ? (parseFloat(grainInput.value) || wg.qty) : wg.qty;
+    wg.qty = Math.max(0, grainStock - grain);
+  }
   if (wf) wf.qty = (parseFloat(wf.qty) || 0) + flour;
 
   state.millLog = state.millLog || [];
   state.millLog.push({ date: new Date().toLocaleDateString(), sent: grain, received: flour });
-  saveStock();
+  save();
   renderStock();
-  showToast(`Mill run logged: ${grain}kg grain → ${flour}kg flour ✓`);
+  showToast('Mill run logged: ' + grain + 'kg grain to ' + flour + 'kg flour');
 }
 
 function resetStockToDefaults() {
@@ -1883,13 +1898,6 @@ function resetStock() {
 }
 
 function saveStock() {
-  // Update wheat grain and flour from direct inputs if visible
-  const wgInput = document.getElementById('wheat-grain-stock');
-  const wfInput = document.getElementById('wheat-flour-stock');
-  const wg = state.stock.find(s => s.id === 'wheat_grain');
-  const wf = state.stock.find(s => s.id === 'wheat_flour');
-  if (wgInput && wg && wgInput.value) wg.qty = parseFloat(wgInput.value) || wg.qty;
-  if (wfInput && wf && wfInput.value) wf.qty = parseFloat(wfInput.value) || wf.qty;
   save();
   showToast('Stock saved ✓');
 }
