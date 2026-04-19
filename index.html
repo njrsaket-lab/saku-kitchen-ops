@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v21</title>
+<title>Saku Kitchen — Operations Platform v22</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -890,6 +890,178 @@ textarea { resize: vertical; min-height: 70px; }
 
 <script>
 // ═══════════════════════════════════ DATA ═══════════════════════════════════
+
+
+// ═══════════════════════════════════════════════════════
+// WEEKLY BOWL & JUICE INGREDIENTS (MARATHI)
+// ═══════════════════════════════════════════════════════
+
+var BOWL_INGREDIENTS = {
+  Monday: [
+    { en: 'Chavali (Lobhia)', mr: 'चवळी (लोबिया)' },
+    { en: 'Kala Mung', mr: 'काळा मूग' },
+    { en: 'Peanut Butter', mr: 'शेंगदाणा बटर' },
+    { en: 'Orange Juice (Fresh)', mr: 'ताज्या संत्र्याचा रस' },
+    { en: 'Lemon', mr: 'लिंबू' },
+    { en: 'Smoked Paprika', mr: 'स्मोक्ड पाप्रिका' },
+    { en: 'Mustard Seeds', mr: 'मोहरी' },
+    { en: 'Curry Leaves', mr: 'कढीपत्ता' },
+    { en: 'Green Chilli', mr: 'हिरवी मिरची' },
+    { en: 'Lal Math (Amaranth)', mr: 'लाल माठ' },
+    { en: 'Besan', mr: 'बेसन' },
+    { en: 'Garlic', mr: 'लसूण' },
+    { en: 'Shengdana Chikki', mr: 'शेंगदाणा चिक्की' },
+    { en: 'Varai (Barnyard Millet)', mr: 'वरई' },
+    { en: 'Curd', mr: 'दही' },
+    { en: 'Kashmiri Red Chilli', mr: 'काश्मिरी लाल तिखट' },
+    { en: 'Nutmeg Powder', mr: 'जायफळ पूड' },
+    { en: 'Cucumber', mr: 'काकडी' },
+    { en: 'Carrot', mr: 'गाजर' },
+    { en: 'Pomegranate', mr: 'डाळिंब' },
+    { en: 'Fresh Berries', mr: 'ताज्या बेरीज' },
+    { en: 'Coriander', mr: 'कोथिंबीर' },
+    { en: 'Pudina (Mint)', mr: 'पुदीना' },
+  ],
+  Tuesday: [
+    { en: 'Rajma (Kidney Beans)', mr: 'राजमा' },
+    { en: 'Chole (Chickpeas)', mr: 'छोले' },
+    { en: 'Mung Sprouts', mr: 'मोड आलेले मूग' },
+    { en: 'Tamarind Chutney', mr: 'चिंचेची चटणी' },
+    { en: 'Green Chutney', mr: 'हिरवी चटणी' },
+    { en: 'Chaat Masala', mr: 'चाट मसाला' },
+    { en: 'Black Salt', mr: 'काळं मीठ' },
+    { en: 'Ragi Murmura', mr: 'रागी मुरमुरा' },
+    { en: 'Roasted Peanuts', mr: 'भाजलेले शेंगदाणे' },
+    { en: 'Ghee', mr: 'तूप' },
+    { en: 'Iceberg Lettuce', mr: 'आइसबर्ग लेट्यूस' },
+    { en: 'French Beans', mr: 'फ्रेंच बीन्स' },
+    { en: 'Sweet Corn', mr: 'स्वीट कॉर्न' },
+    { en: 'Potato (Boiled)', mr: 'उकडलेला बटाटा' },
+    { en: 'Sambhar Powder', mr: 'सांबार पावडर' },
+    { en: 'Roasted Walnuts', mr: 'भाजलेले अक्रोड' },
+    { en: 'Bel Candy', mr: 'बेल कँडी' },
+    { en: 'Thick Curd', mr: 'घट्ट दही' },
+    { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पूड' },
+    { en: 'Dry Red Chilli', mr: 'सुक्या लाल मिरच्या' },
+  ],
+  Wednesday: [
+    { en: 'Paneer', mr: 'पनीर' },
+    { en: 'Olive Oil', mr: 'ऑलिव्ह ऑईल' },
+    { en: 'Garlic', mr: 'लसूण' },
+    { en: 'Zaatar / Oregano', mr: 'झातार / ओरेगानो' },
+    { en: 'Lemon', mr: 'लिंबू' },
+    { en: 'Brown Rice', mr: 'ब्राऊन तांदूळ' },
+    { en: 'Ambat Chuka (Sorrel)', mr: 'आंबट चूका' },
+    { en: 'Boiled Peanuts', mr: 'उकडलेले शेंगदाणे' },
+    { en: 'Capsicum', mr: 'ढोबळी मिरची' },
+    { en: 'Carrot', mr: 'गाजर' },
+    { en: 'Beetroot', mr: 'बीट' },
+    { en: 'Rasam Powder', mr: 'रसम पावडर' },
+    { en: 'Pineapple', mr: 'अननस' },
+    { en: 'Roasted Harbara (Crushed)', mr: 'भाजलेला हरभरा (कुटलेला)' },
+    { en: 'Fresh Coconut', mr: 'ताजा नारळ' },
+    { en: 'Green Chilli', mr: 'हिरवी मिरची' },
+  ],
+  Thursday: [
+    { en: 'Kabuli Chana (Chickpeas)', mr: 'काबुली चणे' },
+    { en: 'Ginger', mr: 'आलं' },
+    { en: 'Garlic', mr: 'लसूण' },
+    { en: 'Soy Sauce', mr: 'सोया सॉस' },
+    { en: 'Chilli Sauce', mr: 'चिली सॉस' },
+    { en: 'Spring Onion', mr: 'स्प्रिंग ऑनियन' },
+    { en: 'Cabbage', mr: 'पत्ता कोबी' },
+    { en: 'Baby Corn', mr: 'बेबी कॉर्न' },
+    { en: 'Capsicum', mr: 'ढोबळी मिरची' },
+    { en: 'Vinegar', mr: 'व्हिनेगर' },
+    { en: 'Fenugreek (Methi)', mr: 'ताजी मेथी' },
+    { en: 'Red Rice / Millet Noodles / Daliya', mr: 'लाल तांदूळ / मिलेट नूडल्स / दलिया' },
+    { en: 'Sweet Potato', mr: 'रताळे' },
+    { en: 'Onion', mr: 'कांदा' },
+  ],
+  Friday: [
+    { en: 'Whole Masoor Dal', mr: 'अख्खा मसूर' },
+    { en: 'Green Harbara', mr: 'हिरवा हरभरा' },
+    { en: 'Goda Masala', mr: 'गोडा मसाला' },
+    { en: 'Tamarind', mr: 'चिंच' },
+    { en: 'Jaggery', mr: 'गूळ' },
+    { en: 'Shepu (Dill)', mr: 'शेपू' },
+    { en: 'Peanuts', mr: 'शेंगदाणे' },
+    { en: 'Cucumber', mr: 'काकडी' },
+    { en: 'Cabbage', mr: 'कोबी' },
+    { en: 'Carrot', mr: 'गाजर' },
+    { en: 'Bhakri Crisp / Jowar Flakes', mr: 'भाकरी क्रिस्प / ज्वारी फ्लेक्स' },
+    { en: 'Raisins (Manuka)', mr: 'मनुका' },
+    { en: 'Chikoo', mr: 'चिकू' },
+    { en: 'Hung Curd', mr: 'हँग कर्ड (चक्का)' },
+    { en: 'Tomato Puree', mr: 'टोमॅटो प्युरी' },
+    { en: 'Cumin Seeds', mr: 'जिरे' },
+  ],
+  Saturday: [
+    { en: 'Yellow Peas (Vatane)', mr: 'पिवळे वाटाणे' },
+    { en: 'Green Harbara', mr: 'हिरवे हरभरे' },
+    { en: 'Onion', mr: 'कांदा' },
+    { en: 'Olive Oil', mr: 'ऑलिव्ह ऑईल' },
+    { en: 'Vinegar', mr: 'व्हिनेगर' },
+    { en: 'Quinoa', mr: 'क्विनोआ' },
+    { en: 'Zucchini', mr: 'झुकिनी' },
+    { en: 'Capsicum', mr: 'ढोबळी मिरची' },
+    { en: 'Cauliflower', mr: 'फ्लॉवर' },
+    { en: 'Lollo Rosso Lettuce', mr: 'लोलो रोसो लेट्यूस' },
+    { en: 'Mixed Seeds', mr: 'मिक्स बिया' },
+    { en: 'Papaya / Muskmelon', mr: 'पपई / खरबूज' },
+    { en: 'Ambat Chuka (Sorrel)', mr: 'आंबट चूका' },
+    { en: 'Kokum', mr: 'कोकम' },
+  ],
+};
+
+var JUICE_INGREDIENTS = {
+  Monday: [
+    { en: 'Fresh Orange Juice', mr: 'ताज्या संत्र्याचा रस' },
+    { en: 'Amla Juice', mr: 'आवळ्याचा रस' },
+    { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पावडर' },
+    { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
+    { en: 'Black Salt', mr: 'काळं मीठ' },
+    { en: 'Sabja Seeds', mr: 'भिजवलेले सब्जा बी' },
+  ],
+  Tuesday: [
+    { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
+    { en: 'Coriander', mr: 'कोथिंबीर' },
+    { en: 'Roasted Cumin', mr: 'भाजलेले जिरे' },
+    { en: 'Ajwain Water', mr: 'अजवाइन पाणी' },
+    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
+    { en: 'Black Salt', mr: 'काळं मीठ' },
+    { en: 'Mishri', mr: 'मिश्री' },
+  ],
+  Wednesday: [
+    { en: 'Thin Coconut Milk', mr: 'पातळ नारळाचे दूध' },
+    { en: 'Amla Juice', mr: 'आवळ्याचा रस' },
+    { en: 'Cardamom Powder', mr: 'वेलची पावडर' },
+    { en: 'Saffron (Optional)', mr: 'केशर (ऐच्छिक)' },
+    { en: 'Mishri', mr: 'मिश्री' },
+  ],
+  Thursday: [
+    { en: 'Cucumber Juice', mr: 'काकडीचा रस' },
+    { en: 'Ajwain Water', mr: 'अजवाइन पाणी' },
+    { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
+    { en: 'Black Pepper Powder', mr: 'काळी मिरी पावडर' },
+    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
+    { en: 'Black Salt', mr: 'काळं मीठ' },
+  ],
+  Friday: [
+    { en: 'Cold Milk / Almond Milk', mr: 'थंड दूध / बदाम दूध' },
+    { en: 'Gulkand', mr: 'गुलकंद' },
+    { en: 'Fennel Powder (Badishep)', mr: 'बडीशेप पावडर' },
+    { en: 'Rose Water', mr: 'गुलाब पाणी' },
+    { en: 'Sabja Seeds', mr: 'भिजवलेले सब्जा बी' },
+  ],
+  Saturday: [
+    { en: 'Kokum Water', mr: 'कोकम पाणी' },
+    { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
+    { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पावडर' },
+    { en: 'Black Salt', mr: 'काळं मीठ' },
+    { en: 'Honey', mr: 'मध' },
+  ],
+};
 
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DAY_DATES_APR = ['20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr'];
@@ -3722,6 +3894,107 @@ function selectEmpDay(day) {
   }
 }
 
+function switchEmpIngTab(tab, btn) {
+  document.querySelectorAll('#screen-employee .tab').forEach(function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('emp-bowl-ings').style.display = tab === 'bowl' ? 'block' : 'none';
+  document.getElementById('emp-juice-ings').style.display = tab === 'juice' ? 'block' : 'none';
+}
+
+function renderEmpIngredients(day) {
+  var bowlIngs = BOWL_INGREDIENTS[day] || [];
+  var juiceIngs = JUICE_INGREDIENTS[day] || [];
+
+  function buildIngList(items, prefix) {
+    if (!items.length) return '<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:12px">No ingredients for this day</div>';
+    var html = '';
+    items.forEach(function(ing, i) {
+      var cbId = prefix + '_cb_' + i;
+      var qtyId = prefix + '_qty_' + i;
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:6px;background:white">';
+      html += '<input type="checkbox" id="' + cbId + '" style="width:18px;height:18px;accent-color:var(--green);cursor:pointer;flex-shrink:0">';
+      html += '<div style="flex:1">';
+      html += '<div style="font-size:13px;font-weight:700;color:#111827">' + ing.en + '</div>';
+      html += '<div style="font-size:11px;color:#9ca3af">' + ing.mr + '</div>';
+      html += '</div>';
+      html += '<input type="text" id="' + qtyId + '" placeholder="qty+unit" ';
+      html += 'onfocus="document.getElementById(' + String.fromCharCode(39) + cbId + String.fromCharCode(39) + ').checked=true" ';
+      html += 'style="width:85px;font-size:12px;padding:4px 8px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
+      html += '</div>';
+    });
+    return html;
+  }
+
+  var bowlEl = document.getElementById('emp-bowl-ings');
+  var juiceEl = document.getElementById('emp-juice-ings');
+  if (bowlEl) bowlEl.innerHTML = buildIngList(bowlIngs, 'bowl');
+  if (juiceEl) juiceEl.innerHTML = buildIngList(juiceIngs, 'juice');
+}
+
+function sendIngredientsToBuy() {
+  var day = null;
+  DAYS.forEach(function(d) {
+    var el = document.getElementById('empday_'+d);
+    if (el && el.classList.contains('active')) day = d;
+  });
+  if (!day) return showToast('Please select a day first');
+
+  var bowlIngs = BOWL_INGREDIENTS[day] || [];
+  var juiceIngs = JUICE_INGREDIENTS[day] || [];
+  var selected = [];
+
+  bowlIngs.forEach(function(ing, i) {
+    var cb = document.getElementById('bowl_cb_'+i);
+    var qty = document.getElementById('bowl_qty_'+i);
+    if (cb && cb.checked) {
+      selected.push({ name: ing.en, mr: ing.mr, qty: qty ? qty.value : '', type: 'Bowl' });
+    }
+  });
+  juiceIngs.forEach(function(ing, i) {
+    var cb = document.getElementById('juice_cb_'+i);
+    var qty = document.getElementById('juice_qty_'+i);
+    if (cb && cb.checked) {
+      selected.push({ name: ing.en, mr: ing.mr, qty: qty ? qty.value : '', type: 'Juice' });
+    }
+  });
+
+  if (!selected.length) return showToast('Please select at least one ingredient');
+
+  var week = state.currentWeek;
+  var dateStr = getDayDate(week, DAYS.indexOf(day));
+  var nl = String.fromCharCode(10);
+  var msg = 'SAKU KITCHEN - PURCHASE REQUEST' + nl;
+  msg += 'Employee purchase list for approval' + nl;
+  msg += day + ', ' + dateStr + nl;
+  msg += '-------------------' + nl + nl;
+
+  var bowlSelected = selected.filter(function(s){ return s.type === 'Bowl'; });
+  var juiceSelected = selected.filter(function(s){ return s.type === 'Juice'; });
+
+  if (bowlSelected.length) {
+    msg += 'BOWL INGREDIENTS' + nl;
+    bowlSelected.forEach(function(s, i) {
+      msg += (i+1) + '. ' + s.name + ' / ' + s.mr;
+      if (s.qty) msg += ' - ' + s.qty;
+      msg += nl;
+    });
+    msg += nl;
+  }
+  if (juiceSelected.length) {
+    msg += 'JUICE INGREDIENTS' + nl;
+    juiceSelected.forEach(function(s, i) {
+      msg += (i+1) + '. ' + s.name + ' / ' + s.mr;
+      if (s.qty) msg += ' - ' + s.qty;
+      msg += nl;
+    });
+    msg += nl;
+  }
+  msg += '-------------------' + nl;
+  msg += 'Please approve and arrange purchase. - Saku Kitchen Employee';
+
+  window.open('https://wa.me/' + DIRECTOR_WA + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
 function autoSync() {
   if (state.autoSync && state.sheetsUrl) syncToSheets(true);
 }
@@ -4154,16 +4427,37 @@ function formatPurchaseData(data) {
     <div id="emp-order-summary" style="display:none;margin-top:12px;padding:10px 14px;background:var(--gray-50);border-radius:var(--radius-sm);font-size:12px;color:var(--gray-600)"></div>
   </div>
 
-  <!-- Purchase List Section -->
-  <div class="card">
+  <!-- Purchase List Section (Director-set) -->
+  <div class="card" style="margin-bottom:14px">
     <div class="card-header">
-      <span class="card-title">🛒 Today's Purchase List</span>
+      <span class="card-title">🛒 Purchase List (by Director)</span>
       <span class="badge badge-amber" id="emp-purchase-count">0 items</span>
     </div>
     <div id="emp-no-purchase" style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px">
       Select a day to see purchase list
     </div>
     <div id="emp-purchase-list" style="display:none"></div>
+  </div>
+
+  <!-- Employee Ingredient Selection -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">🧺 Select Ingredients to Buy</span>
+      <button class="btn btn-whatsapp btn-sm" onclick="sendIngredientsToBuy()">📲 Send to Director</button>
+    </div>
+    <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Select what you need to buy, enter qty, then send to director for approval.</div>
+
+    <div class="tabs" style="margin-bottom:12px">
+      <button class="tab active" onclick="switchEmpIngTab('bowl',this)">🥗 Bowl</button>
+      <button class="tab" onclick="switchEmpIngTab('juice',this)">🍹 Juice</button>
+    </div>
+
+    <div id="emp-bowl-ings">
+      <div style="text-align:center;padding:16px;color:var(--gray-400);font-size:12px">Select a day above first</div>
+    </div>
+    <div id="emp-juice-ings" style="display:none">
+      <div style="text-align:center;padding:16px;color:var(--gray-400);font-size:12px">Select a day above first</div>
+    </div>
   </div>
 </div>
 
