@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saku Kitchen — Operations Platform v27</title>
+<title>Saku Kitchen — Operations Platform v29</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -794,6 +794,30 @@ textarea { resize: vertical; min-height: 70px; }
     <button class="btn btn-outline btn-sm" onclick="resetStockToDefaults()" style="font-size:11px;color:var(--gray-400);border-color:var(--gray-200)">↺ Restore Defaults</button>
     <button class="btn btn-outline btn-sm" onclick="addStockItem()">＋ Add New Stock Item</button>
   </div>
+
+  <!-- PACKAGING SECTION -->
+  <div style="margin-top:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div>
+        <div style="font-size:16px;font-weight:800;color:var(--gray-900)">📦 Packaging Stock</div>
+        <div style="font-size:12px;color:var(--gray-400);margin-top:2px">Bowls, plates, cups, parcel boxes, covers — tap to add photo</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-outline btn-sm" onclick="addPackagingItem()">＋ Add Item</button>
+        <button class="btn btn-whatsapp btn-sm" onclick="sharePackagingStock()">📲 Send to Director</button>
+      </div>
+    </div>
+
+    <div id="packaging-alerts" style="margin-bottom:10px"></div>
+    <div id="packaging-grid" style="display:flex;flex-direction:column;gap:10px"></div>
+
+    <div id="packaging-empty" style="text-align:center;padding:28px;background:white;border-radius:var(--radius);border:1.5px dashed var(--gray-300);margin-top:4px">
+      <div style="font-size:28px;margin-bottom:8px">📦</div>
+      <div style="font-size:13px;font-weight:700;color:var(--gray-600)">No packaging items yet</div>
+      <div style="font-size:12px;color:var(--gray-400);margin-top:4px">Tap "+ Add Item" to add bowls, plates, cups, boxes...</div>
+    </div>
+  </div>
+
 </div>
 
 <!-- ═══════════════════════════════════ WEEKLY REPORT ═══════════════════════════════════ -->
@@ -1218,29 +1242,42 @@ function getDayDate(weekKey, dayIndex) {
 
 function save() {
   try {
-    localStorage.setItem('saku_state', JSON.stringify(state));
-  } catch(e) {}
+    var toSave = JSON.parse(JSON.stringify(state));
+    localStorage.setItem('saku_state', JSON.stringify(toSave));
+  } catch(e) {
+    console.warn('Save failed:', e);
+  }
 }
 
 function load() {
   try {
-    const raw = localStorage.getItem('saku_state');
-    if (raw) {
-      const loaded = JSON.parse(raw);
-      state = { ...state, ...loaded };
+    var raw = localStorage.getItem('saku_state');
+    if (raw && raw !== 'undefined' && raw !== 'null') {
+      var loaded = JSON.parse(raw);
+      if (loaded && typeof loaded === 'object') {
+        state = Object.assign({}, state, loaded);
+      }
     }
-  } catch(e) {}
+  } catch(e) {
+    console.warn('State load failed, resetting:', e);
+    localStorage.removeItem('saku_state');
+  }
   // Ensure defaults
-  // Always ensure all default stock items exist
   if (!state.stock) state.stock = [];
   DEFAULT_STOCK.forEach(function(def) {
     var exists = state.stock.find(function(s){ return s.id === def.id; });
     if (!exists) state.stock.push(JSON.parse(JSON.stringify(def)));
   });
-  if (!state.menu[state.currentWeek]) state.menu[state.currentWeek] = JSON.parse(JSON.stringify(DEFAULT_MENU));
+  if (!state.menu[state.currentWeek]) {
+    state.menu[state.currentWeek] = JSON.parse(JSON.stringify(DEFAULT_MENU));
+  }
   if (!state.sales) state.sales = {};
   if (!state.expenses) state.expenses = {};
+  if (!state.subscribers) state.subscribers = [];
+  if (!state.purchases) state.purchases = {};
+  if (!state.packaging) state.packaging = JSON.parse(JSON.stringify(DEFAULT_PACKAGING));
 }
+
 
 // ═══════════════════════════════════ NAVIGATION ═══════════════════════════════════
 
@@ -1261,7 +1298,7 @@ function showScreen(name) {
   if (name === 'menu') renderMenuEditor();
   if (name === 'daily') renderDailyDays();
   if (name === 'expenses') renderExpenseDays();
-  if (name === 'stock') renderStock();
+  if (name === 'stock') { renderStock(); renderPackaging(); }
   if (name === 'report') generateReport();
   if (name === 'purchase') renderPurchaseDays();
   if (name === 'subscriptions') renderSubscriptions();
@@ -2028,6 +2065,8 @@ function renderStock() {
     </div>`;
   }).join('');
 }
+
+  renderPackaging();
 
 function filterStock(cat, btn) {
   currentFilter = cat;
@@ -4134,6 +4173,195 @@ function sendIngredientsToBuy() {
   window.open('https://wa.me/' + DIRECTOR_WA + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
+
+// ═══════════════════════════════════════════════════════
+// PACKAGING STOCK
+// ═══════════════════════════════════════════════════════
+
+var DEFAULT_PACKAGING = [
+  { id:'bowl_container', name:'Bowl Container', qty:0, unit:'pcs', min:20, photo:null },
+  { id:'thali_plate',    name:'Thali Plate',    qty:0, unit:'pcs', min:30, photo:null },
+  { id:'parcel_box',     name:'Parcel Box',     qty:0, unit:'pcs', min:20, photo:null },
+  { id:'cups',           name:'Cups',           qty:0, unit:'pcs', min:50, photo:null },
+  { id:'covers_bags',    name:'Covers / Bags',  qty:0, unit:'pcs', min:50, photo:null },
+  { id:'tissue_paper',   name:'Tissue Paper',   qty:0, unit:'pcs', min:100, photo:null },
+];
+
+function initPackaging() {
+  if (!state.packaging) {
+    state.packaging = JSON.parse(JSON.stringify(DEFAULT_PACKAGING));
+    save();
+  }
+}
+
+function renderPackaging() {
+  initPackaging();
+  var items = state.packaging;
+  var emptyEl = document.getElementById('packaging-empty');
+  var gridEl = document.getElementById('packaging-grid');
+  var alertsEl = document.getElementById('packaging-alerts');
+  if (!gridEl) return;
+
+  if (!items.length) {
+    if (emptyEl) emptyEl.style.display = 'block';
+    gridEl.innerHTML = '';
+    if (alertsEl) alertsEl.innerHTML = '';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+
+  var lowItems = items.filter(function(item){ return item.qty <= item.min; });
+  if (alertsEl) {
+    alertsEl.innerHTML = lowItems.length
+      ? '<div class="alert alert-warning">Warning - Low packaging: ' + lowItems.map(function(item){ return item.name; }).join(', ') + '</div>'
+      : '';
+  }
+
+  var html = '';
+  var unitOptions = ['pcs','packets','rolls','boxes'];
+
+  items.forEach(function(item, i) {
+    var isLow = item.qty <= item.min;
+    var borderCol = isLow ? '#ef4444' : '#e5e7eb';
+    var bgCol = isLow ? '#fee2e2' : 'white';
+    var qtyColor = isLow ? '#ef4444' : '#111827';
+    var statusBg = isLow ? '#fee2e2' : '#eaf5eb';
+    var statusColor = isLow ? '#ef4444' : '#5a9e5e';
+    var statusText = isLow ? 'LOW' : 'OK';
+    var nameVal = (item.name || '').replace(/"/g, '&quot;');
+    var notesVal = (item.notes || '').replace(/"/g, '&quot;');
+
+    var unitOpts = '';
+    unitOptions.forEach(function(u) {
+      unitOpts += '<option value="' + u + '"' + (item.unit === u ? ' selected' : '') + '>' + u + '</option>';
+    });
+
+    html += '<div style="background:' + bgCol + ';border:1.5px solid ' + borderCol + ';border-radius:8px;padding:14px;display:flex;gap:12px;align-items:flex-start">';
+
+    // Photo
+    if (item.photo) {
+      html += '<div style="position:relative;flex-shrink:0">';
+      html += '<img src="' + item.photo + '" style="width:64px;height:64px;border-radius:8px;object-fit:cover;border:2px solid #e5e7eb;cursor:pointer" onclick="openPackagingPhoto(' + i + ')" title="Tap to view">';
+      html += '<label style="position:absolute;bottom:-4px;right:-4px;background:#0843C7;color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer">';
+      html += 'C<input type="file" accept="image/*" capture="environment" style="display:none" onchange="attachPackagingPhoto(' + i + ',this)"></label>';
+      html += '</div>';
+    } else {
+      html += '<label style="width:64px;height:64px;border:2px dashed #d1d5db;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;background:#f9fafb;flex-shrink:0">';
+      html += '<span style="font-size:20px">📷</span>';
+      html += '<span style="font-size:9px;font-weight:700;color:#9ca3af">PHOTO</span>';
+      html += '<input type="file" accept="image/*" capture="environment" style="display:none" onchange="attachPackagingPhoto(' + i + ',this)"></label>';
+    }
+
+    // Content
+    html += '<div style="flex:1">';
+
+    // Name + remove
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">';
+    html += '<input type="text" value="' + nameVal + '" oninput="updatePackagingField(' + i + ',0,this.value)" style="font-size:14px;font-weight:700;border:none;border-bottom:1.5px solid #e5e7eb;padding:2px 4px;font-family:Montserrat,sans-serif;flex:1;background:transparent">';
+    html += '<button onclick="removePackagingItem(' + i + ')" style="padding:3px 8px;background:#fee2e2;color:#ef4444;border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px">X</button>';
+    html += '</div>';
+
+    // Qty + unit + min + status
+    html += '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
+    html += '<span style="font-size:11px;color:#9ca3af;font-weight:600">QTY:</span>';
+    html += '<input type="number" value="' + item.qty + '" min="0" oninput="updatePackagingField(' + i + ',1,parseFloat(this.value)||0)" style="width:75px;font-size:16px;font-weight:800;color:' + qtyColor + ';text-align:center;padding:4px 6px;border:1.5px solid ' + borderCol + ';border-radius:6px;font-family:Montserrat,sans-serif">';
+    html += '<select onchange="updatePackagingField(' + i + ',2,this.value)" style="font-size:12px;padding:5px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">' + unitOpts + '</select>';
+    html += '<span style="font-size:11px;color:#9ca3af">Min:</span>';
+    html += '<input type="number" value="' + item.min + '" min="0" oninput="updatePackagingField(' + i + ',3,parseFloat(this.value)||0)" style="width:55px;font-size:12px;padding:3px 5px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
+    html += '<span style="font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;background:' + statusBg + ';color:' + statusColor + '">' + statusText + '</span>';
+    html += '</div>';
+
+    // Notes
+    html += '<input type="text" value="' + notesVal + '" placeholder="Notes (brand, size, supplier...)" oninput="updatePackagingField(' + i + ',4,this.value)" style="margin-top:8px;font-size:12px;padding:4px 8px;border:1.5px solid #e5e7eb;border-radius:6px;width:100%;font-family:Montserrat,sans-serif;color:#4b5563">';
+
+    html += '</div>';
+    html += '</div>';
+  });
+
+  gridEl.innerHTML = html;
+}
+
+function updatePackagingField(i, fieldIdx, val) {
+  if (!state.packaging || !state.packaging[i]) return;
+  var fields = ['name', 'qty', 'unit', 'min', 'notes'];
+  state.packaging[i][fields[fieldIdx]] = val;
+  save();
+  if (fieldIdx !== 0 && fieldIdx !== 4) renderPackaging();
+}
+
+
+// updatePackaging replaced by updatePackagingField
+
+function addPackagingItem() {
+  initPackaging();
+  state.packaging.push({ id: 'pkg_' + Date.now(), name: 'New Item', qty: 0, unit: 'pcs', min: 20, photo: null, notes: '' });
+  save();
+  renderPackaging();
+}
+
+function removePackagingItem(i) {
+  if (!confirm('Remove this packaging item?')) return;
+  state.packaging.splice(i, 1);
+  save();
+  renderPackaging();
+}
+
+function attachPackagingPhoto(i, input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    if (!state.packaging[i]) return;
+    state.packaging[i].photo = e.target.result;
+    save();
+    renderPackaging();
+  };
+  reader.readAsDataURL(file);
+}
+
+function openPackagingPhoto(i) {
+  if (state.packaging && state.packaging[i] && state.packaging[i].photo) {
+    document.getElementById('lightbox-img').src = state.packaging[i].photo;
+    document.getElementById('photo-lightbox').classList.add('open');
+  }
+}
+
+function sharePackagingStock() {
+  initPackaging();
+  var items = state.packaging;
+  if (!items.length) return showToast('No packaging items to share');
+  var nl = String.fromCharCode(10);
+  var sep = '-------------------';
+  var msg = 'SAKU KITCHEN - PACKAGING STOCK REPORT' + nl;
+  msg += new Date().toLocaleDateString('en-IN', {weekday:'long', day:'numeric', month:'short'}) + nl;
+  msg += sep + nl + nl;
+
+  var low = items.filter(function(i){ return i.qty <= i.min; });
+  var ok = items.filter(function(i){ return i.qty > i.min; });
+
+  if (low.length) {
+    msg += 'LOW STOCK - NEEDS REORDER (' + low.length + ' items)' + nl;
+    low.forEach(function(item) {
+      msg += '* ' + item.name + ' - ' + item.qty + ' ' + item.unit + ' (min: ' + item.min + ')' + nl;
+      if (item.notes) msg += '  Note: ' + item.notes + nl;
+    });
+    msg += nl;
+  }
+
+  if (ok.length) {
+    msg += 'ADEQUATE STOCK (' + ok.length + ' items)' + nl;
+    ok.forEach(function(item) {
+      msg += '* ' + item.name + ' - ' + item.qty + ' ' + item.unit + nl;
+    });
+    msg += nl;
+  }
+
+  msg += sep + nl;
+  msg += 'Total items tracked: ' + items.length + nl;
+  msg += 'Saku Kitchen - Packaging Inventory';
+
+  window.open('https://wa.me/' + DIRECTOR_WA + '?text=' + encodeURIComponent(msg), '_blank');
+}
 
 function autoSync() {
   if (state.autoSync && state.sheetsUrl) syncToSheets(true);
