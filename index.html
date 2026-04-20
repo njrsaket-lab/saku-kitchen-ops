@@ -1129,6 +1129,15 @@ var JUICE_INGREDIENTS = {
 };
 
 
+var DEFAULT_PACKAGING = [
+  { id:'bowl_container', name:'Bowl Container', qty:0, unit:'pcs', min:20, photo:null },
+  { id:'thali_plate',    name:'Thali Plate',    qty:0, unit:'pcs', min:30, photo:null },
+  { id:'parcel_box',     name:'Parcel Box',     qty:0, unit:'pcs', min:20, photo:null },
+  { id:'cups',           name:'Cups',           qty:0, unit:'pcs', min:50, photo:null },
+  { id:'covers_bags',    name:'Covers / Bags',  qty:0, unit:'pcs', min:50, photo:null },
+  { id:'tissue_paper',   name:'Tissue Paper',   qty:0, unit:'pcs', min:100, photo:null },
+];
+
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DAY_DATES_APR = ['20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr'];
 
@@ -2064,9 +2073,9 @@ function renderStock() {
       </div>
     </div>`;
   }).join('');
-}
 
   renderPackaging();
+}
 
 function filterStock(cat, btn) {
   currentFilter = cat;
@@ -4178,14 +4187,6 @@ function sendIngredientsToBuy() {
 // PACKAGING STOCK
 // ═══════════════════════════════════════════════════════
 
-var DEFAULT_PACKAGING = [
-  { id:'bowl_container', name:'Bowl Container', qty:0, unit:'pcs', min:20, photo:null },
-  { id:'thali_plate',    name:'Thali Plate',    qty:0, unit:'pcs', min:30, photo:null },
-  { id:'parcel_box',     name:'Parcel Box',     qty:0, unit:'pcs', min:20, photo:null },
-  { id:'cups',           name:'Cups',           qty:0, unit:'pcs', min:50, photo:null },
-  { id:'covers_bags',    name:'Covers / Bags',  qty:0, unit:'pcs', min:50, photo:null },
-  { id:'tissue_paper',   name:'Tissue Paper',   qty:0, unit:'pcs', min:100, photo:null },
-];
 
 function initPackaging() {
   if (!state.packaging) {
