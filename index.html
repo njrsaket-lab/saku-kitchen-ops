@@ -614,6 +614,8 @@ textarea { resize: vertical; min-height: 70px; }
           <div style="font-size:11px;font-weight:800;color:var(--green-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📋 Customer Order List</div>
           <div id="bowl-customer-orders" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
           <button class="btn btn-success btn-sm" onclick="addBowlCustomer()" style="width:100%;justify-content:center;font-size:12px">＋ Add Customer Order</button>
+          <!-- Payment summary -->
+          <div id="bowl-payment-summary" style="display:none;margin-top:10px;padding:10px 12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200)"></div>
           <div style="display:flex;gap:8px;margin-top:10px">
             <button class="btn btn-outline btn-sm" onclick="viewPackingList()" style="flex:1;justify-content:center;font-size:11px">📦 View Packing List</button>
             <button class="btn btn-whatsapp btn-sm" onclick="sharePackingList()" style="flex:1;justify-content:center;font-size:11px">📲 Share to Employee</button>
@@ -679,6 +681,7 @@ textarea { resize: vertical; min-height: 70px; }
     <div class="tabs">
       <button class="tab active" onclick="switchExpTab('thali', this)">🍱 Thali Purchases</button>
       <button class="tab" onclick="switchExpTab('bowl', this)">🥗 Bowl Purchases</button>
+      <button class="tab" onclick="switchExpTab('other', this)">🔧 Other Expenses</button>
     </div>
 
     <div id="exp-thali-section">
@@ -732,6 +735,26 @@ textarea { resize: vertical; min-height: 70px; }
         </div>
         <div id="bowl-stock-usage"></div>
         <button class="btn btn-success btn-sm" style="margin-top:12px" onclick="saveBowlExpenses()">💾 Save Bowl Expenses</button>
+      </div>
+    </div>
+
+    <div id="exp-other-section" style="display:none">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header">
+          <span class="card-title">🔧 Other Expenses</span>
+          <button class="btn btn-primary btn-sm" onclick="addOtherExpenseRow()">＋ Add Expense</button>
+        </div>
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Maintenance, repairs, appliances, renovation, utilities, and any other kitchen investment</div>
+        <div id="other-expense-rows"></div>
+        <div class="divider"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:12px 16px;background:var(--red-pale);border-radius:var(--radius-sm);border:1.5px solid #fca5a5">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:.5px">Total Other Expenses</div>
+            <div style="font-size:11px;color:#b91c1c;margin-top:2px" id="other-exp-count">0 items</div>
+          </div>
+          <div style="font-size:22px;font-weight:800;color:#991b1b;font-family:var(--mono)" id="other-exp-total">₹0</div>
+        </div>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveOtherExpenses()">💾 Save Other Expenses</button>
       </div>
     </div>
   </div>
@@ -868,7 +891,7 @@ textarea { resize: vertical; min-height: 70px; }
     <div class="card-header"><span class="card-title">💸 Week Expense Summary</span></div>
     <table class="report-table" id="report-exp-table">
       <thead>
-        <tr><th>Day</th><th>Thali Purchases</th><th>Bowl Purchases</th><th>Total Day Expense</th></tr>
+        <tr><th>Day</th><th>Thali Purchases</th><th>Bowl Purchases</th><th>Other Expenses</th><th>Total Day Expense</th></tr>
       </thead>
       <tbody id="report-exp-body"></tbody>
       <tfoot id="report-exp-foot"></tfoot>
@@ -1755,6 +1778,20 @@ function saveThaliSales() {
   renderDailyDays();
 }
 
+function getPorterCost() {
+  var week = state.currentWeek; var day = state.selectedDay;
+  if (!week || !day) return 0;
+  return ((state.sales[week] || {})[day] || {}).porterCost || 0;
+}
+function savePorterCost(val) {
+  var week = state.currentWeek; var day = state.selectedDay;
+  if (!week || !day) return;
+  if (!state.sales[week]) state.sales[week] = {};
+  if (!state.sales[week][day]) state.sales[week][day] = {};
+  state.sales[week][day].porterCost = parseFloat(val) || 0;
+  save();
+}
+
 function saveBowlSales() {
   const week = state.currentWeek;
   const day = state.selectedDay;
@@ -1811,6 +1848,7 @@ function selectExpDay(day) {
 
   thaliExpRows = exp.thali_purchases ? JSON.parse(JSON.stringify(exp.thali_purchases)) : [];
   bowlExpRows = exp.bowl_purchases ? JSON.parse(JSON.stringify(exp.bowl_purchases)) : [];
+  otherExpRows = exp.other_expenses ? JSON.parse(JSON.stringify(exp.other_expenses)) : [];
 
   renderExpenseRows();
   renderStockUsage();
@@ -1995,6 +2033,8 @@ function switchExpTab(tab, btn) {
   btn.classList.add('active');
   document.getElementById('exp-thali-section').style.display = tab === 'thali' ? 'block' : 'none';
   document.getElementById('exp-bowl-section').style.display = tab === 'bowl' ? 'block' : 'none';
+  document.getElementById('exp-other-section').style.display = tab === 'other' ? 'block' : 'none';
+  if (tab === 'other') renderOtherExpenseRows();
 }
 
 function saveThaliExpenses() {
@@ -2035,7 +2075,151 @@ function saveExpenses(type) {
   renderExpenseDays();
 }
 
-// ═══════════════════════════════════ STOCK ═══════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// OTHER EXPENSES (Maintenance / Repair / Renovation)
+// ═══════════════════════════════════════════════════════
+
+var OTHER_EXP_CATEGORIES = [
+  'Gas Cylinder', 'Equipment Repair', 'New Appliance', 'Renovation',
+  'Electrical/Plumbing', 'Cleaning Supplies', 'Packaging (Bulk)',
+  'Staff Expense', 'Transport', 'Utilities', 'Other'
+];
+
+var otherExpRows = [];
+
+function renderOtherExpenseRows() {
+  var week = state.currentWeek;
+  var day = state.selectedDay;
+  if (!day) return;
+  var saved = ((state.expenses[week] || {})[day] || {}).other_expenses || [];
+  otherExpRows = saved.length ? JSON.parse(JSON.stringify(saved)) : otherExpRows;
+  renderOtherExpList();
+}
+
+function renderOtherExpList() {
+  var container = document.getElementById('other-expense-rows');
+  if (!container) return;
+  if (!otherExpRows.length) {
+    container.innerHTML = '<div style="text-align:center;padding:28px 20px;color:var(--gray-400)">'
+      + '<div style="font-size:28px;margin-bottom:8px">🔧</div>'
+      + '<div style="font-size:13px;font-weight:600;margin-bottom:4px">No other expenses logged</div>'
+      + '<div style="font-size:12px">Gas refill, repair, renovation, appliances...</div></div>';
+    document.getElementById('other-exp-total').textContent = '₹0';
+    document.getElementById('other-exp-count').textContent = '0 items';
+    return;
+  }
+
+  var catOptions = OTHER_EXP_CATEGORIES.map(function(c) {
+    return '<option value="' + c + '">' + c + '</option>';
+  }).join('');
+
+  var html = '';
+  otherExpRows.forEach(function(row, i) {
+    var nameVal = (row.name || '').replace(/"/g, '&quot;');
+    var notesVal = (row.notes || '').replace(/"/g, '&quot;');
+    var vendorVal = (row.vendor || '').replace(/"/g, '&quot;');
+    var catOptions2 = OTHER_EXP_CATEGORIES.map(function(c) {
+      return '<option value="' + c + '"' + (row.category === c ? ' selected' : '') + '>' + c + '</option>';
+    }).join('');
+
+    // Category color
+    var catColors = {
+      'Gas Cylinder':'#f97316','Equipment Repair':'#ef4444','New Appliance':'#8b5cf6',
+      'Renovation':'#0891b2','Electrical/Plumbing':'#d97706','Cleaning Supplies':'#16a34a',
+      'Packaging (Bulk)':'#0843C7','Staff Expense':'#db2777','Transport':'#92400e',
+      'Utilities':'#475569','Other':'#6b7280'
+    };
+    var catColor = catColors[row.category] || '#6b7280';
+
+    html += '<div style="background:white;border:1.5px solid #e5e7eb;border-left:4px solid ' + catColor + ';border-radius:var(--radius-sm);padding:14px;margin-bottom:10px">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
+    html += '<span style="font-size:11px;font-weight:700;color:' + catColor + ';text-transform:uppercase;letter-spacing:.5px">Expense #' + (i+1) + '</span>';
+    html += '<button class="btn btn-danger btn-sm" onclick="removeOtherExpRow(' + i + ')" style="padding:3px 10px;font-size:11px">Remove</button>';
+    html += '</div>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+    // Category + name
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+    html += '<div class="form-group" style="margin:0"><label>Category</label>';
+    html += '<select onchange="updateOtherExpRow(' + i + ',\'category\',this.value)" style="font-size:13px">' + catOptions2 + '</select></div>';
+    html += '<div class="form-group" style="margin:0"><label>Description</label>';
+    html += '<input type="text" placeholder="e.g. Mixer grinder repair" value="' + nameVal + '" oninput="updateOtherExpRow(' + i + ',\'name\',this.value)" style="font-size:13px;font-weight:600"></div>';
+    html += '</div>';
+    // Amount + vendor
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+    html += '<div class="form-group" style="margin:0"><label>₹ Amount</label>';
+    html += '<input type="number" placeholder="0" min="0" value="' + (row.amount||'') + '" oninput="updateOtherExpRow(' + i + ',\'amount\',parseFloat(this.value)||0);calcOtherExpTotal()" style="font-size:15px;font-weight:800;color:var(--red)"></div>';
+    html += '<div class="form-group" style="margin:0"><label>Paid to / Vendor</label>';
+    html += '<input type="text" placeholder="e.g. Raju Repair Shop" value="' + vendorVal + '" oninput="updateOtherExpRow(' + i + ',\'vendor\',this.value)"></div>';
+    html += '</div>';
+    // Notes + receipt photo
+    html += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end">';
+    html += '<div class="form-group" style="margin:0"><label>Notes</label>';
+    html += '<input type="text" placeholder="Optional details..." value="' + notesVal + '" oninput="updateOtherExpRow(' + i + ',\'notes\',this.value)"></div>';
+    if (row.photo) {
+      html += '<div style="position:relative"><img src="' + row.photo + '" style="width:56px;height:56px;border-radius:6px;object-fit:cover;border:2px solid var(--green);cursor:pointer" onclick="openLightbox(\'' + row.photo + '\')">';
+      html += '<label style="position:absolute;bottom:-4px;right:-4px;background:var(--blue);color:white;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer">📷<input type="file" accept="image/*" capture="environment" style="display:none" onchange="attachOtherExpPhoto(' + i + ',this)"></label></div>';
+    } else {
+      html += '<label style="width:56px;height:56px;border:2px dashed #d1d5db;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer;background:#f9fafb">';
+      html += '<span style="font-size:18px">📷</span><span style="font-size:8px;font-weight:700;color:#9ca3af">BILL</span>';
+      html += '<input type="file" accept="image/*" capture="environment" style="display:none" onchange="attachOtherExpPhoto(' + i + ',this)"></label>';
+    }
+    html += '</div>';
+    // Amount badge
+    html += '<div style="padding:8px 10px;background:#fef2f2;border-radius:6px;display:flex;justify-content:space-between;align-items:center">';
+    html += '<span style="font-size:12px;font-weight:600;color:#991b1b">' + (row.category||'Other') + (row.name ? ' — '+row.name : '') + '</span>';
+    html += '<span style="font-size:15px;font-weight:800;color:#991b1b;font-family:var(--mono)">₹' + ((parseFloat(row.amount)||0).toLocaleString('en-IN')) + '</span>';
+    html += '</div>';
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+  calcOtherExpTotal();
+}
+
+function addOtherExpenseRow() {
+  otherExpRows.push({ category: 'Other', name: '', amount: 0, vendor: '', notes: '', photo: null });
+  renderOtherExpList();
+}
+
+function removeOtherExpRow(i) {
+  otherExpRows.splice(i, 1);
+  renderOtherExpList();
+}
+
+function updateOtherExpRow(i, field, val) {
+  if (otherExpRows[i]) otherExpRows[i][field] = val;
+  if (field === 'amount') calcOtherExpTotal();
+  if (field === 'category') renderOtherExpList();
+}
+
+function calcOtherExpTotal() {
+  var total = otherExpRows.reduce(function(s, r) { return s + (parseFloat(r.amount)||0); }, 0);
+  var countEl = document.getElementById('other-exp-count');
+  var totalEl = document.getElementById('other-exp-total');
+  if (countEl) countEl.textContent = otherExpRows.length + (otherExpRows.length === 1 ? ' item' : ' items');
+  if (totalEl) totalEl.textContent = '₹' + total.toLocaleString('en-IN');
+}
+
+function attachOtherExpPhoto(i, input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    if (otherExpRows[i]) { otherExpRows[i].photo = e.target.result; renderOtherExpList(); }
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function saveOtherExpenses() {
+  var week = state.currentWeek;
+  var day = state.selectedDay;
+  if (!day) return alert('Please select a day first');
+  if (!state.expenses[week]) state.expenses[week] = {};
+  if (!state.expenses[week][day]) state.expenses[week][day] = {};
+  state.expenses[week][day].other_expenses = JSON.parse(JSON.stringify(otherExpRows));
+  save();
+  autoSync();
+  showToast('Other expenses saved ✓');
+  renderExpenseDays();
+}
 
 let currentFilter = 'all';
 
@@ -2236,14 +2420,16 @@ function generateReport() {
     const e = weekExp[day] || {};
     const thaliPurch = (e.thali_purchases || []).reduce((s, r) => s + (parseFloat(r.amount)||0), 0);
     const bowlPurch = (e.bowl_purchases || []).reduce((s, r) => s + (parseFloat(r.amount)||0), 0);
+    const otherPurch = (e.other_expenses || []).reduce((s, r) => s + (parseFloat(r.amount)||0), 0);
     totalThaliExp += thaliPurch;
     totalBowlExp += bowlPurch;
-    totalExp += thaliPurch + bowlPurch;
+    totalExp += thaliPurch + bowlPurch + otherPurch;
     return `<tr>
       <td><strong>${day}</strong></td>
       <td class="text-mono">₹${thaliPurch.toLocaleString('en-IN')}</td>
       <td class="text-mono">₹${bowlPurch.toLocaleString('en-IN')}</td>
-      <td class="text-mono fw-700">₹${(thaliPurch+bowlPurch).toLocaleString('en-IN')}</td>
+      <td class="text-mono">${otherPurch > 0 ? '₹'+otherPurch.toLocaleString('en-IN') : '—'}</td>
+      <td class="text-mono fw-700">₹${(thaliPurch+bowlPurch+otherPurch).toLocaleString('en-IN')}</td>
     </tr>`;
   }).join('');
 
@@ -3559,8 +3745,22 @@ function renderBowlCustomerOrders() {
     var sizeNote = o.size === 'half' ? ' Half' : ' Full';
     var delivTag = o.delivery ? ' Delivery' : ' Pickup';
 
-    html += '<div style="background:white;border-radius:8px;padding:10px 12px;border:1.5px solid #e5e7eb;margin-bottom:6px">';
-    
+    // Payment method styling
+    var pmCash    = o.payment === 'cash'    ? 'background:#16a34a;color:white;border-color:#16a34a' : 'background:white;color:var(--gray-600);border-color:#e5e7eb';
+    var pmUPI     = o.payment === 'upi'     ? 'background:#7c3aed;color:white;border-color:#7c3aed' : 'background:white;color:var(--gray-600);border-color:#e5e7eb';
+    var pmBalance = o.payment === 'balance' ? 'background:var(--blue);color:white;border-color:var(--blue)' : 'background:white;color:var(--gray-600);border-color:#e5e7eb';
+    var pmPending = o.payment === 'pending' ? 'background:var(--red);color:white;border-color:var(--red)' : 'background:white;color:var(--gray-600);border-color:#e5e7eb';
+
+    // Payment label for summary
+    var payLabel = o.payment === 'cash' ? '💵 Cash' : o.payment === 'upi' ? '📱 UPI' : o.payment === 'balance' ? '🏦 Balance' : '⏳ Pending';
+    var payColor = o.payment === 'cash' ? '#16a34a' : o.payment === 'upi' ? '#7c3aed' : o.payment === 'balance' ? 'var(--blue)' : 'var(--red)';
+
+    // Porter delivery
+    var isPorter = o.delivery && o.porter;
+    var porterVal = (o.porterCharge || '').toString().replace(/"/g, '&quot;');
+
+    html += '<div style="background:white;border-radius:8px;padding:10px 12px;border:1.5px solid ' + (o.payment === 'pending' ? '#fca5a5' : '#e5e7eb') + ';margin-bottom:6px">';
+
     // Name + remove
     html += '<div style="display:flex;gap:8px;margin-bottom:8px">';
     html += '<input type="text" value="' + nameVal + '" placeholder="Customer name" ';
@@ -3584,17 +3784,36 @@ function renderBowlCustomerOrders() {
 
     // Delivery fields
     if (o.delivery) {
-      html += '<div style="background:#e8eeff;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-bottom:6px">';
+      html += '<div style="background:#e8eeff;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px;margin-bottom:8px">';
       html += '<input type="tel" value="' + phoneVal + '" placeholder="Phone number" oninput="bowlOrderSetField(' + i + ',0,this.value)" style="font-size:12px;padding:5px 8px;border:1.5px solid #0843C7;border-radius:6px;font-family:Montserrat,sans-serif">';
       html += '<input type="text" value="' + addrVal + '" placeholder="Delivery address" oninput="bowlOrderSetField(' + i + ',1,this.value)" style="font-size:12px;padding:5px 8px;border:1.5px solid #0843C7;border-radius:6px;font-family:Montserrat,sans-serif">';
       html += '<input type="text" value="' + landmarkVal + '" placeholder="Landmark (near...)" oninput="bowlOrderSetField(' + i + ',2,this.value)" style="font-size:12px;padding:5px 8px;border:1.5px solid #0843C7;border-radius:6px;font-family:Montserrat,sans-serif">';
+      // Porter toggle
+      var porterBg = o.porter ? 'background:#f97316;color:white;border-color:#f97316' : 'background:white;color:var(--gray-600);border-color:#e5e7eb';
+      html += '<button onclick="togglePorter(' + i + ')" style="padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + porterBg + '">🛵 Porter Delivery</button>';
       html += '</div>';
     }
 
-    html += '<div style="font-size:11px;color:#0843C7;font-weight:700">Rs.' + orderTotal + sizeNote + ' |' + delivTag + '</div>';
+    // Payment method row
+    html += '<div style="margin-bottom:6px">';
+    html += '<div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Payment</div>';
+    html += '<div style="display:flex;gap:5px;flex-wrap:wrap">';
+    html += '<button onclick="setBowlPayment(' + i + ',\'cash\')" style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + pmCash + '">💵 Cash</button>';
+    html += '<button onclick="setBowlPayment(' + i + ',\'upi\')" style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + pmUPI + '">📱 UPI</button>';
+    html += '<button onclick="setBowlPayment(' + i + ',\'balance\')" style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + pmBalance + '">🏦 Balance</button>';
+    html += '<button onclick="setBowlPayment(' + i + ',\'pending\')" style="padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + pmPending + '">⏳ Pending</button>';
+    html += '</div>';
+    html += '</div>';
+
+    // Summary line
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding-top:6px;border-top:1px solid #f3f4f6">';
+    html += '<span style="font-size:11px;color:' + payColor + ';font-weight:700">' + payLabel + '</span>';
+    html += '<span style="font-size:13px;font-weight:800;color:#0843C7">Rs.' + orderTotal + sizeNote + ' |' + delivTag + (o.porter ? ' 🛵' : '') + '</span>';
+    html += '</div>';
     html += '</div>';
   }
   container.innerHTML = html;
+  updateBowlPaymentSummary();
 }
 
 function bowlOrderSetName(i, val) { updateBowlOrder(i, 'name', val); }
@@ -3604,8 +3823,47 @@ function bowlOrderSetField(i, fieldIdx, val) {
 }
 function setDelivery(i, isDelivery) {
   var orders = getBowlOrders();
-  if (orders[i]) { orders[i].delivery = !!isDelivery; saveBowlOrders(); }
+  if (orders[i]) { orders[i].delivery = !!isDelivery; if (!isDelivery) orders[i].porter = false; saveBowlOrders(); }
   renderBowlCustomerOrders();
+}
+function setBowlPayment(i, method) {
+  var orders = getBowlOrders();
+  if (orders[i]) { orders[i].payment = method; saveBowlOrders(); }
+  renderBowlCustomerOrders();
+  updateBowlPaymentSummary();
+}
+function togglePorter(i) {
+  var orders = getBowlOrders();
+  if (orders[i]) { orders[i].porter = !orders[i].porter; saveBowlOrders(); }
+  renderBowlCustomerOrders();
+}
+function updateBowlPaymentSummary() {
+  var orders = getBowlOrders();
+  var cash = 0, upi = 0, balance = 0, pending = 0, porterCount = 0;
+  orders.forEach(function(o) {
+    var amt = 280 + (o.juice ? 70 : 0);
+    if (o.payment === 'cash') cash += amt;
+    else if (o.payment === 'upi') upi += amt;
+    else if (o.payment === 'balance') balance += amt;
+    else pending += amt;
+    if (o.porter) porterCount++;
+  });
+  var el = document.getElementById('bowl-payment-summary');
+  if (!el) return;
+  if (!orders.length) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">'
+    + '<div style="background:#dcfce7;border-radius:6px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:#16a34a">💵 CASH</div><div style="font-size:15px;font-weight:800;color:#16a34a">₹' + cash + '</div></div>'
+    + '<div style="background:#ede9fe;border-radius:6px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:#7c3aed">📱 UPI</div><div style="font-size:15px;font-weight:800;color:#7c3aed">₹' + upi + '</div></div>'
+    + '<div style="background:var(--blue-pale);border-radius:6px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--blue)">🏦 BALANCE</div><div style="font-size:15px;font-weight:800;color:var(--blue)">₹' + balance + '</div></div>'
+    + '<div style="background:var(--red-pale);border-radius:6px;padding:8px;text-align:center"><div style="font-size:10px;font-weight:700;color:var(--red)">⏳ PENDING</div><div style="font-size:15px;font-weight:800;color:var(--red)">₹' + pending + '</div></div>'
+    + '</div>'
+    + (porterCount > 0 ? '<div style="background:#fff7ed;border:1px solid #f97316;border-radius:6px;padding:8px 12px;display:flex;align-items:center;justify-content:space-between">'
+      + '<div><div style="font-size:11px;font-weight:700;color:#ea580c">🛵 Porter Orders: ' + porterCount + '</div>'
+      + '<div style="font-size:10px;color:#9ca3af;margin-top:2px">Enter total porter cost below</div></div>'
+      + '<div style="display:flex;align-items:center;gap:6px"><span style="font-size:13px;font-weight:700;color:#ea580c">₹</span>'
+      + '<input type="number" id="porter-daily-cost" min="0" placeholder="0" value="' + (getPorterCost()) + '" oninput="savePorterCost(this.value)" style="width:80px;font-size:15px;font-weight:800;color:#ea580c;border:1.5px solid #f97316;border-radius:6px;padding:4px 8px;font-family:Montserrat,sans-serif">'
+      + '</div></div>' : '');
 }
 
 
