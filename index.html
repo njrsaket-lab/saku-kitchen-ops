@@ -682,6 +682,7 @@ textarea { resize: vertical; min-height: 70px; }
       <button class="tab active" onclick="switchExpTab('thali', this)">🍱 Thali Purchases</button>
       <button class="tab" onclick="switchExpTab('bowl', this)">🥗 Bowl Purchases</button>
       <button class="tab" onclick="switchExpTab('other', this)">🔧 Other Expenses</button>
+      <button class="tab" onclick="switchExpTab('porter', this)">🛵 Porter</button>
     </div>
 
     <div id="exp-thali-section">
@@ -755,6 +756,32 @@ textarea { resize: vertical; min-height: 70px; }
           <div style="font-size:22px;font-weight:800;color:#991b1b;font-family:var(--mono)" id="other-exp-total">₹0</div>
         </div>
         <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="saveOtherExpenses()">💾 Save Other Expenses</button>
+      </div>
+    </div>
+
+    <!-- PORTER SECTION -->
+    <div id="exp-porter-section" style="display:none">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-header">
+          <span class="card-title">🛵 Porter Delivery Charges</span>
+          <button class="btn btn-primary btn-sm" onclick="addPorterRow()">＋ Add Delivery</button>
+        </div>
+        <div style="font-size:12px;color:var(--gray-400);margin-bottom:14px">Log each Porter delivery — customer name, destination, and what was charged</div>
+
+        <!-- Daily Porter total summary -->
+        <div id="porter-daily-summary" style="background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1.5px solid #f97316;border-radius:var(--radius-sm);padding:14px;margin-bottom:14px;display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#ea580c;text-transform:uppercase;letter-spacing:.5px">Today's Porter Spend</div>
+              <div style="font-size:11px;color:#9a3412;margin-top:2px" id="porter-trip-count">0 deliveries</div>
+            </div>
+            <div style="font-size:26px;font-weight:800;color:#ea580c;font-family:var(--mono)" id="porter-day-total">₹0</div>
+          </div>
+        </div>
+
+        <div id="porter-expense-rows"></div>
+
+        <button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="savePorterExpenses()">💾 Save Porter Records</button>
       </div>
     </div>
   </div>
@@ -891,7 +918,7 @@ textarea { resize: vertical; min-height: 70px; }
     <div class="card-header"><span class="card-title">💸 Week Expense Summary</span></div>
     <table class="report-table" id="report-exp-table">
       <thead>
-        <tr><th>Day</th><th>Thali Purchases</th><th>Bowl Purchases</th><th>Other Expenses</th><th>Total Day Expense</th></tr>
+        <tr><th>Day</th><th>Thali Purchases</th><th>Bowl Purchases</th><th>Other Expenses</th><th>Porter Charges</th><th>Total Day Expense</th></tr>
       </thead>
       <tbody id="report-exp-body"></tbody>
       <tfoot id="report-exp-foot"></tfoot>
@@ -1849,6 +1876,7 @@ function selectExpDay(day) {
   thaliExpRows = exp.thali_purchases ? JSON.parse(JSON.stringify(exp.thali_purchases)) : [];
   bowlExpRows = exp.bowl_purchases ? JSON.parse(JSON.stringify(exp.bowl_purchases)) : [];
   otherExpRows = exp.other_expenses ? JSON.parse(JSON.stringify(exp.other_expenses)) : [];
+  porterExpRows = exp.porter_expenses ? JSON.parse(JSON.stringify(exp.porter_expenses)) : [];
 
   renderExpenseRows();
   renderStockUsage();
@@ -2034,7 +2062,9 @@ function switchExpTab(tab, btn) {
   document.getElementById('exp-thali-section').style.display = tab === 'thali' ? 'block' : 'none';
   document.getElementById('exp-bowl-section').style.display = tab === 'bowl' ? 'block' : 'none';
   document.getElementById('exp-other-section').style.display = tab === 'other' ? 'block' : 'none';
+  document.getElementById('exp-porter-section').style.display = tab === 'porter' ? 'block' : 'none';
   if (tab === 'other') renderOtherExpenseRows();
+  if (tab === 'porter') renderPorterRows();
 }
 
 function saveThaliExpenses() {
@@ -2218,6 +2248,145 @@ function saveOtherExpenses() {
   save();
   autoSync();
   showToast('Other expenses saved ✓');
+  renderExpenseDays();
+}
+
+// ═══════════════════════════════════════════════════════
+// PORTER EXPENSES
+// ═══════════════════════════════════════════════════════
+
+var porterExpRows = [];
+
+function renderPorterRows() {
+  var week = state.currentWeek;
+  var day = state.selectedDay;
+  if (!day) return;
+  var saved = ((state.expenses[week] || {})[day] || {}).porter_expenses || [];
+  if (saved.length) porterExpRows = JSON.parse(JSON.stringify(saved));
+  renderPorterList();
+}
+
+function renderPorterList() {
+  var container = document.getElementById('porter-expense-rows');
+  if (!container) return;
+
+  // Update summary
+  var total = porterExpRows.reduce(function(s, r) { return s + (parseFloat(r.charge) || 0); }, 0);
+  var summaryEl = document.getElementById('porter-daily-summary');
+  var totalEl = document.getElementById('porter-day-total');
+  var countEl = document.getElementById('porter-trip-count');
+  if (summaryEl) summaryEl.style.display = porterExpRows.length ? 'block' : 'none';
+  if (totalEl) totalEl.textContent = '₹' + total.toLocaleString('en-IN');
+  if (countEl) countEl.textContent = porterExpRows.length + (porterExpRows.length === 1 ? ' delivery' : ' deliveries') + ' · Total porter spend today';
+
+  if (!porterExpRows.length) {
+    container.innerHTML = '<div style="text-align:center;padding:28px 20px;color:var(--gray-400)">'
+      + '<div style="font-size:32px;margin-bottom:8px">🛵</div>'
+      + '<div style="font-size:13px;font-weight:600;margin-bottom:4px">No porter deliveries logged</div>'
+      + '<div style="font-size:12px">Tap "+ Add Delivery" to record each Porter trip</div></div>';
+    return;
+  }
+
+  var html = '';
+  porterExpRows.forEach(function(row, i) {
+    var custVal     = (row.customerName || '').replace(/"/g, '&quot;');
+    var phoneVal    = (row.phone || '').replace(/"/g, '&quot;');
+    var addrVal     = (row.address || '').replace(/"/g, '&quot;');
+    var landmarkVal = (row.landmark || '').replace(/"/g, '&quot;');
+    var orderVal    = (row.orderDetails || '').replace(/"/g, '&quot;');
+    var notesVal    = (row.notes || '').replace(/"/g, '&quot;');
+    var charge      = parseFloat(row.charge) || 0;
+
+    // Payment method buttons
+    var pmCash    = row.payment === 'cash'    ? 'background:#16a34a;color:white;border-color:#16a34a' : 'background:white;color:#4b5563;border-color:#e5e7eb';
+    var pmUPI     = row.payment === 'upi'     ? 'background:#7c3aed;color:white;border-color:#7c3aed' : 'background:white;color:#4b5563;border-color:#e5e7eb';
+    var pmPending = row.payment === 'pending' ? 'background:var(--red);color:white;border-color:var(--red)' : 'background:white;color:#4b5563;border-color:#e5e7eb';
+
+    html += '<div style="background:white;border:1.5px solid #fed7aa;border-left:4px solid #f97316;border-radius:var(--radius-sm);padding:14px;margin-bottom:12px">';
+
+    // Header: trip number + remove
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
+    html += '<div style="display:flex;align-items:center;gap:8px">';
+    html += '<div style="width:28px;height:28px;background:#f97316;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800">' + (i+1) + '</div>';
+    html += '<span style="font-size:12px;font-weight:700;color:#ea580c;text-transform:uppercase;letter-spacing:.5px">Porter Trip #' + (i+1) + '</span>';
+    html += '</div>';
+    html += '<button onclick="removePorterRow(' + i + ')" style="padding:3px 10px;background:#fee2e2;color:#ef4444;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:11px">Remove</button>';
+    html += '</div>';
+
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+
+    // Customer name + phone
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+    html += '<div class="form-group" style="margin:0"><label>Customer Name</label>';
+    html += '<input type="text" placeholder="e.g. Priya Shah" value="' + custVal + '" oninput="updatePorterRow(' + i + ',\'customerName\',this.value)" style="font-size:13px;font-weight:700"></div>';
+    html += '<div class="form-group" style="margin:0"><label>Phone</label>';
+    html += '<input type="tel" placeholder="10-digit number" value="' + phoneVal + '" oninput="updatePorterRow(' + i + ',\'phone\',this.value)" style="font-size:13px"></div>';
+    html += '</div>';
+
+    // Address + landmark
+    html += '<div class="form-group" style="margin:0"><label>Delivery Address</label>';
+    html += '<input type="text" placeholder="Full delivery address" value="' + addrVal + '" oninput="updatePorterRow(' + i + ',\'address\',this.value)" style="font-size:13px"></div>';
+    html += '<div class="form-group" style="margin:0"><label>Landmark</label>';
+    html += '<input type="text" placeholder="Near..." value="' + landmarkVal + '" oninput="updatePorterRow(' + i + ',\'landmark\',this.value)" style="font-size:12px"></div>';
+
+    // Order details + Porter charge
+    html += '<div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end">';
+    html += '<div class="form-group" style="margin:0"><label>Order Details</label>';
+    html += '<input type="text" placeholder="e.g. 1 Full Bowl + Juice" value="' + orderVal + '" oninput="updatePorterRow(' + i + ',\'orderDetails\',this.value)" style="font-size:12px"></div>';
+    html += '<div class="form-group" style="margin:0"><label>Porter Charge ₹</label>';
+    html += '<input type="number" placeholder="0" min="0" value="' + (row.charge || '') + '" oninput="updatePorterRow(' + i + ',\'charge\',parseFloat(this.value)||0);renderPorterList()" style="width:90px;font-size:16px;font-weight:800;color:#f97316;border:1.5px solid #f97316;border-radius:6px;padding:5px 8px;font-family:Montserrat,sans-serif"></div>';
+    html += '</div>';
+
+    // Payment method for Porter charge
+    html += '<div>';
+    html += '<div style="font-size:10px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Porter Payment Method</div>';
+    html += '<div style="display:flex;gap:6px">';
+    html += '<button onclick="updatePorterRow(' + i + ',\'payment\',\'cash\');renderPorterList()" style="flex:1;padding:5px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + pmCash + '">💵 Cash</button>';
+    html += '<button onclick="updatePorterRow(' + i + ',\'payment\',\'upi\');renderPorterList()" style="flex:1;padding:5px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + pmUPI + '">📱 UPI</button>';
+    html += '<button onclick="updatePorterRow(' + i + ',\'payment\',\'pending\');renderPorterList()" style="flex:1;padding:5px;border-radius:6px;font-size:11px;font-weight:700;border:1.5px solid;cursor:pointer;' + pmPending + '">⏳ Pending</button>';
+    html += '</div></div>';
+
+    // Notes
+    html += '<div class="form-group" style="margin:0"><label>Notes (optional)</label>';
+    html += '<input type="text" placeholder="e.g. Late delivery, customer called..." value="' + notesVal + '" oninput="updatePorterRow(' + i + ',\'notes\',this.value)" style="font-size:12px"></div>';
+
+    // Summary badge
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#fff7ed;border-radius:6px;border:1px solid #fed7aa">';
+    html += '<span style="font-size:12px;font-weight:700;color:#9a3412">' + (row.customerName || 'Customer ' + (i+1)) + (row.address ? ' · ' + row.address : '') + '</span>';
+    html += '<span style="font-size:16px;font-weight:800;color:#f97316;font-family:var(--mono)">₹' + charge.toLocaleString('en-IN') + '</span>';
+    html += '</div>';
+
+    html += '</div></div>';
+  });
+
+  container.innerHTML = html;
+}
+
+function addPorterRow() {
+  porterExpRows.push({ customerName: '', phone: '', address: '', landmark: '', orderDetails: '', charge: 0, payment: 'cash', notes: '' });
+  renderPorterList();
+}
+
+function removePorterRow(i) {
+  porterExpRows.splice(i, 1);
+  renderPorterList();
+}
+
+function updatePorterRow(i, field, val) {
+  if (porterExpRows[i]) porterExpRows[i][field] = val;
+}
+
+function savePorterExpenses() {
+  var week = state.currentWeek;
+  var day = state.selectedDay;
+  if (!day) return alert('Please select a day first');
+  if (!state.expenses[week]) state.expenses[week] = {};
+  if (!state.expenses[week][day]) state.expenses[week][day] = {};
+  state.expenses[week][day].porter_expenses = JSON.parse(JSON.stringify(porterExpRows));
+  save();
+  autoSync();
+  var total = porterExpRows.reduce(function(s, r) { return s + (parseFloat(r.charge) || 0); }, 0);
+  showToast(porterExpRows.length + ' porter records saved · Total ₹' + total + ' ✓');
   renderExpenseDays();
 }
 
@@ -2421,15 +2590,17 @@ function generateReport() {
     const thaliPurch = (e.thali_purchases || []).reduce((s, r) => s + (parseFloat(r.amount)||0), 0);
     const bowlPurch = (e.bowl_purchases || []).reduce((s, r) => s + (parseFloat(r.amount)||0), 0);
     const otherPurch = (e.other_expenses || []).reduce((s, r) => s + (parseFloat(r.amount)||0), 0);
+    const porterPurch = (e.porter_expenses || []).reduce((s, r) => s + (parseFloat(r.charge)||0), 0);
     totalThaliExp += thaliPurch;
     totalBowlExp += bowlPurch;
-    totalExp += thaliPurch + bowlPurch + otherPurch;
+    totalExp += thaliPurch + bowlPurch + otherPurch + porterPurch;
     return `<tr>
       <td><strong>${day}</strong></td>
       <td class="text-mono">₹${thaliPurch.toLocaleString('en-IN')}</td>
       <td class="text-mono">₹${bowlPurch.toLocaleString('en-IN')}</td>
       <td class="text-mono">${otherPurch > 0 ? '₹'+otherPurch.toLocaleString('en-IN') : '—'}</td>
-      <td class="text-mono fw-700">₹${(thaliPurch+bowlPurch+otherPurch).toLocaleString('en-IN')}</td>
+      <td class="text-mono">${porterPurch > 0 ? '₹'+porterPurch.toLocaleString('en-IN') : '—'}</td>
+      <td class="text-mono fw-700">₹${(thaliPurch+bowlPurch+otherPurch+porterPurch).toLocaleString('en-IN')}</td>
     </tr>`;
   }).join('');
 
