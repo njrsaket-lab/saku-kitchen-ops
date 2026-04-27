@@ -972,209 +972,261 @@ textarea { resize: vertical; min-height: 70px; }
 
 var BOWL_INGREDIENTS = {
   Monday: [
-    { en: 'Chavali (Lobhia)', mr: 'चवळी (लोबिया)' },
-    { en: 'Kala Mung', mr: 'काळा मूग' },
-    { en: 'Peanut Butter', mr: 'शेंगदाणा बटर' },
-    { en: 'Fresh Orange Juice', mr: 'ताज्या संत्र्याचा रस' },
-    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
-    { en: 'Smoked Paprika', mr: 'स्मोक्ड पाप्रिका' },
-    { en: 'Oil', mr: 'तेल' },
-    { en: 'Mustard Seeds', mr: 'मोहरी' },
-    { en: 'Curry Leaves', mr: 'कढीपत्ता' },
-    { en: 'Green Chilli', mr: 'हिरवी मिरची' },
-    { en: 'Lal Math (Amaranth Leaves)', mr: 'लाल माठ' },
-    { en: 'Besan (Chickpea Flour)', mr: 'बेसन' },
-    { en: 'Garlic', mr: 'लसूण' },
-    { en: 'Shengdana Chikki (Peanut Brittle)', mr: 'शेंगदाणा चिक्की' },
-    { en: 'Varai (Barnyard Millet)', mr: 'वरई (सांवा)' },
-    { en: 'Curd', mr: 'दही' },
-    { en: 'Kashmiri Red Chilli', mr: 'काश्मिरी लाल तिखट' },
-    { en: 'Nutmeg Powder', mr: 'जायफळ पूड' },
-    { en: 'Oregano', mr: 'ओरेगानो' },
-    { en: 'Cucumber', mr: 'काकडी' },
-    { en: 'Carrot', mr: 'गाजर' },
-    { en: 'Pomegranate Seeds', mr: 'डाळिंब दाणे' },
-    { en: 'Fresh Berries (optional)', mr: 'ताज्या बेरीज (ऐच्छिक)' },
-    { en: 'Coriander', mr: 'कोथिंबीर' },
-    { en: 'Mint (Pudina)', mr: 'पुदीना' },
-    { en: 'Salt', mr: 'मीठ' },
+    // Protein
+    { en: 'Soya chunks', mr: 'सोया चंक्स', section: 'Protein' },
+    { en: 'Chaat masala', mr: 'चाट मसाला', section: 'Protein' },
+    { en: 'Dry mango powder (amchur)', mr: 'आमचूर', section: 'Protein' },
+    { en: 'Red chilli powder', mr: 'लाल तिखट', section: 'Protein' },
+    { en: 'Roasted cumin powder', mr: 'भाजलेले जिरे पूड', section: 'Protein' },
+    { en: 'Black salt', mr: 'काळं मीठ', section: 'Protein' },
+    { en: 'Jaggery powder', mr: 'गूळ पूड', section: 'Protein' },
+    { en: 'Lemon juice', mr: 'लिंबाचा रस', section: 'Protein' },
+    { en: 'Oil', mr: 'तेल', section: 'Protein' },
+    // Leafy base
+    { en: 'Lettuce', mr: 'लेट्यूस', section: 'Leafy Base' },
+    { en: 'Mint leaves', mr: 'पुदिन्याची पाने', section: 'Leafy Base' },
+    { en: 'Fresh coriander', mr: 'कोथिंबीर', section: 'Leafy Base' },
+    { en: 'Black pepper', mr: 'काळी मिरी', section: 'Leafy Base' },
+    // Grain base
+    { en: 'Varai / sama millet', mr: 'वरई / सामा', section: 'Grain Base' },
+    { en: 'Sweet corn', mr: 'स्वीट कॉर्न', section: 'Grain Base' },
+    { en: 'Bell pepper', mr: 'ढोबळी मिरची', section: 'Grain Base' },
+    { en: 'Carrot', mr: 'गाजर', section: 'Grain Base' },
+    { en: 'Garlic', mr: 'लसूण', section: 'Grain Base' },
+    { en: 'Olive oil', mr: 'ऑलिव्ह ऑईल', section: 'Grain Base' },
+    { en: 'Mixed herbs / oregano', mr: 'मिक्स हर्ब्स / ओरेगानो', section: 'Grain Base' },
+    { en: 'Chilli flakes', mr: 'चिली फ्लेक्स', section: 'Grain Base' },
+    { en: 'Salt', mr: 'मीठ', section: 'Grain Base' },
+    // Toppings
+    { en: 'Pomegranate seeds', mr: 'डाळिंब दाणे', section: 'Toppings' },
+    { en: 'Amla candy', mr: 'आवळा कँडी', section: 'Toppings' },
+    // Dressing
+    { en: 'Beetroot', mr: 'बीट', section: 'Dressing' },
+    { en: 'Curd / yogurt', mr: 'दही', section: 'Dressing' },
+    { en: 'Green chilli', mr: 'हिरवी मिरची', section: 'Dressing' },
   ],
   Tuesday: [
-    { en: 'Boiled Rajma (Kidney Beans)', mr: 'उकडलेले राजमा' },
-    { en: 'Boiled Kabuli Chana (Chole)', mr: 'उकडलेले काबुली चणे (छोले)' },
-    { en: 'Sprouted Mung', mr: 'मोड आलेले मूग' },
-    { en: 'Tamarind Chutney', mr: 'चिंचेची चटणी' },
-    { en: 'Green Chutney', mr: 'हिरवी चटणी' },
-    { en: 'Chaat Masala', mr: 'चाट मसाला' },
-    { en: 'Red Chilli Powder', mr: 'लाल तिखट' },
-    { en: 'Black Salt', mr: 'काळं मीठ' },
-    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
-    { en: 'Ragi Puffs / Ragi Murmura', mr: 'रागी पफ्स / रागी मुरमुरा' },
-    { en: 'Roasted Peanuts', mr: 'भाजलेले शेंगदाणे' },
-    { en: 'Curry Leaves', mr: 'कढीपत्ता' },
-    { en: 'Mustard Seeds', mr: 'मोहरी' },
-    { en: 'Ghee', mr: 'तूप' },
-    { en: 'Turmeric', mr: 'हळद' },
-    { en: 'Iceberg Lettuce', mr: 'आइसबर्ग लेट्यूस' },
-    { en: 'French Beans', mr: 'फ्रेंच बीन्स' },
-    { en: 'Sweet Corn', mr: 'स्वीट कॉर्न' },
-    { en: 'Boiled Potato', mr: 'उकडलेला बटाटा' },
-    { en: 'Sambhar Powder', mr: 'सांबार पावडर' },
-    { en: 'Roasted Walnuts', mr: 'अक्रोड (भाजलेले)' },
-    { en: 'Bel Candy', mr: 'बेल कँडी' },
-    { en: 'Thick Curd', mr: 'घट्ट दही' },
-    { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पूड' },
-    { en: 'Dry Red Chilli', mr: 'सुक्या लाल मिरच्या' },
-    { en: 'Salt', mr: 'मीठ' },
+    // Protein
+    { en: 'Paneer cubes', mr: 'पनीर क्यूब्स', section: 'Protein' },
+    { en: 'Boiled chickpeas (harbara)', mr: 'उकडलेले हरभरे', section: 'Protein' },
+    { en: 'Pineapple chutney', mr: 'अननस चटणी', section: 'Protein' },
+    { en: 'Jaggery', mr: 'गूळ', section: 'Protein' },
+    { en: 'Red chilli powder / paprika', mr: 'लाल तिखट / पाप्रिका', section: 'Protein' },
+    { en: 'Ginger', mr: 'आले', section: 'Protein' },
+    { en: 'Cumin seeds', mr: 'जिरे', section: 'Protein' },
+    { en: 'Oil', mr: 'तेल', section: 'Protein' },
+    // Leafy base
+    { en: 'Spinach', mr: 'पालक', section: 'Leafy Base' },
+    { en: 'Garlic', mr: 'लसूण', section: 'Leafy Base' },
+    { en: 'Chaat masala', mr: 'चाट मसाला', section: 'Leafy Base' },
+    { en: 'Sambar masala', mr: 'सांबार मसाला', section: 'Leafy Base' },
+    // Grain base
+    { en: 'Brown rice', mr: 'ब्राऊन तांदूळ', section: 'Grain Base' },
+    { en: 'Curd / yogurt', mr: 'दही', section: 'Grain Base' },
+    { en: 'Baby corn', mr: 'बेबी कॉर्न', section: 'Grain Base' },
+    { en: 'Carrot', mr: 'गाजर', section: 'Grain Base' },
+    { en: 'Potato cubes', mr: 'बटाटा क्यूब्स', section: 'Grain Base' },
+    { en: 'Mustard seeds', mr: 'मोहरी', section: 'Grain Base' },
+    { en: 'Curry leaves', mr: 'कढीपत्ता', section: 'Grain Base' },
+    { en: 'Green chilli', mr: 'हिरवी मिरची', section: 'Grain Base' },
+    // Toppings
+    { en: 'Pineapple cubes', mr: 'अननस क्यूब्स', section: 'Toppings' },
+    { en: 'Roasted / salted peanuts', mr: 'भाजलेले शेंगदाणे', section: 'Toppings' },
+    // Dressing
+    { en: 'Kokum', mr: 'कोकम', section: 'Dressing' },
+    { en: 'Tomato pulp', mr: 'टोमॅटो प्युरी', section: 'Dressing' },
+    { en: 'Rasam powder', mr: 'रसम पावडर', section: 'Dressing' },
+    { en: 'Roasted cumin powder', mr: 'भाजलेले जिरे पूड', section: 'Dressing' },
+    { en: 'Black salt', mr: 'काळं मीठ', section: 'Dressing' },
   ],
   Wednesday: [
-    { en: 'Paneer', mr: 'पनीर' },
-    { en: 'Olive Oil', mr: 'ऑलिव्ह ऑईल' },
-    { en: 'Garlic', mr: 'लसूण' },
-    { en: 'Zaatar / Dry Oregano', mr: 'झातार / सुकं ओरिगॅनो' },
-    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
-    { en: 'Black Pepper Powder', mr: 'काळी मिरी पूड' },
-    { en: 'Brown Rice (cooked)', mr: 'ब्राऊन तांदूळ (शिजवलेले)' },
-    { en: 'Ambat Chuka (Sorrel)', mr: 'आंबट चूका' },
-    { en: 'Boiled Peanuts', mr: 'उकडलेले शेंगदाणे' },
-    { en: 'Mustard Seeds', mr: 'मोहरी' },
-    { en: 'Curry Leaves', mr: 'कढीपत्ता' },
-    { en: 'Green Chilli', mr: 'हिरवी मिरची' },
-    { en: 'Turmeric', mr: 'हळद' },
-    { en: 'Capsicum / Bell Pepper', mr: 'ढोबळी मिरची' },
-    { en: 'Carrot', mr: 'गाजर' },
-    { en: 'Beetroot', mr: 'बीट' },
-    { en: 'Rasam Powder', mr: 'रसम पावडर' },
-    { en: 'Pineapple', mr: 'अननस' },
-    { en: 'Roasted Harbara / Futana (crushed)', mr: 'भाजलेला हरभरा (फुटाणा)' },
-    { en: 'Fresh Coconut (grated)', mr: 'ताजा नारळ (खवलेला)' },
-    { en: 'Salt', mr: 'मीठ' },
+    // Protein + grain
+    { en: 'Rajma (kidney beans)', mr: 'राजमा', section: 'Protein + Grain' },
+    { en: 'Quinoa', mr: 'क्विनोआ', section: 'Protein + Grain' },
+    { en: 'Ambat chuka / sorrel leaves', mr: 'अंबट चुका', section: 'Protein + Grain' },
+    { en: 'Onion', mr: 'कांदा', section: 'Protein + Grain' },
+    { en: 'Garlic', mr: 'लसूण', section: 'Protein + Grain' },
+    { en: 'Ginger', mr: 'आले', section: 'Protein + Grain' },
+    { en: 'Green chilli', mr: 'हिरवी मिरची', section: 'Protein + Grain' },
+    { en: 'Roasted cumin powder', mr: 'भाजलेले जिरे पूड', section: 'Protein + Grain' },
+    { en: 'Black pepper', mr: 'काळी मिरी', section: 'Protein + Grain' },
+    { en: 'Soy sauce (optional)', mr: 'सोया सॉस (ऐच्छिक)', section: 'Protein + Grain' },
+    { en: 'Oil', mr: 'तेल', section: 'Protein + Grain' },
+    // Leafy base
+    { en: 'Fresh sorrel / ambat chuka', mr: 'अंबट चुका पाने', section: 'Leafy Base' },
+    { en: 'Lemon juice / sesame oil', mr: 'लिंबू / तीळ तेल', section: 'Leafy Base' },
+    // Vegetables
+    { en: 'Cabbage', mr: 'पत्ता कोबी', section: 'Vegetables' },
+    { en: 'Beetroot', mr: 'बीट', section: 'Vegetables' },
+    { en: 'Podi masala', mr: 'पोडी मसाला', section: 'Vegetables' },
+    { en: 'Tamarind water', mr: 'चिंच पाणी', section: 'Vegetables' },
+    { en: 'Sesame seeds', mr: 'तीळ', section: 'Vegetables' },
+    // Toppings
+    { en: 'Grapes', mr: 'द्राक्षे', section: 'Toppings' },
+    { en: 'Almonds', mr: 'बदाम', section: 'Toppings' },
+    { en: 'Cashews', mr: 'काजू', section: 'Toppings' },
+    { en: 'Jaggery (for caramelising)', mr: 'गूळ (कॅरमलसाठी)', section: 'Toppings' },
+    // Dressing
+    { en: 'Curd / yogurt', mr: 'दही', section: 'Dressing' },
+    { en: 'Mango / papaya', mr: 'आंबा / पपई', section: 'Dressing' },
+    { en: 'Roasted cumin powder', mr: 'भाजलेले जिरे पूड', section: 'Dressing' },
+    { en: 'Black salt', mr: 'काळं मीठ', section: 'Dressing' },
+    { en: 'Black pepper', mr: 'काळी मिरी', section: 'Dressing' },
   ],
   Thursday: [
-    { en: 'Kabuli Chana (Chickpeas)', mr: 'काबुली चणे' },
-    { en: 'Ginger', mr: 'आलं' },
-    { en: 'Garlic', mr: 'लसूण' },
-    { en: 'Green Chilli', mr: 'हिरवी मिरची' },
-    { en: 'Soy Sauce (low sodium)', mr: 'सोया सॉस (लो सोडियम)' },
-    { en: 'Black Pepper Powder', mr: 'काळी मिरी पूड' },
-    { en: 'Red Chilli Sauce / Paste', mr: 'रेड चिली सॉस / पेस्ट' },
-    { en: 'Spring Onion', mr: 'स्प्रिंग ऑनियन' },
-    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
-    { en: 'Cabbage', mr: 'पत्ता कोबी' },
-    { en: 'Baby Corn', mr: 'बेबी कॉर्न' },
-    { en: 'Capsicum', mr: 'सिमला मिरची' },
-    { en: 'Vinegar', mr: 'व्हिनेगर' },
-    { en: 'Fenugreek Leaves (Methi)', mr: 'ताजी मेथी' },
-    { en: 'Red Rice / Millet Noodles / Daliya', mr: 'लाल तांदूळ / मिलेट नूडल्स / दलिया' },
-    { en: 'Sweet Potato', mr: 'रताळे' },
-    { en: 'Onion', mr: 'कांदा' },
-    { en: 'Curd', mr: 'दही' },
-    { en: 'Red Chilli Flakes', mr: 'रेड चिली फ्लेक्स' },
-    { en: 'Oil', mr: 'तेल' },
-    { en: 'Salt', mr: 'मीठ' },
+    // Protein
+    { en: 'Val beans (field beans)', mr: 'वाल', section: 'Protein' },
+    { en: 'Masoor dal (red lentils)', mr: 'मसूर डाळ', section: 'Protein' },
+    { en: 'Onion', mr: 'कांदा', section: 'Protein' },
+    { en: 'Tomato', mr: 'टोमॅटो', section: 'Protein' },
+    { en: 'Ginger-garlic paste', mr: 'आले-लसूण पेस्ट', section: 'Protein' },
+    { en: 'Pav bhaji masala', mr: 'पाव भाजी मसाला', section: 'Protein' },
+    { en: 'Turmeric powder', mr: 'हळद', section: 'Protein' },
+    { en: 'Red chilli powder', mr: 'लाल तिखट', section: 'Protein' },
+    { en: 'Butter', mr: 'बटर', section: 'Protein' },
+    { en: 'Oil', mr: 'तेल', section: 'Protein' },
+    // Leafy base
+    { en: 'Fresh methi (fenugreek leaves)', mr: 'ताजी मेथी', section: 'Leafy Base' },
+    { en: 'Garlic', mr: 'लसूण', section: 'Leafy Base' },
+    { en: 'Raisins', mr: 'मनुका', section: 'Leafy Base' },
+    { en: 'Oil / ghee', mr: 'तेल / तूप', section: 'Leafy Base' },
+    // Grain + vegetables
+    { en: 'Whole wheat pasta', mr: 'गव्हाचे पास्ता', section: 'Grain + Vegetables' },
+    { en: 'Cucumber', mr: 'काकडी', section: 'Grain + Vegetables' },
+    { en: 'Cauliflower florets', mr: 'फुलकोबी', section: 'Grain + Vegetables' },
+    { en: 'Broccoli florets', mr: 'ब्रोकोली', section: 'Grain + Vegetables' },
+    { en: 'Maggi masala (very little)', mr: 'मॅगी मसाला', section: 'Grain + Vegetables' },
+    { en: 'Black pepper', mr: 'काळी मिरी', section: 'Grain + Vegetables' },
+    { en: 'Salt', mr: 'मीठ', section: 'Grain + Vegetables' },
+    // Toppings
+    { en: 'Raw mango strips', mr: 'कच्चा आंबा काप', section: 'Toppings' },
+    { en: 'Roasted seeds / crushed peanuts', mr: 'भाजलेल्या बिया / शेंगदाणे', section: 'Toppings' },
+    // Dressing
+    { en: 'Raw mango', mr: 'कच्चा आंबा', section: 'Dressing' },
+    { en: 'Fresh coconut', mr: 'ताजा नारळ', section: 'Dressing' },
+    { en: 'Green chilli', mr: 'हिरवी मिरची', section: 'Dressing' },
+    { en: 'Roasted cumin powder', mr: 'भाजलेले जिरे पूड', section: 'Dressing' },
+    { en: 'Curd / yogurt (optional)', mr: 'दही (ऐच्छिक)', section: 'Dressing' },
+    { en: 'Mustard seeds + curry leaves', mr: 'मोहरी + कढीपत्ता', section: 'Dressing' },
   ],
   Friday: [
-    { en: 'Whole Masoor Dal', mr: 'अख्खा मसूर' },
-    { en: 'Green Harbara (Green Chana)', mr: 'हिरवा हरभरा' },
-    { en: 'Ginger-Garlic Paste', mr: 'आलं-लसूण पेस्ट' },
-    { en: 'Cumin Seeds', mr: 'जिरे' },
-    { en: 'Curry Leaves', mr: 'कढीपत्ता' },
-    { en: 'Turmeric', mr: 'हळद' },
-    { en: 'Red Chilli Powder', mr: 'लाल तिखट' },
-    { en: 'Goda Masala', mr: 'गोडा मसाला' },
-    { en: 'Tamarind-Jaggery Chutney', mr: 'चिंच-गुळ चटणी' },
-    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
-    { en: 'Coriander', mr: 'कोथिंबीर' },
-    { en: 'Shepu (Dill Leaves)', mr: 'शेपू' },
-    { en: 'Peanuts (roasted, crushed)', mr: 'शेंगदाणे (भाजून कुटलेले)' },
-    { en: 'Cucumber', mr: 'काकडी' },
-    { en: 'Cabbage', mr: 'पत्ता कोबी' },
-    { en: 'Carrot', mr: 'गाजर' },
-    { en: 'Bhakri Crisp / Jowar Flakes', mr: 'भाकरी क्रिस्प / ज्वारी फ्लेक्स' },
-    { en: 'Raisins (Manuka)', mr: 'मनुका' },
-    { en: 'Chikoo', mr: 'चिकू' },
-    { en: 'Hung Curd (Chakka)', mr: 'हँग कर्ड (चक्का)' },
-    { en: 'Tomato Puree', mr: 'टोमॅटो प्युरी' },
-    { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पावडर' },
-    { en: 'Garlic Paste', mr: 'लसूण पेस्ट' },
-    { en: 'Jaggery (optional)', mr: 'गूळ (ऐच्छिक)' },
-    { en: 'Dry Red Chilli Flakes', mr: 'सुक्या लाल मिरच्या फ्लेक्स' },
-    { en: 'Smoked Paprika (optional)', mr: 'स्मोक्ड पाप्रिका (ऐच्छिक)' },
-    { en: 'Salt', mr: 'मीठ' },
+    // Protein
+    { en: 'Black beans', mr: 'काळे बीन्स', section: 'Protein' },
+    { en: 'Broccoli', mr: 'ब्रोकोली', section: 'Protein' },
+    { en: 'Onion', mr: 'कांदा', section: 'Protein' },
+    { en: 'Garlic', mr: 'लसूण', section: 'Protein' },
+    { en: 'Black pepper', mr: 'काळी मिरी', section: 'Protein' },
+    { en: 'Salt', mr: 'मीठ', section: 'Protein' },
+    { en: 'Oil', mr: 'तेल', section: 'Protein' },
+    { en: 'Milk / plant milk (optional)', mr: 'दूध / प्लांट मिल्क', section: 'Protein' },
+    // Vegetables
+    { en: 'Carrot', mr: 'गाजर', section: 'Vegetables' },
+    { en: 'Cucumber', mr: 'काकडी', section: 'Vegetables' },
+    { en: 'Zucchini noodles', mr: 'झुकिनी नूडल्स', section: 'Vegetables' },
+    { en: 'Extra broccoli florets (optional)', mr: 'ब्रोकोली (ऐच्छिक)', section: 'Vegetables' },
+    // Leafy base
+    { en: 'Lettuce', mr: 'लेट्यूस', section: 'Leafy Base' },
+    // Toppings
+    { en: 'Muskmelon cubes', mr: 'खरबूज क्यूब्स', section: 'Toppings' },
+    { en: 'Bael candy', mr: 'बेल कँडी', section: 'Toppings' },
+    { en: 'Crushed peanuts', mr: 'कुटलेले शेंगदाणे', section: 'Toppings' },
+    // Dressing
+    { en: 'Muskmelon', mr: 'खरबूज', section: 'Dressing' },
+    { en: 'Mint leaves', mr: 'पुदिन्याची पाने', section: 'Dressing' },
+    { en: 'Lemon juice', mr: 'लिंबाचा रस', section: 'Dressing' },
+    { en: 'Black salt', mr: 'काळं मीठ', section: 'Dressing' },
+    { en: 'Roasted cumin powder', mr: 'भाजलेले जिरे पूड', section: 'Dressing' },
+    { en: 'Black pepper', mr: 'काळी मिरी', section: 'Dressing' },
+    { en: 'Curd / yogurt (optional)', mr: 'दही (ऐच्छिक)', section: 'Dressing' },
   ],
   Saturday: [
-    { en: 'Yellow Peas (Vatane)', mr: 'पिवळे वाटाणे' },
-    { en: 'Green Harbara (Green Chana)', mr: 'हिरवे हरभरे' },
-    { en: 'Onion', mr: 'कांदा' },
-    { en: 'Olive Oil', mr: 'ऑलिव्ह ऑईल' },
-    { en: 'Apple / Plain Vinegar', mr: 'सफरचंद व्हिनेगर / साधा व्हिनेगर' },
-    { en: 'Mustard Seeds', mr: 'राई (मोहरी)' },
-    { en: 'Black Pepper Powder', mr: 'काळी मिरी पूड' },
-    { en: 'Quinoa', mr: 'क्विनोआ' },
-    { en: 'Zucchini', mr: 'झुकिनी' },
-    { en: 'Capsicum (Bell Pepper)', mr: 'ढोबळी मिरची' },
-    { en: 'Cauliflower', mr: 'फ्लॉवर' },
-    { en: 'Garlic Powder', mr: 'लसूण पावडर' },
-    { en: 'Lollo Rosso Lettuce', mr: 'लोलो रोसो पाने' },
-    { en: 'Mixed Seeds (Pumpkin+Sunflower+Flax)', mr: 'मिक्स बिया (भोपळा+सूर्यफूल+अळशी)' },
-    { en: 'Papaya / Muskmelon', mr: 'पपई / खरबूज' },
-    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
-    { en: 'Ambat Chuka (Sorrel) puree', mr: 'अंबट चुका प्युरी' },
-    { en: 'Kokum', mr: 'कोकम' },
-    { en: 'Garlic', mr: 'लसूण' },
-    { en: 'Jaggery', mr: 'गूळ' },
-    { en: 'Salt', mr: 'मीठ' },
+    // Protein
+    { en: 'Yellow moong', mr: 'पिवळे मूग', section: 'Protein' },
+    { en: 'Yellow peas', mr: 'पिवळे वाटाणे', section: 'Protein' },
+    { en: 'Pani puri masala', mr: 'पाणी पुरी मसाला', section: 'Protein' },
+    { en: 'Roasted cumin powder', mr: 'भाजलेले जिरे पूड', section: 'Protein' },
+    { en: 'Black salt', mr: 'काळं मीठ', section: 'Protein' },
+    { en: 'Green chilli', mr: 'हिरवी मिरची', section: 'Protein' },
+    { en: 'Lemon juice', mr: 'लिंबाचा रस', section: 'Protein' },
+    // Leafy base
+    { en: 'Lal math / red amaranth leaves', mr: 'लाल माठ', section: 'Leafy Base' },
+    { en: 'Garlic', mr: 'लसूण', section: 'Leafy Base' },
+    { en: 'Oil', mr: 'तेल', section: 'Leafy Base' },
+    // Grain + vegetables
+    { en: 'Brown rice', mr: 'ब्राऊन तांदूळ', section: 'Grain + Vegetables' },
+    { en: 'Red cabbage', mr: 'लाल कोबी', section: 'Grain + Vegetables' },
+    { en: 'Onion', mr: 'कांदा', section: 'Grain + Vegetables' },
+    { en: 'Tomato', mr: 'टोमॅटो', section: 'Grain + Vegetables' },
+    { en: 'Sweet-tangy tomato chutney', mr: 'गोड-आंबट टोमॅटो चटणी', section: 'Grain + Vegetables' },
+    { en: 'Black pepper', mr: 'काळी मिरी', section: 'Grain + Vegetables' },
+    { en: 'Salt', mr: 'मीठ', section: 'Grain + Vegetables' },
+    // Toppings
+    { en: 'Phutana / roasted gram', mr: 'फुटाणा / भाजलेले चणे', section: 'Toppings' },
+    { en: 'Apple cubes', mr: 'सफरचंद क्यूब्स', section: 'Toppings' },
+    { en: 'Lemon juice (to prevent apple browning)', mr: 'लिंबू (सफरचंदासाठी)', section: 'Toppings' },
+    // Dressing
+    { en: 'Garlic', mr: 'लसूण', section: 'Dressing' },
+    { en: 'Ginger', mr: 'आले', section: 'Dressing' },
+    { en: 'Green / red chilli', mr: 'मिरची', section: 'Dressing' },
+    { en: 'Soy sauce', mr: 'सोया सॉस', section: 'Dressing' },
+    { en: 'Vinegar', mr: 'व्हिनेगर', section: 'Dressing' },
+    { en: 'Jaggery', mr: 'गूळ', section: 'Dressing' },
+    { en: 'Black pepper', mr: 'काळी मिरी', section: 'Dressing' },
+    { en: 'Oil', mr: 'तेल', section: 'Dressing' },
+    { en: 'Cornflour slurry (optional)', mr: 'कॉर्नफ्लोअर (ऐच्छिक)', section: 'Dressing' },
   ],
 };
 
 var JUICE_INGREDIENTS = {
   Monday: [
-    { en: 'Fresh Orange Juice', mr: 'ताज्या संत्र्याचा रस' },
-    { en: 'Amla Juice', mr: 'आवळ्याचा रस' },
-    { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पावडर' },
-    { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
-    { en: 'Black Salt', mr: 'काळं मीठ' },
-    { en: 'Sabja Seeds (soaked)', mr: 'भिजवलेले सब्जा बी' },
-    { en: 'Cold Water', mr: 'थंड पाणी' },
+    { en: 'Rose syrup – 15 ml', mr: 'गुलाब सिरप' },
+    { en: 'Gulkand (rose petal preserve) – 5 g', mr: 'गुलकंद' },
+    { en: 'Fennel (saunf) powder – 1 g', mr: 'बडीशेप पूड' },
+    { en: 'Sabja seeds soaked – 5 g', mr: 'सब्जा बी' },
+    { en: 'Black salt – pinch', mr: 'काळं मीठ' },
+    { en: 'Chilled water / diluted milk – 200 ml', mr: 'थंड पाणी / दूध' },
   ],
   Tuesday: [
-    { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
-    { en: 'Coriander', mr: 'कोथिंबीर' },
-    { en: 'Roasted Cumin', mr: 'भाजलेले जिरे' },
-    { en: 'Ajwain Water', mr: 'अजवाइन पाणी' },
-    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
-    { en: 'Black Salt', mr: 'काळं मीठ' },
-    { en: 'Mishri (Rock Sugar)', mr: 'मिश्री' },
-    { en: 'Cold Water', mr: 'थंड पाणी' },
+    { en: 'Pineapple syrup – 15 ml', mr: 'अननस सिरप' },
+    { en: 'Ajwain crushed – pinch', mr: 'अजवाइन' },
+    { en: 'Roasted cumin powder – 1 g', mr: 'भाजलेले जिरे पूड' },
+    { en: 'Fresh mint leaves – 5-6', mr: 'पुदिन्याची पाने' },
+    { en: 'Black salt – pinch', mr: 'काळं मीठ' },
+    { en: 'Chilled water – 220 ml', mr: 'थंड पाणी' },
   ],
   Wednesday: [
-    { en: 'Thin Coconut Milk', mr: 'पातळ नारळाचे दूध' },
-    { en: 'Amla Juice', mr: 'आवळ्याचा रस' },
-    { en: 'Cardamom Powder', mr: 'वेलची पावडर' },
-    { en: 'Saffron (optional)', mr: 'केशर (ऐच्छिक)' },
-    { en: 'Mishri (Rock Sugar)', mr: 'मिश्री' },
+    { en: 'Amla (gooseberry) juice – 30 ml', mr: 'आवळ्याचा रस' },
+    { en: 'Kokum extract – 30 ml', mr: 'कोकम अर्क' },
+    { en: 'Fresh mint leaves – 6-8', mr: 'पुदिन्याची पाने' },
+    { en: 'Black salt – pinch', mr: 'काळं मीठ' },
+    { en: 'Honey / jaggery – 3-5 g', mr: 'मध / गूळ' },
+    { en: 'Chilled water – 150 ml', mr: 'थंड पाणी' },
   ],
   Thursday: [
-    { en: 'Cucumber Juice', mr: 'काकडीचा रस' },
-    { en: 'Ajwain Water', mr: 'अजवाइन पाणी' },
-    { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
-    { en: 'Black Pepper Powder', mr: 'काळी मिरी पावडर' },
-    { en: 'Lemon Juice', mr: 'लिंबाचा रस' },
-    { en: 'Black Salt', mr: 'काळं मीठ' },
+    { en: 'Raw mango (kairi) pulp – 30 g', mr: 'कच्चा आंबा (कैरी) गर' },
+    { en: 'Fresh coconut paste – 15 g', mr: 'ताजा नारळ पेस्ट' },
+    { en: 'Roasted cumin powder – 1 g', mr: 'भाजलेले जिरे पूड' },
+    { en: 'Black salt – pinch', mr: 'काळं मीठ' },
+    { en: 'Jaggery – 5 g', mr: 'गूळ' },
+    { en: 'Chilled water – 180 ml', mr: 'थंड पाणी' },
   ],
   Friday: [
-    { en: 'Cold Milk / Almond Milk', mr: 'थंड दूध / बदाम दूध' },
-    { en: 'Gulkand', mr: 'गुलकंद' },
-    { en: 'Fennel Powder (Badishep)', mr: 'बडीशेप पावडर' },
-    { en: 'Rose Water', mr: 'गुलाब पाणी' },
-    { en: 'Sabja Seeds (soaked)', mr: 'भिजवलेले सब्जा बी' },
+    { en: 'Fresh cucumber juice – 120 ml', mr: 'काकडीचा रस' },
+    { en: 'Bael syrup – 15 ml', mr: 'बेल सिरप' },
+    { en: 'Fresh mint leaves – 5-6', mr: 'पुदिन्याची पाने' },
+    { en: 'Roasted cumin powder – 1 g', mr: 'भाजलेले जिरे पूड' },
+    { en: 'Black salt – pinch', mr: 'काळं मीठ' },
+    { en: 'Chilled water – 100 ml', mr: 'थंड पाणी' },
   ],
   Saturday: [
-    { en: 'Kokum Water', mr: 'कोकम पाणी' },
-    { en: 'Mint Leaves', mr: 'पुदिन्याची पाने' },
-    { en: 'Roasted Cumin Powder', mr: 'भाजलेले जिरे पावडर' },
-    { en: 'Black Salt', mr: 'काळं मीठ' },
-    { en: 'Honey', mr: 'मध' },
+    { en: 'Kokum extract – 30 ml', mr: 'कोकम अर्क' },
+    { en: 'Fresh mint leaves – 5-6', mr: 'पुदिन्याची पाने' },
+    { en: 'Fresh coriander – 1 tbsp', mr: 'कोथिंबीर' },
+    { en: 'Roasted cumin powder – 2 g', mr: 'भाजलेले जिरे पूड' },
+    { en: 'Ajwain – pinch', mr: 'अजवाइन' },
+    { en: 'Black salt – pinch', mr: 'काळं मीठ' },
+    { en: 'Jaggery – 3-5 g', mr: 'गूळ' },
+    { en: 'Chilled water – 180 ml', mr: 'थंड पाणी' },
   ],
 };
 
@@ -1199,9 +1251,11 @@ const THALI_ITEMS = [
   { id:'rice',               name:'Rice',                  price:20,  group:'extras'  },
   { id:'dal',                name:'Dal',                   price:15,  group:'extras'  },
   { id:'bhaji',              name:'Bhaji',                 price:20,  group:'extras'  },
-  { id:'buttermilk',         name:'Buttermilk (paid)',     price:25,  group:'extras'  },
+  { id:'buttermilk',         name:'Buttermilk (paid)',     price:30,  group:'extras'  },
   { id:'sweet',              name:'Sweet',                 price:35,  group:'extras'  },
   { id:'papad',              name:'Papad (extra)',         price:10,  group:'extras'  },
+  { id:'koshimbir',          name:'Koshimbir',             price:15,  group:'extras'  },
+  { id:'chopped_salad',      name:'Chopped Salad',         price:10,  group:'extras'  },
   { id:'full_thali_parcel',  name:'Full Thali — Parcel',  price:80,  group:'parcel'  },
   { id:'dal_rice_parcel',    name:'Dal Rice — Parcel',    price:45,  group:'parcel'  },
   { id:'chap_bhaji_parcel',  name:'Chapati Bhaji — Parcel',price:50, group:'parcel'  },
@@ -1236,20 +1290,20 @@ const DEFAULT_STOCK = [
 
 const DEFAULT_MENU = {
   thali: {
-    Monday:    { dal:'Rajma Masala', rice:'Jeera Rice',   bhaji:'Dal Fry',   koshimbir:'Onion-Cucumber Salad', side:'Papad',  sweet_or_tak:'Sweet — Gulab Jamun' },
-    Tuesday:   { dal:'Amti',        rice:'Normal Rice',   bhaji:'Chavli Usal',koshimbir:'Kakdi Koshimbir',     side:'Loncha', sweet_or_tak:'Taak Included' },
-    Wednesday: { dal:'Light Dal',   rice:'Masala Bhat',   bhaji:'Mix Veg (Batata, Matar, Flower)', koshimbir:'Gajar Koshimbir', side:'Chutney', sweet_or_tak:'Mattha Included' },
-    Thursday:  { dal:'Tomato Saar', rice:'Steam Rice',    bhaji:'Matki Usal', koshimbir:'Onion Koshimbir',     side:'Papad',  sweet_or_tak:'Taak Included' },
-    Friday:    { dal:'Dal Tadka',   rice:'Veg Pulao',     bhaji:'Paneer Butter Masala', koshimbir:'Chopped Salad', side:'Loncha', sweet_or_tak:'Sweet — Sheera' },
-    Saturday:  { dal:'Simple Dal',  rice:'Normal Rice',   bhaji:'Sukka Batata Bhaji', koshimbir:'Cucumber Salad', side:'Loncha', sweet_or_tak:'Taak Included' },
+    Monday:    { dal:'Dal Fry', rice:'Jeera Rice', bhaji:'Chole Masala', koshimbir:'Onion-Cucumber Salad', side:'Papad', sweet_or_tak:'Sweet — Suji Sheera (Buttermilk Paid ₹30)' },
+    Tuesday:   { dal:'Amti', rice:'Normal Rice', bhaji:'Tondli Batata Bhaji', koshimbir:'Kakdi Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included' },
+    Wednesday: { dal:'Light Dal', rice:'Masala Bhat', bhaji:'Kala Chana Usal', koshimbir:'Gajar Koshimbir', side:'Chutney', sweet_or_tak:'Mattha Included' },
+    Thursday:  { dal:'Tomato Saar', rice:'Steam Rice', bhaji:'Dudhi Chana Dal Bhaji', koshimbir:'Onion Koshimbir', side:'Papad', sweet_or_tak:'Taak Included' },
+    Friday:    { dal:'Dal Tadka', rice:'Veg Pulao', bhaji:'Paneer Matar Masala', koshimbir:'Chopped Salad', side:'Loncha', sweet_or_tak:'Sweet — 1 Gulab Jamun (Buttermilk Paid ₹30)' },
+    Saturday:  { dal:'Simple Dal', rice:'Normal Rice', bhaji:'Sukka Kanda Batata Bhaji', koshimbir:'Cucumber Salad', side:'Loncha', sweet_or_tak:'Taak Included' },
   },
   bowl: {
-    Monday:    { name:'', ingredients:'' },
-    Tuesday:   { name:'', ingredients:'' },
-    Wednesday: { name:'', ingredients:'' },
-    Thursday:  { name:'Hakka Paneer Fusion Bowl', ingredients:'Wheat Spaghetti 80g · Paneer 80g · Sweet Potato 60g · Capsicum 40g · Roasted Beans 25g · Khare Shengdana 20g · Grapes 30g' },
-    Friday:    { name:'Podi Rajma & Quinoa Comfort Bowl', ingredients:'Rajma 90g · Quinoa 70g · Lettuce 40g · Peanuts 20g · Coconut 25g · Ragi Cracker 30g · Hung Curd 40g' },
-    Saturday:  { name:'Val-Harbara Comfort Balance Bowl', ingredients:'Val Beans 70g · Harbara 70g · Zucchini Noodles 100g · Carrot 30g · Beetroot 30g · Mixed Nuts 25g · Hung Curd 40g' },
+    Monday:    { name:'Tangy Chatpata Soya Bowl', ingredients:'Soya chunks · Lettuce · Varai millet · Sweet corn · Bell pepper · Pomegranate · Amla candy · Beetroot curd dressing' },
+    Tuesday:   { name:'Pineapple Paneer Chana Bowl', ingredients:'Paneer · Chickpeas · Pineapple chutney · Spinach · Brown rice · Baby corn · Kokum rasam dressing' },
+    Wednesday: { name:'Rajma Quinoa Ambat Chuka Bowl', ingredients:'Rajma · Quinoa · Sorrel leaves · Cabbage · Beetroot · Grapes · Almonds · Cashews · Curd mango dressing' },
+    Thursday:  { name:'Val Masoor Methi Pasta Bowl', ingredients:'Val beans · Masoor dal · Fresh methi · Whole wheat pasta · Cauliflower · Broccoli · Raw mango coconut dressing' },
+    Friday:    { name:'Black Beans Cooling Bowl', ingredients:'Black beans · Broccoli · Zucchini noodles · Carrot · Cucumber · Lettuce · Muskmelon · Bael candy · Peanuts · Muskmelon mint dressing' },
+    Saturday:  { name:'Street Style Pani Puri Bowl', ingredients:'Yellow moong · Yellow peas · Lal math · Brown rice · Red cabbage · Apple cubes · Phutana · Spicy soy dressing' },
   }
 };
 
@@ -2945,7 +2999,7 @@ function selectPurchaseDay(day) {
   if (!saved.bowlIngredients || saved.bowlIngredients.length === 0) {
     // Build from BOWL_INGREDIENTS — no perBowlQty since these are full recipe amounts
     purchaseState.bowlIngredients = dayIngs.map(function(ing) {
-      return { name: ing.en, nameMr: ing.mr, perBowlQty: 0, perBowlUnit: 'gm', selected: true, buyQty: '', buyUnit: 'gm' };
+      return { name: ing.en, nameMr: ing.mr, section: ing.section || 'Other', selected: true, buyQty: '', buyUnit: 'g' };
     });
   } else {
     // Restore saved, but merge in any new ingredients from BOWL_INGREDIENTS
@@ -2954,7 +3008,7 @@ function selectPurchaseDay(day) {
     dayIngs.forEach(function(ing) {
       var exists = purchaseState.bowlIngredients.find(function(b){ return b.name === ing.en; });
       if (!exists) {
-        purchaseState.bowlIngredients.push({ name: ing.en, nameMr: ing.mr, perBowlQty: 0, perBowlUnit: 'gm', selected: false, buyQty: '', buyUnit: 'gm' });
+        purchaseState.bowlIngredients.push({ name: ing.en, nameMr: ing.mr, section: ing.section || 'Other', selected: false, buyQty: '', buyUnit: 'g' });
       }
     });
   }
@@ -2978,50 +3032,63 @@ function closePurchaseDay() {
 }
 
 function renderBowlIngredients() {
-  var count = parseInt(document.getElementById('purchase-bowl-count').value) || 20;
   var container = document.getElementById('purchase-bowl-ingredients');
   if (!purchaseState.bowlIngredients || !purchaseState.bowlIngredients.length) {
-    container.innerHTML = '<div style="text-align:center;padding:16px;color:var(--gray-400);font-size:13px">No ingredients for this day</div>';
+    container.innerHTML = '<div style="text-align:center;color:var(--gray-400);font-size:13px;padding:16px">No ingredients for this day</div>';
     return;
   }
-  var html = '';
-  purchaseState.bowlIngredients.forEach(function(ing, i) {
-    var mr = ing.nameMr || getMr(ing.name);
-    var suggestedRaw = ing.perBowlQty ? ing.perBowlQty * count : 0;
-    var suggested = suggestedRaw;
-    var suggestedUnit = ing.perBowlUnit || 'gm';
-    if ((suggestedUnit === 'g' || suggestedUnit === 'gm') && suggested >= 1000) {
-      suggested = (suggested / 1000).toFixed(2);
-      suggestedUnit = 'kg';
-    } else if (suggested > 0) {
-      suggested = suggested % 1 === 0 ? suggested : suggested.toFixed(1);
-    }
-    var buyQty = (ing.buyQty !== undefined && ing.buyQty !== '') ? ing.buyQty : (ing.perBowlQty ? suggested : '');
-    var buyUnit = ing.buyUnit || suggestedUnit;
-    var isSelected = ing.selected ? 'selected' : '';
-    var checkMark = ing.selected ? '<span style="color:white;font-weight:800;font-size:14px">&#10003;</span>' : '';
 
-    html += '<div class="purchase-ingredient ' + isSelected + '" onclick="togglePurchaseIng(' + i + ')" id="ping-' + i + '">';
-    html += '<div class="pi-check">' + checkMark + '</div>';
-    html += '<div class="pi-name">';
-    html += '<div class="pi-en">' + ing.name + '</div>';
-    if (mr) html += '<div class="pi-mr">' + mr + '</div>';
-    if (ing.perBowlQty) html += '<div class="pi-suggested">' + ing.perBowlQty + ing.perBowlUnit + ' × ' + count + ' bowls = ' + suggested + ' ' + suggestedUnit + '</div>';
-    html += '</div>';
-    // Qty controls
-    html += '<div class="pi-qty" onclick="event.stopPropagation()">';
-    html += '<input type="number" value="' + buyQty + '" min="0" step="0.1" oninput="updateIngQty(' + i + ',0,this.value)" style="width:65px">';
-    html += '<select onchange="updateIngQty(' + i + ',1,this.value)">';
-    var units = ['g','gm','kg','pcs','bunch','packet'];
-    units.forEach(function(u) {
-      html += '<option value="' + u + '"' + (buyUnit===u?' selected':'') + '>' + u + '</option>';
+  var sectionColors = {
+    'Protein':'#ef4444','Leafy Base':'#16a34a','Grain Base':'#f97316',
+    'Protein + Grain':'#8b5cf6','Vegetables':'#0891b2',
+    'Grain + Vegetables':'#f97316','Toppings':'#d97706','Dressing':'#0843C7','Other':'#6b7280'
+  };
+
+  // Group by section
+  var sections = {};
+  var sectionOrder = [];
+  purchaseState.bowlIngredients.forEach(function(ing, i) {
+    var sec = ing.section || 'Other';
+    if (!sections[sec]) { sections[sec] = []; sectionOrder.push(sec); }
+    sections[sec].push({ ing: ing, i: i });
+  });
+
+  var html = '';
+  sectionOrder.forEach(function(sec) {
+    var secColor = sectionColors[sec] || '#6b7280';
+    html += '<div style="margin-bottom:14px">';
+    html += '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:' + secColor + ';padding:5px 10px;background:' + secColor + '18;border-radius:4px;margin-bottom:6px;border-left:3px solid ' + secColor + '">' + sec + '</div>';
+
+    sections[sec].forEach(function(item) {
+      var ing = item.ing; var i = item.i;
+      var mr = ing.mr || getMr(ing.name);
+      var isSelected = ing.selected !== false;
+      var buyQty = ing.buyQty !== undefined ? ing.buyQty : '';
+      var buyUnit = ing.buyUnit || 'g';
+      var borderCol = isSelected ? '#0843C7' : '#e5e7eb';
+      var bgCol = isSelected ? '#e8eeff' : 'white';
+      var checkBg = isSelected ? 'background:#0843C7;border-color:#0843C7' : 'background:white;border-color:#d1d5db';
+      var checkMark = isSelected ? '<span style="color:white;font-weight:800;font-size:12px">&#10003;</span>' : '';
+      var units = ['g','gm','kg','ml','pcs','bunch','packet','tbsp','tsp'];
+      var unitOpts = units.map(function(u){ return '<option value="'+u+'"'+(buyUnit===u?' selected':'')+'>'+u+'</option>'; }).join('');
+
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:1.5px solid '+borderCol+';background:'+bgCol+';border-radius:8px;margin-bottom:5px;cursor:pointer" onclick="togglePurchaseIng('+i+')" id="ping-'+i+'">';
+      html += '<div style="width:20px;height:20px;border-radius:5px;border:2px solid;'+checkBg+';flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px">'+checkMark+'</div>';
+      html += '<div style="flex:1">';
+      html += '<div style="font-size:13px;font-weight:700;color:#111827">'+ing.name+'</div>';
+      if (mr) html += '<div style="font-size:10px;color:#9ca3af;margin-top:1px">'+mr+'</div>';
+      html += '</div>';
+      html += '<div style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation()">';
+      html += '<input type="text" value="'+buyQty+'" placeholder="qty" oninput="updateIngQty('+i+',0,this.value)" style="width:60px;padding:4px 6px;font-size:13px;text-align:center;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif">';
+      html += '<select onchange="updateIngQty('+i+',1,this.value)" style="padding:4px 3px;font-size:11px;border:1.5px solid #e5e7eb;border-radius:6px;font-family:Montserrat,sans-serif;background:white">'+unitOpts+'</select>';
+      html += '</div>';
+      html += '</div>';
     });
-    html += '</select>';
-    html += '</div>';
     html += '</div>';
   });
   container.innerHTML = html;
 }
+
 
 function togglePurchaseIng(i) {
   purchaseState.bowlIngredients[i].selected = !purchaseState.bowlIngredients[i].selected;
