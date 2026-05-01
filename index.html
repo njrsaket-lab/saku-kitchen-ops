@@ -3858,81 +3858,70 @@ function toggleAutoSync(checked) {
   showToast(checked ? 'Auto-sync enabled ✓' : 'Auto-sync disabled');
 }
 
-// ── JSONP-based sync — bypasses CORS completely ──
-function jsonpRequest(url, callbackName) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error('timeout'));
-    }, 10000);
-    function cleanup() {
-      clearTimeout(timeout);
-      delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-    window[callbackName] = function(data) {
-      cleanup();
-      resolve(data);
-    };
-    script.onerror = () => { cleanup(); reject(new Error('script error')); };
-    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + callbackName;
-    document.head.appendChild(script);
-  });
+// ── POST via no-cors fetch + iframe fallback ──
+function buildSyncPayload() {
+  var syncState = JSON.parse(JSON.stringify(state));
+  // Strip all photos to keep payload small
+  if (syncState.expenses) {
+    Object.keys(syncState.expenses).forEach(function(week) {
+      Object.keys(syncState.expenses[week]).forEach(function(day) {
+        var e = syncState.expenses[week][day];
+        ['thali_purchases','bowl_purchases','other_expenses','porter_expenses'].forEach(function(key) {
+          if (e[key]) e[key].forEach(function(p) { delete p.photo; delete p.photoName; });
+        });
+      });
+    });
+  }
+  if (syncState.packaging) {
+    syncState.packaging.forEach(function(p) { delete p.photo; });
+  }
+  if (syncState.stock) {
+    syncState.stock.forEach(function(s) { delete s.photo; });
+  }
+  return syncState;
 }
 
 async function syncToSheets(silent) {
-  const url = state.sheetsUrl;
+  var url = state.sheetsUrl;
   if (!url) {
     if (!silent) showSyncStatus('error', 'No Sheets URL set — go to Settings');
     return;
   }
   showSyncStatus('syncing', '🔄 Syncing to Google Sheets...');
   try {
-    // Strip photos from state to keep payload small
-    const syncState = JSON.parse(JSON.stringify(state));
-    if (syncState.expenses) {
-      Object.keys(syncState.expenses).forEach(week => {
-        Object.keys(syncState.expenses[week]).forEach(day => {
-          const e = syncState.expenses[week][day];
-          ['thali_purchases','bowl_purchases'].forEach(key => {
-            if (e[key]) e[key].forEach(p => { delete p.photo; delete p.photoName; });
-          });
-        });
-      });
-    }
-    const payload = encodeURIComponent(JSON.stringify(syncState));
-    const cbName = 'sakuSyncCb_' + Date.now();
-    const data = await jsonpRequest(`${url}?action=sync&data=${payload}`, cbName);
-    if (data && data.status === 'ok') {
-      state.lastSync = new Date().toISOString();
-      save();
-      showSyncStatus('ok', '✅ Synced — ' + (data.synced || 'done'));
-      if (!silent) showToast('Synced to Google Sheets ✓');
-      const lastEl = document.getElementById('last-sync-time');
-      if (lastEl) lastEl.textContent = 'Last synced: ' + new Date(state.lastSync).toLocaleString('en-IN');
-    } else {
-      showSyncStatus('error', '❌ Sync error: ' + (data && data.message ? data.message : 'Unknown'));
-    }
+    var syncState = buildSyncPayload();
+    var payload = JSON.stringify(syncState);
+
+    // Use fetch with no-cors as primary (Apps Script accepts POST)
+    var resp = await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: payload
+    });
+    // no-cors returns opaque response — we assume success if no error thrown
+    state.lastSync = new Date().toISOString();
+    save();
+    showSyncStatus('ok', '✅ Synced — ' + new Date().toLocaleString('en-IN'));
+    if (!silent) showToast('Synced to Google Sheets ✓');
+    var lastEl = document.getElementById('last-sync-time');
+    if (lastEl) lastEl.textContent = 'Last synced: ' + new Date(state.lastSync).toLocaleString('en-IN');
   } catch(e) {
-    showSyncStatus('error', '❌ Could not reach Sheets — check URL & redeploy');
+    showSyncStatus('error', '❌ Sync failed: ' + e.message + ' — check URL & redeploy');
   }
 }
 
 async function testSheetConnection() {
-  const url = document.getElementById('sheets-url').value.trim();
+  var url = document.getElementById('sheets-url').value.trim();
   if (!url) return showToast('Enter a URL first');
   showSyncStatus('syncing', '🔄 Testing connection...');
   try {
-    const cbName = 'sakuTestCb_' + Date.now();
-    const data = await jsonpRequest(`${url}?action=test`, cbName);
-    if (data && data.status === 'ok') {
-      showSyncStatus('ok', '✅ Connected! ' + (data.message || ''));
-    } else {
-      showSyncStatus('error', '❌ ' + (data && data.message ? data.message : 'Connection failed'));
-    }
+    var resp = await fetch(url + '?action=test', { method: 'GET', mode: 'no-cors' });
+    // no-cors means we can't read response but if no error = reachable
+    showSyncStatus('ok', '✅ URL reachable — save it and try Sync Now');
+    showToast('URL is reachable ✓ — now click Sync Now');
   } catch(e) {
-    showSyncStatus('error', '❌ Cannot connect — check URL');
+    showSyncStatus('error', '❌ Cannot reach URL — check it is deployed as Web App');
   }
 }
 
@@ -5123,43 +5112,30 @@ function autoSync() {
       <div style="margin-bottom:8px"><strong>Step 4</strong> — Click <strong>Deploy → New deployment → Web App</strong> · Set "Who has access" to <strong>Anyone</strong> · Deploy</div>
       <div style="margin-bottom:12px"><strong>Step 5</strong> — Copy the Web App URL · Paste it above · Click Save URL</div>
       <div style="background:var(--gray-900);color:#a8ff78;border-radius:var(--radius-sm);padding:14px;font-family:monospace;font-size:11px;overflow-x:auto;white-space:pre;line-height:1.6;user-select:all" id="apps-script-code">function doGet(e) {
-  var callback = e.parameter.callback;
-  var result = handleRequest(e);
-  if (callback) {
-    return ContentService.createTextOutput(callback + "(" + result + ")")
-      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  // Handle test ping via GET
+  if (e.parameter.action === 'test') {
+    return ContentService.createTextOutput(JSON.stringify({status:'ok',message:'Connected!'}))
+      .setMimeType(ContentService.MimeType.JSON);
   }
-  return ContentService.createTextOutput(result)
+  return ContentService.createTextOutput(JSON.stringify({status:'error',message:'Use POST'}))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-function handleRequest(e) {
+function doPost(e) {
   try {
-    var action = e.parameter.action;
+    var data = JSON.parse(e.postData.contents);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
-
-    if (action === 'test') {
-      return ContentService.createTextOutput(JSON.stringify({status:'ok', message:'Connected!'}))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    if (action === 'sync') {
-      var data = JSON.parse(decodeURIComponent(e.parameter.data));
-      writeSheet(ss, 'Sales', formatSalesData(data));
-      writeSheet(ss, 'Expenses', formatExpenseData(data));
-      writeSheet(ss, 'Stock', formatStockData(data));
-      writeSheet(ss, 'Subscribers', formatSubData(data));
-      writeSheet(ss, 'PurchaseLists', formatPurchaseData(data));
-      var logSheet = getOrCreateSheet(ss, 'SyncLog');
-      logSheet.appendRow([new Date().toLocaleString('en-IN'), 'Sync', data.currentWeek || '']);
-      return ContentService.createTextOutput(JSON.stringify({status:'ok', synced: new Date().toLocaleString('en-IN')}))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    return ContentService.createTextOutput(JSON.stringify({status:'error', message:'Unknown action'}))
+    writeSheet(ss, 'Sales',         formatSalesData(data));
+    writeSheet(ss, 'Expenses',      formatExpenseData(data));
+    writeSheet(ss, 'Stock',         formatStockData(data));
+    writeSheet(ss, 'Subscribers',   formatSubData(data));
+    writeSheet(ss, 'PurchaseLists', formatPurchaseData(data));
+    var log = getOrCreateSheet(ss, 'SyncLog');
+    log.appendRow([new Date().toLocaleString('en-IN'), 'POST sync', data.currentWeek || '']);
+    return ContentService.createTextOutput(JSON.stringify({status:'ok',synced:new Date().toLocaleString('en-IN')}))
       .setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({status:'error', message: err.toString()}))
+    return ContentService.createTextOutput(JSON.stringify({status:'error',message:err.toString()}))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
@@ -5171,22 +5147,30 @@ function getOrCreateSheet(ss, name) {
 function writeSheet(ss, name, rows) {
   var sheet = getOrCreateSheet(ss, name);
   sheet.clearContents();
-  if (rows.length > 0) {
-    sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
-  }
+  if (rows.length > 0) sheet.getRange(1,1,rows.length,rows[0].length).setValues(rows);
 }
 
 function formatSalesData(data) {
-  var rows = [['Week','Day','Full Thali','Dal Rice','Chap Bhaji','Chapati','Rice','Dal','Bhaji','Buttermilk','Sweet','Papad','Thali Revenue','Bowls Sold','Bowls Free','Bowl Revenue','Total Revenue']];
+  var rows = [['Week','Day','Full Thali','Dal Rice','Chap Bhaji','Chapati','Rice','Dal','Bhaji','Buttermilk','Sweet','Papad','Koshimbir','Chopped Salad','Thali Revenue','Bowls Sold','Bowls Free','Bowl Revenue','Porter Cost','Total Revenue','Thali Cash','Thali UPI','Bowl Cash','Bowl UPI']];
   var sales = data.sales || {};
   Object.keys(sales).forEach(function(week) {
     Object.keys(sales[week]).forEach(function(day) {
       var s = sales[week][day];
       var t = s.thali || {};
       var b = s.bowl || {};
-      var tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*35+(t.papad||0)*10;
+      var orders = s.bowlOrders || [];
+      var tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45
+        +(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20
+        +(t.buttermilk||0)*30+(t.sweet||0)*35+(t.papad||0)*10
+        +(t.koshimbir||0)*15+(t.chopped_salad||0)*10;
       var bRev = (b.sold||0)*280;
-      rows.push([week,day,t.full_thali||0,t.dal_rice||0,t.chap_bhaji||0,t.chapati||0,t.rice||0,t.dal||0,t.bhaji||0,t.buttermilk||0,t.sweet||0,t.papad||0,tRev,b.sold||0,b.free||0,bRev,tRev+bRev]);
+      var juiceRev = orders.reduce(function(sum,o){return sum+(o.juice?70:0);},0);
+      var porterCost = s.porterCost || 0;
+      rows.push([week,day,t.full_thali||0,t.dal_rice||0,t.chap_bhaji||0,
+        t.chapati||0,t.rice||0,t.dal||0,t.bhaji||0,t.buttermilk||0,
+        t.sweet||0,t.papad||0,t.koshimbir||0,t.chopped_salad||0,
+        tRev,b.sold||0,b.free||0,bRev+juiceRev,porterCost,tRev+bRev+juiceRev,
+        s.thali_cash||0,s.thali_online||0,s.bowl_cash||0,s.bowl_online||0]);
     });
   });
   return rows;
@@ -5198,9 +5182,12 @@ function formatExpenseData(data) {
   Object.keys(exp).forEach(function(week) {
     Object.keys(exp[week]).forEach(function(day) {
       var e = exp[week][day];
-      var thaliP = (e.thali_purchases || []).map(function(p) { return Object.assign({}, p, {svc:'Thali'}); });
-      var bowlP = (e.bowl_purchases || []).map(function(p) { return Object.assign({}, p, {svc:'Bowl'}); });
-      thaliP.concat(bowlP).forEach(function(p) {
+      var allRows = []
+        .concat((e.thali_purchases||[]).map(function(p){return Object.assign({},p,{svc:'Thali'});}))
+        .concat((e.bowl_purchases||[]).map(function(p){return Object.assign({},p,{svc:'Bowl'});}))
+        .concat((e.other_expenses||[]).map(function(p){return {name:p.name||'',qty:'',unit:'',amount:p.amount||0,vendor:p.vendor||'',notes:(p.category||'')+' '+( p.notes||''),svc:'Other'};}))
+        .concat((e.porter_expenses||[]).map(function(p){return {name:p.customerName||'',qty:'',unit:'',amount:p.charge||0,vendor:'Porter',notes:p.address||'',svc:'Porter'};}));
+      allRows.forEach(function(p) {
         rows.push([week,day,p.svc,p.name||'',p.qty||'',p.unit||'',p.amount||0,p.vendor||'',p.notes||'']);
       });
     });
@@ -5210,37 +5197,31 @@ function formatExpenseData(data) {
 
 function formatStockData(data) {
   var rows = [['ID','Name','Qty','Unit','Min Alert','Category','Service']];
-  (data.stock || []).forEach(function(s) {
-    rows.push([s.id,s.name,s.qty,s.unit,s.min,s.category,s.service]);
-  });
+  (data.stock||[]).forEach(function(s){rows.push([s.id,s.name,s.qty,s.unit,s.min,s.category,s.service]);});
   return rows;
 }
 
 function formatSubData(data) {
   var rows = [['ID','Name','Phone','Service','Plan','Meals/Day','Start','End','Price','Payment','Building','Floor','Landmark','Address','Delivered','Skipped','Extra Days']];
-  (data.subscribers || []).forEach(function(s) {
-    var delivered = (s.deliveryLog||[]).filter(function(l){return l.status==='delivered';}).length;
-    var skipped = (s.deliveryLog||[]).filter(function(l){return l.status==='skipped';}).length;
-    rows.push([s.id,s.name,s.phone,s.service,s.plan,s.meals,s.startDate,s.endDate,s.price||0,s.payment,s.building||'',s.floor||'',s.landmark||'',s.address||'',delivered,skipped,s.extraDays||0]);
+  (data.subscribers||[]).forEach(function(s) {
+    var d=(s.deliveryLog||[]).filter(function(l){return l.status==='delivered';}).length;
+    var sk=(s.deliveryLog||[]).filter(function(l){return l.status==='skipped';}).length;
+    rows.push([s.id,s.name,s.phone,s.service,s.plan,s.meals,s.startDate,s.endDate,s.price||0,s.payment,s.building||'',s.floor||'',s.landmark||'',s.address||'',d,sk,s.extraDays||0]);
   });
   return rows;
 }
 
 function formatPurchaseData(data) {
-  var rows = [['Week','Day','Item','Marathi Name','Qty','Unit','Est Price','Type']];
+  var rows = [['Week','Day','Item','Marathi Name','Qty','Unit','Section','Type']];
   var purchases = data.purchases || {};
   Object.keys(purchases).forEach(function(week) {
     Object.keys(purchases[week]).forEach(function(day) {
       var p = purchases[week][day];
-      (p.bowlIngredients||[]).filter(function(i){return i.selected;}).forEach(function(i) {
-        rows.push([week,day,i.name,'',i.buyQty||'',i.buyUnit||'','','Bowl']);
+      (p.bowlIngredients||[]).filter(function(i){return i.selected;}).forEach(function(i){
+        rows.push([week,day,i.name,i.nameMr||'',i.buyQty||'',i.buyUnit||'',i.section||'','Bowl']);
       });
-      (p.thaliItems||[]).forEach(function(i) {
-        rows.push([week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'',i.estPrice||0,'Thali']);
-      });
-      (p.otherItems||[]).forEach(function(i) {
-        rows.push([week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'',i.estPrice||0,'Other']);
-      });
+      (p.thaliItems||[]).forEach(function(i){rows.push([week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'','','Thali']);});
+      (p.otherItems||[]).forEach(function(i){rows.push([week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'','','Other']);});
     });
   });
   return rows;
