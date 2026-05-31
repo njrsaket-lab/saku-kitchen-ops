@@ -1341,7 +1341,7 @@ const DEFAULT_MENU = {
 var WEEK_MENUS = {
   '2025-05-11': {
     thali: {
-      Monday:    { dal:'Dal Fry', rice:'Soya Jeera Rice', bhaji:'Palak Paneer', koshimbir:'Chopped Salad (Onion, Cucumber, Tomato)', side:'Papad', sweet_or_tak:'Sweet — Small Barfi / Vadi' },
+      Monday:    { dal:'Dal Fry', rice:'Soya Jeera Rice', bhaji:'Palak Paneer', koshimbir:'Chopped Salad (Onion + Cucumber + Tomato)', side:'Papad', sweet_or_tak:'Sweet — Small Barfi / Vadi' },
       Tuesday:   { dal:'Amti', rice:'Normal Rice', bhaji:'Chavali Usal', koshimbir:'Dry Koshimbir (Carrot + Peanut Tadka)', side:'Loncha', sweet_or_tak:'Solkadhi Included' },
       Wednesday: { dal:'Tomato Rassam', rice:'Shezwan Rice', bhaji:'Batata Flower Matar Mix Veg (Pav Bhaji Style)', koshimbir:'Dahi Boondi', side:'Papad', sweet_or_tak:'Sweet — Gulab Jamun' },
       Thursday:  { dal:'Kadhi', rice:'Normal Rice', bhaji:'Bhindi Bhaji', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha', sweet_or_tak:'Mattha Included' },
@@ -1351,7 +1351,7 @@ var WEEK_MENUS = {
   },
   '2025-05-18': {
     thali: {
-      Monday:    { dal:'Dal Fry', rice:'Jeera Mint Rice', bhaji:'Matar Paneer (Light Tomato Gravy)', koshimbir:'Chopped Salad (Cucumber, Onion, Tomato)', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi' },
+      Monday:    { dal:'Dal Fry', rice:'Jeera Mint Rice', bhaji:'Matar Paneer (Light Tomato Gravy)', koshimbir:'Chopped Salad (Cucumber + Onion + Tomato)', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi' },
       Tuesday:   { dal:'Kokum Saar', rice:'Normal Rice', bhaji:'Dodka Chana Bhaji', koshimbir:'Dry Gajar Koshimbir (Light Tadka)', side:'Loncha', sweet_or_tak:'Taak Included' },
       Wednesday: { dal:'Light Kadhi', rice:'Lemon Soya Rice', bhaji:'Moong Usal', koshimbir:'Kakdi Koshimbir with Dahi', side:'Papad', sweet_or_tak:'Sweet — Kheer' },
       Thursday:  { dal:'Tomato Rassam', rice:'Normal Rice', bhaji:'Gavar Batata Bhaji', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha', sweet_or_tak:'Mattha Included' },
@@ -1359,11 +1359,31 @@ var WEEK_MENUS = {
       Saturday:  { dal:'Moong-Toor Mixed Dal', rice:'Normal Rice', bhaji:'Kobi Matar Bhaji', koshimbir:'Beetroot Dry Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included' },
     }
   },
+  '2025-05-25': {
+    thali: {
+      Monday:    { dal:'Tomato Saar', rice:'Veg Pulao', bhaji:'Matki Usal', koshimbir:'Kakdi Peanut Koshimbir', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi' },
+      Tuesday:   { dal:'Simple Dal', rice:'Normal Rice', bhaji:'Mix Veg Bhaji (Cauliflower + Matar + Batata + Capsicum)', koshimbir:'Dry Gajar Koshimbir (Light Tadka)', side:'Loncha', sweet_or_tak:'Taak Included' },
+      Wednesday: { dal:'Dal Fry', rice:'Jeera Rice', bhaji:'Kobi Batata Bhaji', koshimbir:'Onion Tomato Koshimbir', side:'Papad', sweet_or_tak:'Sweet — Doodhi Halwa' },
+      Thursday:  { dal:'Kokum Saar', rice:'Normal Rice', bhaji:'Chavali Usal', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha', sweet_or_tak:'Mattha Included' },
+      Friday:    { dal:'Kadhi', rice:'Moong Dal Khichadi', bhaji:'Paneer Mutter Rasawala', koshimbir:'Beetroot Dry Koshimbir', side:'Papad', sweet_or_tak:'Sweet — Kheer' },
+      Saturday:  { dal:'Moong-Toor Dal', rice:'Normal Rice', bhaji:'Gavar Batata Bhaji', koshimbir:'Chopped Kakdi Salad', side:'Loncha', sweet_or_tak:'Taak Included' },
+    }
+  },
+  '2025-06-01': {
+    thali: {
+      Monday:    { dal:'Dal Fry', rice:'Jeera Rice + 3 Chapati', bhaji:'Malai Methi Matar', koshimbir:'Chopped Salad (Cucumber + Onion)', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi (No Taak)' },
+      Tuesday:   { dal:'Kokum Saar', rice:'Normal Rice + 3 Chapati', bhaji:'Bhindi Masala', koshimbir:'Dry Gajar Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included (No Sweet)' },
+      Wednesday: { dal:'Sambar Dal', rice:'Tomato Rice + 3 Chapati', bhaji:'Paneer Mix Veg', koshimbir:'Kakdi Koshimbir with Dahi', side:'Papad', sweet_or_tak:'Sweet — Small Gulab Jamun (No Taak)' },
+      Thursday:  { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Kobi Matar Bhaji', koshimbir:'Onion Tomato Koshimbir', side:'Chutney', sweet_or_tak:'Solkadhi Included (No Sweet)' },
+      Friday:    { dal:'Rassam', rice:'Veg Pulao + 3 Chapati', bhaji:'Chole Masala', koshimbir:'Mixed Sprout Salad', side:'Papad', sweet_or_tak:'Sweet — Kheer (No Taak)' },
+      Saturday:  { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Batata Rassa Bhaji', koshimbir:'Beetroot Dry Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included (No Sweet)' },
+    }
+  },
 };
 
 
 let state = {
-  currentWeek: '2025-05-18',
+  currentWeek: '2025-05-25',
   selectedDay: null,
   menu: {},
   sales: {},
@@ -1379,13 +1399,13 @@ let state = {
 };
 
 function getWeeks() {
-  const weeks = [];
-  // Show last week (11 May) + current week (18 May) only
-  const weekStarts = ['2025-05-11', '2025-05-18'];
+  var weeks = [];
+  var weekStarts = ['2025-05-11','2025-05-18','2025-05-25','2025-06-01'];
   weekStarts.forEach(function(startStr) {
-    const d = new Date(startStr);
-    const end = new Date(d); end.setDate(end.getDate() + 5);
-    const label = d.getDate() + ' ' + d.toLocaleString('en',{month:'short'}) + ' – ' + end.getDate() + ' ' + end.toLocaleString('en',{month:'short'});
+    var parts = startStr.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    var end = new Date(d); end.setDate(end.getDate() + 5);
+    var label = d.getDate() + ' ' + d.toLocaleString('en',{month:'short'}) + ' – ' + end.getDate() + ' ' + end.toLocaleString('en',{month:'short'});
     weeks.push({ key: startStr, label: label });
   });
   return weeks;
@@ -1397,9 +1417,11 @@ function getWeekLabel(weekKey) {
 }
 
 function getDayDate(weekKey, dayIndex) {
-  const start = new Date(weekKey);
+  // Parse date parts directly to avoid timezone issues
+  var parts = weekKey.split('-');
+  var start = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
   start.setDate(start.getDate() + dayIndex);
-  return `${start.getDate()} ${start.toLocaleString('en',{month:'short'})}`;
+  return start.getDate() + ' ' + start.toLocaleString('en',{month:'short'});
 }
 
 // ═══════════════════════════════════ PERSISTENCE ═══════════════════════════════════
@@ -1432,11 +1454,14 @@ function load() {
     var exists = state.stock.find(function(s){ return s.id === def.id; });
     if (!exists) state.stock.push(JSON.parse(JSON.stringify(def)));
   });
-  // Load per-week thali menus from WEEK_MENUS
+  // Always force currentWeek to 2025-05-25 (latest active week)
+  state.currentWeek = '2025-05-25';
+
+  // Always apply authoritative thali menus from WEEK_MENUS
   Object.keys(WEEK_MENUS).forEach(function(wk) {
     if (!state.menu[wk]) state.menu[wk] = JSON.parse(JSON.stringify(DEFAULT_MENU));
-    // Always apply the authoritative thali menu for this week
     state.menu[wk].thali = JSON.parse(JSON.stringify(WEEK_MENUS[wk].thali));
+    if (!state.menu[wk].bowl) state.menu[wk].bowl = JSON.parse(JSON.stringify(DEFAULT_MENU.bowl));
   });
   if (!state.menu[state.currentWeek]) {
     state.menu[state.currentWeek] = JSON.parse(JSON.stringify(DEFAULT_MENU));
@@ -2980,6 +3005,13 @@ function init() {
     opt.textContent = w.label;
     if (w.key === state.currentWeek) opt.selected = true;
     sel.appendChild(opt);
+  });
+  // Sync dropdown value to state
+  document.getElementById('globalWeek').value = state.currentWeek;
+  // Apply WEEK_MENUS thali for all weeks
+  Object.keys(WEEK_MENUS).forEach(function(wk) {
+    if (!state.menu[wk]) state.menu[wk] = JSON.parse(JSON.stringify(DEFAULT_MENU));
+    state.menu[wk].thali = JSON.parse(JSON.stringify(WEEK_MENUS[wk].thali));
   });
 
   renderDashboard();
@@ -5173,7 +5205,6 @@ function autoSync() {
       <div style="margin-bottom:8px"><strong>Step 4</strong> — Click <strong>Deploy → New deployment → Web App</strong> · Set "Who has access" to <strong>Anyone</strong> · Deploy</div>
       <div style="margin-bottom:12px"><strong>Step 5</strong> — Copy the Web App URL · Paste it above · Click Save URL</div>
       <div style="background:var(--gray-900);color:#a8ff78;border-radius:var(--radius-sm);padding:14px;font-family:monospace;font-size:11px;overflow-x:auto;white-space:pre;line-height:1.6;user-select:all" id="apps-script-code">function doGet(e) {
-  // Handle test ping via GET
   if (e.parameter.action === 'test') {
     return ContentService.createTextOutput(JSON.stringify({status:'ok',message:'Connected!'}))
       .setMimeType(ContentService.MimeType.JSON);
@@ -5211,45 +5242,55 @@ function writeSheet(ss, name, rows) {
   if (rows.length > 0) sheet.getRange(1,1,rows.length,rows[0].length).setValues(rows);
 }
 
+// Helper: calculate actual date from week key + day name
+function getActualDate(weekKey, dayName) {
+  var dayMap = {Monday:0, Tuesday:1, Wednesday:2, Thursday:3, Friday:4, Saturday:5, Sunday:6};
+  var parts = weekKey.split('-');
+  var weekStart = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+  var offset = dayMap[dayName];
+  if (offset === undefined) return weekKey;
+  var actual = new Date(weekStart);
+  actual.setDate(weekStart.getDate() + offset);
+  return Utilities.formatDate(actual, 'Asia/Kolkata', 'dd/MM/yyyy');
+}
+
 function formatSalesData(data) {
-  var rows = [['Week','Day','Full Thali','Dal Rice','Chap Bhaji','Chapati','Rice','Dal','Bhaji','Buttermilk','Sweet','Papad','Koshimbir','Chopped Salad','Thali Revenue','Bowls Sold','Bowls Free','Bowl Revenue','Porter Cost','Total Revenue','Thali Cash','Thali UPI','Bowl Cash','Bowl UPI']];
+  var rows = [['Date','Week','Day','Full Thali','Dal Rice','Chap Bhaji','Chapati','Rice','Dal','Bhaji','Buttermilk','Sweet','Papad','Koshimbir','Chopped Salad','Thali Revenue','Thali Cash','Thali UPI','Notes']];
   var sales = data.sales || {};
   Object.keys(sales).forEach(function(week) {
     Object.keys(sales[week]).forEach(function(day) {
       var s = sales[week][day];
       var t = s.thali || {};
-      var b = s.bowl || {};
-      var orders = s.bowlOrders || [];
       var tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45
         +(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20
         +(t.buttermilk||0)*30+(t.sweet||0)*35+(t.papad||0)*10
         +(t.koshimbir||0)*15+(t.chopped_salad||0)*10;
-      var bRev = (b.sold||0)*280;
-      var juiceRev = orders.reduce(function(sum,o){return sum+(o.juice?70:0);},0);
-      var porterCost = s.porterCost || 0;
-      rows.push([week,day,t.full_thali||0,t.dal_rice||0,t.chap_bhaji||0,
-        t.chapati||0,t.rice||0,t.dal||0,t.bhaji||0,t.buttermilk||0,
-        t.sweet||0,t.papad||0,t.koshimbir||0,t.chopped_salad||0,
-        tRev,b.sold||0,b.free||0,bRev+juiceRev,porterCost,tRev+bRev+juiceRev,
-        s.thali_cash||0,s.thali_online||0,s.bowl_cash||0,s.bowl_online||0]);
+      var actualDate = getActualDate(week, day);
+      rows.push([actualDate, week, day,
+        t.full_thali||0, t.dal_rice||0, t.chap_bhaji||0,
+        t.chapati||0, t.rice||0, t.dal||0, t.bhaji||0,
+        t.buttermilk||0, t.sweet||0, t.papad||0,
+        t.koshimbir||0, t.chopped_salad||0,
+        tRev, s.thali_cash||0, s.thali_online||0, s.thali_notes||''
+      ]);
     });
   });
   return rows;
 }
 
 function formatExpenseData(data) {
-  var rows = [['Week','Day','Service','Item Name','Qty','Unit','Amount','Vendor','Notes']];
+  var rows = [['Date','Week','Day','Service','Item Name','Qty','Unit','Amount','Vendor','Notes']];
   var exp = data.expenses || {};
   Object.keys(exp).forEach(function(week) {
     Object.keys(exp[week]).forEach(function(day) {
       var e = exp[week][day];
+      var actualDate = getActualDate(week, day);
       var allRows = []
-        .concat((e.thali_purchases||[]).map(function(p){return Object.assign({},p,{svc:'Thali'});}))
-        .concat((e.bowl_purchases||[]).map(function(p){return Object.assign({},p,{svc:'Bowl'});}))
-        .concat((e.other_expenses||[]).map(function(p){return {name:p.name||'',qty:'',unit:'',amount:p.amount||0,vendor:p.vendor||'',notes:(p.category||'')+' '+( p.notes||''),svc:'Other'};}))
+        .concat((e.thali_purchases||[]).map(function(p){return {name:p.name||'',qty:p.qty||'',unit:p.unit||'',amount:p.amount||0,vendor:p.vendor||'',notes:p.notes||'',svc:'Thali'};}))
+        .concat((e.other_expenses||[]).map(function(p){return {name:p.name||'',qty:'',unit:'',amount:p.amount||0,vendor:p.vendor||'',notes:(p.category||'')+' '+(p.notes||''),svc:'Other'};}))
         .concat((e.porter_expenses||[]).map(function(p){return {name:p.customerName||'',qty:'',unit:'',amount:p.charge||0,vendor:'Porter',notes:p.address||'',svc:'Porter'};}));
       allRows.forEach(function(p) {
-        rows.push([week,day,p.svc,p.name||'',p.qty||'',p.unit||'',p.amount||0,p.vendor||'',p.notes||'']);
+        rows.push([actualDate, week, day, p.svc, p.name, p.qty, p.unit, p.amount, p.vendor, p.notes]);
       });
     });
   });
@@ -5273,16 +5314,18 @@ function formatSubData(data) {
 }
 
 function formatPurchaseData(data) {
-  var rows = [['Week','Day','Item','Marathi Name','Qty','Unit','Section','Type']];
+  var rows = [['Date','Week','Day','Item','Marathi Name','Qty','Unit','Est Price','Type']];
   var purchases = data.purchases || {};
   Object.keys(purchases).forEach(function(week) {
     Object.keys(purchases[week]).forEach(function(day) {
       var p = purchases[week][day];
-      (p.bowlIngredients||[]).filter(function(i){return i.selected;}).forEach(function(i){
-        rows.push([week,day,i.name,i.nameMr||'',i.buyQty||'',i.buyUnit||'',i.section||'','Bowl']);
+      var actualDate = getActualDate(week, day);
+      (p.thaliItems||[]).forEach(function(i){
+        rows.push([actualDate,week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'',i.estPrice||0,'Thali']);
       });
-      (p.thaliItems||[]).forEach(function(i){rows.push([week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'','','Thali']);});
-      (p.otherItems||[]).forEach(function(i){rows.push([week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'','','Other']);});
+      (p.otherItems||[]).forEach(function(i){
+        rows.push([actualDate,week,day,i.name,i.nameMr||'',i.qty||'',i.unit||'',i.estPrice||0,'Other']);
+      });
     });
   });
   return rows;
