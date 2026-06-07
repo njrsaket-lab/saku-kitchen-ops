@@ -381,7 +381,7 @@ textarea { resize: vertical; min-height: 70px; }
     <button class="nav-tab" onclick="showScreen('expenses')">Expenses</button>
     <button class="nav-tab" onclick="showScreen('stock')">Stock</button>
     <button class="nav-tab" onclick="showScreen('report')">Report</button>
-    <button class="nav-tab" onclick="showScreen('employee')">👷 Employee</button>
+    
     <button class="nav-tab" onclick="showScreen('settings')">⚙️</button>
   </div>
   <div style="display:flex;align-items:center;gap:8px">
@@ -415,15 +415,11 @@ textarea { resize: vertical; min-height: 70px; }
       <div class="stat-value" id="stat-thali-rev">₹0</div>
       <div class="stat-sub">This week</div>
     </div>
-    <div class="stat-card green">
-      <div class="stat-label">Bowl Revenue</div>
-      <div class="stat-value" id="stat-bowl-rev">₹0</div>
-      <div class="stat-sub">This week</div>
-    </div>
+
     <div class="stat-card amber">
       <div class="stat-label">Total Expenses</div>
       <div class="stat-value" id="stat-expenses">₹0</div>
-      <div class="stat-sub">Thali + Bowl</div>
+      <div class="stat-sub">This week</div>
     </div>
     <div class="stat-card" id="stat-margin-card">
       <div class="stat-label">Net Margin</div>
@@ -449,7 +445,7 @@ textarea { resize: vertical; min-height: 70px; }
     <span style="font-size:20px">💡</span>
     <div>
       <div style="font-size:13px; font-weight:700; color:var(--gray-700)">Daily Workflow</div>
-      <div style="font-size:12px; color:var(--gray-400)">Lunch closes → Enter thali sales → Enter bowl sales (evening) → Log today's expenses → Update stock used</div>
+      <div style="font-size:12px; color:var(--gray-400)">Lunch closes → Enter thali sales → Log today's expenses → Log purchases → Update stock used</div>
     </div>
   </div>
 </div>
@@ -500,7 +496,7 @@ textarea { resize: vertical; min-height: 70px; }
       <span style="font-size:14px;font-weight:700;color:var(--gray-700)" id="daily-selected-label">Monday</span>
       <span style="font-size:12px;color:var(--gray-400)" id="daily-selected-date"></span>
     </div>
-    <div class="split-view">
+    <div style="max-width:600px">
       <!-- Thali Sales -->
       <div class="card">
         <div class="card-header">
@@ -563,98 +559,7 @@ textarea { resize: vertical; min-height: 70px; }
         </div>
       </div>
 
-      <!-- Bowl Sales -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">🥗 Bowl Sales</span>
-          <span class="badge badge-green" id="bowl-day-label">Monday</span>
-        </div>
-        <div class="gap-16" style="margin-bottom:16px">
-          <div style="background:var(--green-pale); border-radius:var(--radius-sm); padding:14px; border:1px solid var(--green);">
-            <div style="font-size:12px; font-weight:700; color:var(--green-dark); margin-bottom:4px">TODAY'S BOWL</div>
-            <div id="bowl-today-name" style="font-size:16px; font-weight:800; color:var(--gray-900);margin-bottom:10px">—</div>
-            <div style="font-size:11px;font-weight:700;color:var(--green-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px">🛒 Ingredient Purchase Checklist</div>
-            <div id="bowl-ingredient-checklist" style="display:flex;flex-direction:column;gap:5px"></div>
-            <button class="btn btn-success btn-sm" onclick="addBowlIngsToPurchase()" style="margin-top:10px;font-size:11px;width:100%;justify-content:center">➕ Add Selected to Purchase List</button>
-          </div>
-          <table class="sales-table">
-            <thead>
-              <tr><th>Item</th><th>Price</th><th>Qty</th><th>Total</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Bowl — Paid</strong></td>
-                <td class="price-col">₹280</td>
-                <td><input type="number" id="bowl-sold" min="0" value="0" oninput="calcBowlTotal()"></td>
-                <td class="total-col" id="bowl-sold-total">₹0</td>
-              </tr>
-              <tr>
-                <td>Bowl — Complimentary</td>
-                <td class="price-col">₹0</td>
-                <td><input type="number" id="bowl-free" min="0" value="0" oninput="calcBowlTotal()"></td>
-                <td class="total-col">₹0</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr class="total-row">
-                <td colspan="2">Total Bowl Revenue</td>
-                <td id="bowl-total-qty">—</td>
-                <td id="bowl-total-rev">₹0</td>
-              </tr>
-            </tfoot>
-          </table>
-          <div class="form-group">
-            <label>Bowl Notes</label>
-            <textarea id="bowl-notes" placeholder="e.g. ingredient substitutions, customer feedback..."></textarea>
-          </div>
-        </div>
 
-        <!-- Customer Order List -->
-        <div style="background:var(--green-pale);border:1px solid var(--green);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px">
-          <div style="font-size:11px;font-weight:800;color:var(--green-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📋 Customer Order List</div>
-          <div id="bowl-customer-orders" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"></div>
-          <button class="btn btn-success btn-sm" onclick="addBowlCustomer()" style="width:100%;justify-content:center;font-size:12px">＋ Add Customer Order</button>
-          <!-- Payment summary -->
-          <div id="bowl-payment-summary" style="display:none;margin-top:10px;padding:10px 12px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200)"></div>
-          <div style="display:flex;gap:8px;margin-top:10px">
-            <button class="btn btn-outline btn-sm" onclick="viewPackingList()" style="flex:1;justify-content:center;font-size:11px">📦 View Packing List</button>
-            <button class="btn btn-whatsapp btn-sm" onclick="sharePackingList()" style="flex:1;justify-content:center;font-size:11px">📲 Share to Employee</button>
-          </div>
-        </div>
-
-        <!-- Packing List View (shown inline) -->
-        <div id="packing-list-view" style="display:none;background:white;border:2px solid var(--green);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-            <div style="font-size:13px;font-weight:800;color:var(--gray-900)">📦 Packing List</div>
-            <button class="btn btn-outline btn-sm" onclick="document.getElementById('packing-list-view').style.display='none'" style="font-size:10px">✕ Close</button>
-          </div>
-          <div id="packing-list-content"></div>
-        </div>
-
-        <!-- Bowl payment split -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-          <div style="background:var(--blue-pale);border-radius:var(--radius-sm);padding:10px 12px">
-            <div style="font-size:10px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">💵 Cash</div>
-            <div style="display:flex;align-items:center;gap:6px">
-              <span style="font-size:13px;font-weight:700;color:var(--blue)">₹</span>
-              <input type="number" id="bowl-cash" min="0" placeholder="0"
-                style="flex:1;font-size:15px;font-weight:800;color:var(--blue);border:1.5px solid var(--blue);border-radius:6px;padding:5px 8px;font-family:var(--font)"
-                oninput="calcPaymentSplit('bowl')">
-            </div>
-          </div>
-          <div style="background:var(--green-pale);border-radius:var(--radius-sm);padding:10px 12px">
-            <div style="font-size:10px;font-weight:700;color:var(--green-dark);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">📱 Online</div>
-            <div style="display:flex;align-items:center;gap:6px">
-              <span style="font-size:13px;font-weight:700;color:var(--green-dark)">₹</span>
-              <input type="number" id="bowl-online" min="0" placeholder="0"
-                style="flex:1;font-size:15px;font-weight:800;color:var(--green-dark);border:1.5px solid var(--green);border-radius:6px;padding:5px 8px;font-family:var(--font)"
-                oninput="calcPaymentSplit('bowl')">
-            </div>
-          </div>
-        </div>
-        <div id="bowl-payment-note" style="font-size:11px;color:var(--gray-400);margin-bottom:10px;text-align:right"></div>
-        <button class="btn btn-success" onclick="saveBowlSales()">💾 Save Bowl Sales</button>
-      </div>
     </div>
   </div>
 </div>
@@ -712,32 +617,7 @@ textarea { resize: vertical; min-height: 70px; }
       </div>
     </div>
 
-    <div id="exp-bowl-section" style="display:none">
-      <div class="card" style="margin-bottom:12px">
-        <div class="card-header">
-          <span class="card-title">🥗 Bowl — Today's Purchases (Fresh)</span>
-          <button class="btn btn-primary btn-sm" onclick="addExpenseRow('bowl')">＋ Add Purchase</button>
-        </div>
-        <div id="bowl-expense-rows"></div>
-        <div class="divider"></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:12px 16px;background:var(--red-pale);border-radius:var(--radius-sm);border:1.5px solid #fca5a5">
-          <div>
-            <div style="font-size:11px;font-weight:700;color:#991b1b;text-transform:uppercase;letter-spacing:.5px">Total Bowl Purchase Expense</div>
-            <div style="font-size:11px;color:#b91c1c;margin-top:2px" id="bowl-exp-count">0 items</div>
-          </div>
-          <div style="font-size:22px;font-weight:800;color:#991b1b;font-family:var(--mono)" id="bowl-exp-total">₹0</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">📦 Bowl — Stock Used Today</span>
-          <span style="font-size:11px; color:var(--gray-400)">Enter qty used — auto-deducts from stock</span>
-        </div>
-        <div id="bowl-stock-usage"></div>
-        <button class="btn btn-success btn-sm" style="margin-top:12px" onclick="saveBowlExpenses()">💾 Save Bowl Expenses</button>
-      </div>
-    </div>
+    
 
     <div id="exp-other-section" style="display:none">
       <div class="card" style="margin-bottom:12px">
@@ -1341,49 +1221,69 @@ const DEFAULT_MENU = {
 var WEEK_MENUS = {
   '2025-05-11': {
     thali: {
-      Monday:    { dal:'Dal Fry', rice:'Soya Jeera Rice', bhaji:'Palak Paneer', koshimbir:'Chopped Salad (Onion + Cucumber + Tomato)', side:'Papad', sweet_or_tak:'Sweet — Small Barfi / Vadi' },
-      Tuesday:   { dal:'Amti', rice:'Normal Rice', bhaji:'Chavali Usal', koshimbir:'Dry Koshimbir (Carrot + Peanut Tadka)', side:'Loncha', sweet_or_tak:'Solkadhi Included' },
-      Wednesday: { dal:'Tomato Rassam', rice:'Shezwan Rice', bhaji:'Batata Flower Matar Mix Veg (Pav Bhaji Style)', koshimbir:'Dahi Boondi', side:'Papad', sweet_or_tak:'Sweet — Gulab Jamun' },
-      Thursday:  { dal:'Kadhi', rice:'Normal Rice', bhaji:'Bhindi Bhaji', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha', sweet_or_tak:'Mattha Included' },
-      Friday:    { dal:'Light Dal Fry', rice:'Moong Dal Khichadi', bhaji:'Rajma Masala', koshimbir:'Raita (Cucumber + Onion)', side:'Papad', sweet_or_tak:'Sweet — Kheer' },
-      Saturday:  { dal:'Amti', rice:'Normal Rice', bhaji:'Kanda Bhaji Sabji', koshimbir:'Dry Beetroot Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included' },
+      Monday:    { dal:'Dal Fry', rice:'Soya Jeera Rice', bhaji:'Palak Paneer', koshimbir:'Chopped Salad (Onion + Cucumber + Tomato)', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet — Barfi / Vadi' },
+      Tuesday:   { dal:'Amti', rice:'Normal Rice', bhaji:'Chavali Usal', koshimbir:'Dry Koshimbir (Carrot + Peanut)', side:'Loncha + 3 Chapati', sweet_or_tak:'Solkadhi Included' },
+      Wednesday: { dal:'Tomato Rassam', rice:'Shezwan Rice', bhaji:'Batata Flower Matar Mix Veg', koshimbir:'Dahi Boondi', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet — Gulab Jamun' },
+      Thursday:  { dal:'Kadhi', rice:'Normal Rice', bhaji:'Bhindi Bhaji', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha + 3 Chapati', sweet_or_tak:'Mattha Included' },
+      Friday:    { dal:'Light Dal Fry', rice:'Moong Dal Khichadi', bhaji:'Rajma Masala', koshimbir:'Raita (Cucumber + Onion)', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet — Kheer' },
+      Saturday:  { dal:'Amti', rice:'Normal Rice', bhaji:'Kanda Bhaji Sabji', koshimbir:'Dry Beetroot Koshimbir', side:'Loncha + 3 Chapati', sweet_or_tak:'Taak Included' },
     }
   },
   '2025-05-18': {
     thali: {
-      Monday:    { dal:'Dal Fry', rice:'Jeera Mint Rice', bhaji:'Matar Paneer (Light Tomato Gravy)', koshimbir:'Chopped Salad (Cucumber + Onion + Tomato)', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi' },
-      Tuesday:   { dal:'Kokum Saar', rice:'Normal Rice', bhaji:'Dodka Chana Bhaji', koshimbir:'Dry Gajar Koshimbir (Light Tadka)', side:'Loncha', sweet_or_tak:'Taak Included' },
-      Wednesday: { dal:'Light Kadhi', rice:'Lemon Soya Rice', bhaji:'Moong Usal', koshimbir:'Kakdi Koshimbir with Dahi', side:'Papad', sweet_or_tak:'Sweet — Kheer' },
-      Thursday:  { dal:'Tomato Rassam', rice:'Normal Rice', bhaji:'Gavar Batata Bhaji', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha', sweet_or_tak:'Mattha Included' },
-      Friday:    { dal:'Dal Tadka', rice:'Veg Pulao', bhaji:'Rajma Masala (Less Spicy)', koshimbir:'Onion-Cucumber Salad', side:'Papad', sweet_or_tak:'Sweet Lassi' },
-      Saturday:  { dal:'Moong-Toor Mixed Dal', rice:'Normal Rice', bhaji:'Kobi Matar Bhaji', koshimbir:'Beetroot Dry Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included' },
+      Monday:    { dal:'Dal Fry', rice:'Jeera Mint Rice', bhaji:'Matar Paneer (Light Tomato Gravy)', koshimbir:'Chopped Salad (Cucumber + Onion + Tomato)', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet — Rajgira Vadi' },
+      Tuesday:   { dal:'Kokum Saar', rice:'Normal Rice', bhaji:'Dodka Chana Bhaji', koshimbir:'Dry Gajar Koshimbir (Light Tadka)', side:'Loncha + 3 Chapati', sweet_or_tak:'Taak Included' },
+      Wednesday: { dal:'Light Kadhi', rice:'Lemon Soya Rice', bhaji:'Moong Usal', koshimbir:'Kakdi Koshimbir with Dahi', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet — Kheer' },
+      Thursday:  { dal:'Tomato Rassam', rice:'Normal Rice', bhaji:'Gavar Batata Bhaji', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha + 3 Chapati', sweet_or_tak:'Mattha Included' },
+      Friday:    { dal:'Dal Tadka', rice:'Veg Pulao', bhaji:'Rajma Masala (Less Spicy)', koshimbir:'Onion-Cucumber Salad', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet Lassi' },
+      Saturday:  { dal:'Moong-Toor Mixed Dal', rice:'Normal Rice', bhaji:'Kobi Matar Bhaji', koshimbir:'Beetroot Dry Koshimbir', side:'Loncha + 3 Chapati', sweet_or_tak:'Taak Included' },
     }
   },
   '2025-05-25': {
     thali: {
-      Monday:    { dal:'Tomato Saar', rice:'Veg Pulao', bhaji:'Matki Usal', koshimbir:'Kakdi Peanut Koshimbir', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi' },
-      Tuesday:   { dal:'Simple Dal', rice:'Normal Rice', bhaji:'Mix Veg Bhaji (Cauliflower + Matar + Batata + Capsicum)', koshimbir:'Dry Gajar Koshimbir (Light Tadka)', side:'Loncha', sweet_or_tak:'Taak Included' },
-      Wednesday: { dal:'Dal Fry', rice:'Jeera Rice', bhaji:'Kobi Batata Bhaji', koshimbir:'Onion Tomato Koshimbir', side:'Papad', sweet_or_tak:'Sweet — Doodhi Halwa' },
-      Thursday:  { dal:'Kokum Saar', rice:'Normal Rice', bhaji:'Chavali Usal', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha', sweet_or_tak:'Mattha Included' },
-      Friday:    { dal:'Kadhi', rice:'Moong Dal Khichadi', bhaji:'Paneer Mutter Rasawala', koshimbir:'Beetroot Dry Koshimbir', side:'Papad', sweet_or_tak:'Sweet — Kheer' },
-      Saturday:  { dal:'Moong-Toor Dal', rice:'Normal Rice', bhaji:'Gavar Batata Bhaji', koshimbir:'Chopped Kakdi Salad', side:'Loncha', sweet_or_tak:'Taak Included' },
+      Monday:    { dal:'Tomato Saar', rice:'Veg Pulao', bhaji:'Matki Usal', koshimbir:'Kakdi Peanut Koshimbir', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet — Rajgira Vadi' },
+      Tuesday:   { dal:'Simple Dal', rice:'Normal Rice', bhaji:'Mix Veg Bhaji (Cauliflower + Matar + Batata + Capsicum)', koshimbir:'Dry Gajar Koshimbir (Light Tadka)', side:'Loncha + 3 Chapati', sweet_or_tak:'Taak Included' },
+      Wednesday: { dal:'Dal Fry', rice:'Jeera Rice', bhaji:'Kobi Batata Bhaji', koshimbir:'Onion Tomato Koshimbir', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet — Doodhi Halwa' },
+      Thursday:  { dal:'Kokum Saar', rice:'Normal Rice', bhaji:'Chavali Usal', koshimbir:'Mixed Sprout Chaat Salad', side:'Loncha + 3 Chapati', sweet_or_tak:'Mattha Included' },
+      Friday:    { dal:'Kadhi', rice:'Moong Dal Khichadi', bhaji:'Paneer Mutter Rasawala', koshimbir:'Beetroot Dry Koshimbir', side:'Papad + 3 Chapati', sweet_or_tak:'Sweet — Kheer' },
+      Saturday:  { dal:'Moong-Toor Dal', rice:'Normal Rice', bhaji:'Gavar Batata Bhaji', koshimbir:'Chopped Kakdi Salad', side:'Loncha + 3 Chapati', sweet_or_tak:'Taak Included' },
     }
   },
   '2025-06-01': {
     thali: {
-      Monday:    { dal:'Dal Fry', rice:'Jeera Rice + 3 Chapati', bhaji:'Malai Methi Matar', koshimbir:'Chopped Salad (Cucumber + Onion)', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi (No Taak)' },
-      Tuesday:   { dal:'Kokum Saar', rice:'Normal Rice + 3 Chapati', bhaji:'Bhindi Masala', koshimbir:'Dry Gajar Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included (No Sweet)' },
-      Wednesday: { dal:'Sambar Dal', rice:'Tomato Rice + 3 Chapati', bhaji:'Paneer Mix Veg', koshimbir:'Kakdi Koshimbir with Dahi', side:'Papad', sweet_or_tak:'Sweet — Small Gulab Jamun (No Taak)' },
-      Thursday:  { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Kobi Matar Bhaji', koshimbir:'Onion Tomato Koshimbir', side:'Chutney', sweet_or_tak:'Solkadhi Included (No Sweet)' },
-      Friday:    { dal:'Rassam', rice:'Veg Pulao + 3 Chapati', bhaji:'Chole Masala', koshimbir:'Mixed Sprout Salad', side:'Papad', sweet_or_tak:'Sweet — Kheer (No Taak)' },
-      Saturday:  { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Batata Rassa Bhaji', koshimbir:'Beetroot Dry Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included (No Sweet)' },
+      Monday:    { dal:'Dal Fry', rice:'Jeera Rice + 3 Chapati', bhaji:'Malai Methi Matar', koshimbir:'Chopped Salad (Cucumber + Onion)', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi' },
+      Tuesday:   { dal:'Kokum Saar', rice:'Normal Rice + 3 Chapati', bhaji:'Bhindi Masala', koshimbir:'Dry Gajar Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included' },
+      Wednesday: { dal:'Sambar Dal', rice:'Tomato Rice + 3 Chapati', bhaji:'Paneer Mix Veg', koshimbir:'Kakdi Koshimbir with Dahi', side:'Papad', sweet_or_tak:'Sweet — Small Gulab Jamun' },
+      Thursday:  { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Kobi Matar Bhaji', koshimbir:'Onion Tomato Koshimbir', side:'Chutney', sweet_or_tak:'Solkadhi Included' },
+      Friday:    { dal:'Rassam', rice:'Veg Pulao + 3 Chapati', bhaji:'Chole Masala', koshimbir:'Mixed Sprout Salad', side:'Papad', sweet_or_tak:'Sweet — Kheer' },
+      Saturday:  { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Batata Rassa Bhaji', koshimbir:'Beetroot Dry Koshimbir', side:'Loncha', sweet_or_tak:'Taak Included' },
+    }
+  },
+  '2025-06-08': {
+    thali: {
+      Monday:    { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Dal Makhani', koshimbir:'Boondi Raita', side:'Papad', sweet_or_tak:'Sweet — Aamras (No Taak)' },
+      Tuesday:   { dal:'Dal Fry', rice:'Jeera Rice + 3 Chapati', bhaji:'Masoor Usal', koshimbir:'Chopped Salad (Carrot + Cucumber + Onion)', side:'Loncha', sweet_or_tak:'Jamun Shot | Taak Included' },
+      Wednesday: { dal:'—', rice:'Shezwan Rice + 3 Chapati', bhaji:'Pav Bhaji Style Bhaji', koshimbir:'Kakdi Koshimbir', side:'Papad', sweet_or_tak:'Mattha Included + Small Sweet' },
+      Thursday:  { dal:'Tomato Saar', rice:'Normal Rice + 3 Chapati', bhaji:'Chole Bhaji', koshimbir:'Beetroot Dry Koshimbir', side:'Papad', sweet_or_tak:'Taak Included' },
+      Friday:    { dal:'Pandhri Kadhi', rice:'Moong Dal Khichadi + 3 Chapati', bhaji:'Aloo Methi', koshimbir:'Chopped Salad (Carrot + Onion + Cucumber)', side:'Loncha', sweet_or_tak:'Sweet — Rajgira Vadi' },
+      Saturday:  { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Malai Methi Matar / Mix Veg', koshimbir:'Tomato Koshimbir', side:'Papad', sweet_or_tak:'Jamun Sharbat | Taak Included' },
+    }
+  },
+  '2025-06-15': {
+    thali: {
+      Monday:    { dal:'Tomato Saar', rice:'Jeera Rice + 3 Chapati', bhaji:'Chavali Usal', koshimbir:'Kakdi Peanut Koshimbir', side:'Papad', sweet_or_tak:'Sweet — Rajgira Vadi' },
+      Tuesday:   { dal:'Simple Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Flower Batata Matar Sabji', koshimbir:'Chopped Salad (Carrot + Cucumber + Onion)', side:'Loncha', sweet_or_tak:'Taak Included' },
+      Wednesday: { dal:'Kokum Saar', rice:'Masala Bhat + 3 Chapati', bhaji:'Masoor Usal', koshimbir:'Dry Beetroot Koshimbir', side:'Papad', sweet_or_tak:'Sweet — Kheer' },
+      Thursday:  { dal:'Dal Fry', rice:'Veg Pulao + 3 Chapati', bhaji:'Paneer Tikka Masala', koshimbir:'Onion Tomato Koshimbir', side:'Papad', sweet_or_tak:'Solkadhi Included' },
+      Friday:    { dal:'Amti', rice:'Normal Rice + 3 Chapati', bhaji:'Kobi Dal Sabji', koshimbir:'Gajar Koshimbir (Dry)', side:'Loncha', sweet_or_tak:'Sweet — Small Gulab Jamun' },
+      Saturday:  { dal:'Rassam', rice:'Soya Jeera Rice + 3 Chapati', bhaji:'Soya Chunk Bhaji', koshimbir:'Mixed Sprout Salad', side:'Papad', sweet_or_tak:'Taak Included' },
     }
   },
 };
 
 
 let state = {
-  currentWeek: '2025-05-25',
+  currentWeek: '2025-06-08',
   selectedDay: null,
   menu: {},
   sales: {},
@@ -1400,7 +1300,7 @@ let state = {
 
 function getWeeks() {
   var weeks = [];
-  var weekStarts = ['2025-05-11','2025-05-18','2025-05-25','2025-06-01'];
+  var weekStarts = ['2025-05-11','2025-05-18','2025-05-25','2025-06-01','2025-06-08','2025-06-15'];
   weekStarts.forEach(function(startStr) {
     var parts = startStr.split('-');
     var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
@@ -1455,7 +1355,7 @@ function load() {
     if (!exists) state.stock.push(JSON.parse(JSON.stringify(def)));
   });
   // Always force currentWeek to 2025-05-25 (latest active week)
-  state.currentWeek = '2025-05-25';
+  state.currentWeek = '2025-06-08';
 
   // Always apply authoritative thali menus from WEEK_MENUS
   Object.keys(WEEK_MENUS).forEach(function(wk) {
@@ -1520,7 +1420,7 @@ function renderDashboard() {
   document.getElementById('dash-week-label').textContent = 'Week of ' + getWeekLabel(week);
 
   // Calc totals
-  let thaliRev = 0, bowlRev = 0, totalExp = 0;
+  let thaliRev = 0, totalExp = 0;
   const weekSales = state.sales[week] || {};
   const weekExp = state.expenses[week] || {};
 
@@ -1531,17 +1431,17 @@ function renderDashboard() {
         thaliRev += (s.thali[item.id] || 0) * item.price;
       });
     }
-    if (s.bowl) bowlRev += (s.bowl.sold || 0) * 280;
+    
     const e = weekExp[day] || {};
     (e.thali_purchases || []).forEach(p => totalExp += (p.amount || 0));
     (e.bowl_purchases || []).forEach(p => totalExp += (p.amount || 0));
   });
 
-  const margin = thaliRev + bowlRev - totalExp;
-  const pct = (thaliRev + bowlRev) > 0 ? ((margin / (thaliRev + bowlRev)) * 100).toFixed(1) : 0;
+  const margin = thaliRev - totalExp;
+  const pct = thaliRev > 0 ? ((margin / thaliRev) * 100).toFixed(1) : 0;
 
   document.getElementById('stat-thali-rev').textContent = '₹' + thaliRev.toLocaleString('en-IN');
-  document.getElementById('stat-bowl-rev').textContent = '₹' + bowlRev.toLocaleString('en-IN');
+  
   document.getElementById('stat-expenses').textContent = '₹' + totalExp.toLocaleString('en-IN');
   document.getElementById('stat-margin').textContent = '₹' + margin.toLocaleString('en-IN');
   document.getElementById('stat-margin-pct').textContent = pct + '% margin';
@@ -2200,7 +2100,7 @@ function switchExpTab(tab, btn) {
   document.querySelectorAll('#screen-expenses .tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('exp-thali-section').style.display = tab === 'thali' ? 'block' : 'none';
-  document.getElementById('exp-bowl-section').style.display = tab === 'bowl' ? 'block' : 'none';
+  if(document.getElementById('exp-bowl-section')) document.getElementById('exp-bowl-section').style.display = 'none';
   document.getElementById('exp-other-section').style.display = tab === 'other' ? 'block' : 'none';
   document.getElementById('exp-porter-section').style.display = tab === 'porter' ? 'block' : 'none';
   if (tab === 'other') renderOtherExpenseRows();
@@ -2685,16 +2585,12 @@ function generateReport() {
 
     let thaliRev = 0;
     THALI_ITEMS.forEach(item => { thaliRev += (thali[item.id] || 0) * item.price; });
-    const bowlSold = bowl.sold || 0;
-    const bowlFree = bowl.free || 0;
-    const bowlRev = bowlSold * 280;
-    const dayTotal = thaliRev + bowlRev;
+    const dayTotal = thaliRev;
 
     totalThaliRev += thaliRev;
-    totalBowlRev += bowlRev;
     totalThaliQty += fullThali;
-    totalBowlSold += bowlSold;
-    totalBowlFree += bowlFree;
+    
+    
 
     return `<tr>
       <td><strong>${day}</strong></td>
@@ -2705,7 +2601,7 @@ function generateReport() {
       <td class="text-mono">₹${thaliRev.toLocaleString('en-IN')}</td>
       <td>${bowlSold || '—'}</td>
       <td>${bowlFree || '—'}</td>
-      <td class="text-mono">₹${bowlRev.toLocaleString('en-IN')}</td>
+      <td class="text-mono">—</td>
       <td class="text-mono fw-700">₹${dayTotal.toLocaleString('en-IN')}</td>
     </tr>`;
   }).join('');
@@ -2853,12 +2749,12 @@ function buildWaPreview() {
     const bowl = s.bowl || {};
     let thaliRev = 0;
     THALI_ITEMS.forEach(item => { thaliRev += (thali[item.id]||0) * item.price; });
-    const bowlRev = (bowl.sold||0) * 280;
+    const bowlRev = 0;
     const e = weekExp[today] || {};
     const thaliExp = (e.thali_purchases||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
     const bowlExp = (e.bowl_purchases||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
     const totalExp = thaliExp + bowlExp;
-    const totalRev = thaliRev + bowlRev;
+    const totalRev = thaliRev;
     const menu = (state.menu[week]||DEFAULT_MENU).thali[today]||{};
     const bowlMenu = (state.menu[week]||DEFAULT_MENU).bowl[today]||{};
 
@@ -2880,7 +2776,6 @@ Sales:
 ${bowlMenu.name ? 'Bowl: ' + bowlMenu.name : 'No bowl today'}
 • Sold: ${bowl.sold||0} × ₹280 = ₹${((bowl.sold||0)*280).toLocaleString('en-IN')}
 • Complimentary: ${bowl.free||0}
-💰 Bowl Revenue: *₹${bowlRev.toLocaleString('en-IN')}*
 ━━━━━━━━━━━━━━━━━━━
 *EXPENSES*
 • Thali Purchases: ₹${thaliExp.toLocaleString('en-IN')}
@@ -2900,15 +2795,15 @@ _Sent from Saku Kitchen Ops Platform_`;
       const bowl = s.bowl||{};
       let thaliRev=0;
       THALI_ITEMS.forEach(item => { thaliRev += (thali[item.id]||0)*item.price; });
-      const bowlRev = (bowl.sold||0)*280;
+      const bowlRev = 0;
       const e = weekExp[day]||{};
       const exp = (e.thali_purchases||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0)
                 + (e.bowl_purchases||[]).reduce((s,r)=>s+(parseFloat(r.amount)||0),0);
-      totalThaliRev+=thaliRev; totalBowlRev+=bowlRev; totalExp+=exp;
+      totalThaliRev+=thaliRev; totalExp+=exp;
       totalThaliQty+=(thali.full_thali||0); totalBowlSold+=(bowl.sold||0);
-      const dayTotal = thaliRev+bowlRev;
+      const dayTotal = thaliRev;
       if (!dayTotal && !exp) return `${day.slice(0,3)}: No data`;
-      return `${day.slice(0,3)}: T₹${thaliRev.toLocaleString('en-IN')} + B₹${bowlRev.toLocaleString('en-IN')} - Exp₹${exp.toLocaleString('en-IN')} = *₹${(dayTotal-exp).toLocaleString('en-IN')}*`;
+      return `${day.slice(0,3)}: T₹${thaliRev.toLocaleString('en-IN')} - Exp₹${exp.toLocaleString('en-IN')} = *₹${(thaliRev-exp).toLocaleString('en-IN')}*`;
     });
     const totalRev = totalThaliRev + totalBowlRev;
     const margin = totalRev - totalExp;
@@ -4974,26 +4869,10 @@ function autoSync() {
     </div>
 
     <!-- Bowls planned today -->
-    <div style="background:var(--green-pale);border:1px solid var(--green);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px">
-      <span style="font-size:20px">🥗</span>
-      <div style="flex:1">
-        <div style="font-size:13px;font-weight:700;color:var(--green-dark)" id="purchase-bowl-name">Bowl name</div>
-        <div style="font-size:11px;color:var(--gray-600);margin-top:2px">How many bowls planned today?</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px">
-        <input type="number" id="purchase-bowl-count" min="1" value="20" style="width:60px;font-size:16px;font-weight:800;text-align:center;padding:6px;border:1.5px solid var(--green);border-radius:8px" oninput="recalcPurchaseSuggestions()">
-        <span style="font-size:12px;color:var(--green-dark);font-weight:600">bowls</span>
-      </div>
-    </div>
+
 
     <!-- Bowl ingredients from menu -->
-    <div class="card" style="margin-bottom:12px">
-      <div class="card-header">
-        <span class="card-title">🥗 Bowl Ingredients</span>
-        <span style="font-size:11px;color:var(--gray-400)">Tap to select · Edit qty</span>
-      </div>
-      <div id="purchase-bowl-ingredients" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
+    
 
     <!-- Thali ingredients (manual) -->
     <div class="card" style="margin-bottom:12px">
@@ -5339,99 +5218,6 @@ function formatPurchaseData(data) {
 </div>
 
 
-<!-- ═══════════════════════════ EMPLOYEE VIEW ═══════════════════════════ -->
-<div class="screen" id="screen-employee">
-  <div class="section-header">
-    <div>
-      <div class="section-title">👷 Employee View</div>
-      <div class="section-sub">Today's packing orders & purchase list</div>
-    </div>
-    <div class="nav-week" style="background:var(--green-pale);border-radius:8px;padding:4px 12px">
-      <span style="font-size:12px;font-weight:700;color:var(--green-dark)" id="emp-date-label"></span>
-    </div>
-  </div>
-
-  <!-- Day selector for employee -->
-  <div class="days-grid" id="emp-days" style="margin-bottom:16px"></div>
-
-  <!-- Customer Orders Section -->
-  <div class="card" style="margin-bottom:14px" id="emp-orders-card">
-    <div class="card-header">
-      <span class="card-title">📦 Customer Orders to Pack</span>
-      <span class="badge badge-green" id="emp-order-count">0 orders</span>
-    </div>
-    <div id="emp-no-orders" style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px">
-      Select a day above to see orders
-    </div>
-    <!-- Pickup orders -->
-    <div id="emp-pickup-section" style="display:none">
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--green-dark);letter-spacing:.5px;margin-bottom:8px;padding:6px 0;border-bottom:1px solid var(--gray-100)">🏃 Pickup Orders</div>
-      <div id="emp-pickup-list"></div>
-    </div>
-    <!-- Delivery orders -->
-    <div id="emp-delivery-section" style="display:none;margin-top:12px">
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--blue);letter-spacing:.5px;margin-bottom:8px;padding:6px 0;border-bottom:1px solid var(--gray-100)">🚚 Delivery Orders</div>
-      <div id="emp-delivery-list"></div>
-    </div>
-    <!-- Summary -->
-    <div id="emp-order-summary" style="display:none;margin-top:12px;padding:10px 14px;background:var(--gray-50);border-radius:var(--radius-sm);font-size:12px;color:var(--gray-600)"></div>
-  </div>
-
-  <!-- Purchase List Section (Director-set) -->
-  <div class="card" style="margin-bottom:14px">
-    <div class="card-header">
-      <span class="card-title">🛒 Purchase List (by Director)</span>
-      <span class="badge badge-amber" id="emp-purchase-count">0 items</span>
-    </div>
-    <div id="emp-no-purchase" style="text-align:center;padding:20px;color:var(--gray-400);font-size:13px">
-      Select a day to see purchase list
-    </div>
-    <div id="emp-purchase-list" style="display:none"></div>
-  </div>
-
-  <!-- Employee Purchase Builder -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">🧺 Build Purchase List</span>
-    </div>
-    <div style="font-size:12px;color:var(--gray-400);margin-bottom:12px">Select ingredients, add thali items, then send the full list to director.</div>
-
-    <!-- Tabs: Bowl / Juice / Thali -->
-    <div class="tabs" style="margin-bottom:12px">
-      <button class="tab active" id="emp-tab-bowl" onclick="switchEmpIngTab('bowl',this)">🥗 Bowl</button>
-      <button class="tab" id="emp-tab-juice" onclick="switchEmpIngTab('juice',this)">🍹 Juice</button>
-      <button class="tab" id="emp-tab-thali" onclick="switchEmpIngTab('thali',this)">🍱 Thali</button>
-    </div>
-
-    <!-- Bowl ingredients -->
-    <div id="emp-bowl-ings">
-      <div style="text-align:center;padding:16px;color:var(--gray-400);font-size:12px">Select a day above first</div>
-    </div>
-
-    <!-- Juice ingredients -->
-    <div id="emp-juice-ings" style="display:none">
-      <div style="text-align:center;padding:16px;color:var(--gray-400);font-size:12px">Select a day above first</div>
-    </div>
-
-    <!-- Thali manual items -->
-    <div id="emp-thali-ings" style="display:none">
-      <div id="emp-thali-items-list"></div>
-      <button class="btn btn-outline btn-sm" onclick="addEmpThaliItem()" style="width:100%;justify-content:center;margin-top:8px">＋ Add Thali Item</button>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- Summary of selected -->
-    <div id="emp-selected-summary" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--gray-600);display:none">
-      <strong>Selected:</strong> <span id="emp-selected-count">0</span> items ready to send
-    </div>
-
-    <button class="btn btn-whatsapp" onclick="sendIngredientsToBuy()" style="width:100%;justify-content:center">
-      📲 Send Full Purchase List to Director
-    </button>
-  </div>
-</div>
-
 <!-- ─── BOTTOM NAV ─── -->
 <nav class="bottom-nav" id="bottom-nav">
   <div class="bottom-nav-inner">
@@ -5456,9 +5242,7 @@ function formatPurchaseData(data) {
     <button class="bnav-btn" id="bnav-report" onclick="showScreen('report')">
       <span class="bnav-icon">📊</span><span class="bnav-label">Report</span>
     </button>
-    <button class="bnav-btn" id="bnav-employee" onclick="showScreen('employee')">
-      <span class="bnav-icon">👷</span><span class="bnav-label">Pack</span>
-    </button>
+
     <button class="bnav-btn" id="bnav-settings" onclick="showScreen('settings')">
       <span class="bnav-icon">⚙️</span><span class="bnav-label">Settings</span>
     </button>
