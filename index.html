@@ -1279,6 +1279,26 @@ var WEEK_MENUS = {
       Saturday:  { dal:'Rassam', rice:'Soya Jeera Rice + 3 Chapati', bhaji:'Soya Chunk Bhaji', koshimbir:'Mixed Sprout Salad', side:'Papad', sweet_or_tak:'Taak Included' },
     }
   },
+  '2025-06-22': {
+    thali: {
+      Monday:    { dal:'Dal Tadka', rice:'Jeera Rice + 3 Chapati', bhaji:'Paneer Matar', koshimbir:'Chopped Kakdi', side:'Papad', sweet_or_tak:'Taak' },
+      Tuesday:   { dal:'Sambar', rice:'Normal Rice + 3 Chapati', bhaji:'Akkha Masoor', koshimbir:'Chopped Carrot', side:'Chutney', sweet_or_tak:'Gulab Jamun (1 pc)' },
+      Wednesday: { dal:'Sadhi Dal', rice:'Moong Dal Khichadi + 3 Chapati', bhaji:'Kobi Matar Bhaji', koshimbir:'Boondi Raita', side:'Papad', sweet_or_tak:'Mattha' },
+      Thursday:  { dal:'Dal Fry', rice:'Jeera Rice + 3 Chapati', bhaji:'Mix Veg', koshimbir:'Kakdi + Kanda + Tomato Chopped', side:'Loncha', sweet_or_tak:'Rajgira Vadi' },
+      Friday:    { dal:'Ridge Gourd Dal (Turai)', rice:'Normal Rice with Carrot + 3 Chapati', bhaji:'Batata Matar Rassa Bhaji', koshimbir:'Beetroot Chopped', side:'Papad', sweet_or_tak:'Taak' },
+      Saturday:  { dal:'Normal Dal', rice:'Pulao + 3 Chapati', bhaji:'Yellow Batata', koshimbir:'Kakdi Koshimbir with Curd', side:'Papad', sweet_or_tak:'Kheer Daliya' },
+    }
+  },
+  '2025-06-29': {
+    thali: {
+      Monday:    { dal:'Sambar', rice:'Normal Rice + 3 Chapati', bhaji:'Chole', koshimbir:'Tomato + Kanda', side:'Papad', sweet_or_tak:'Solkadhi' },
+      Tuesday:   { dal:'Dal Palak', rice:'Jeera Rice + 3 Chapati', bhaji:'Pav Bhaji', koshimbir:'Boondi Raita', side:'Papad', sweet_or_tak:'Shevay Kheer' },
+      Wednesday: { dal:'TBD', rice:'TBD', bhaji:'TBD', koshimbir:'TBD', side:'TBD', sweet_or_tak:'TBD' },
+      Thursday:  { dal:'TBD', rice:'TBD', bhaji:'TBD', koshimbir:'TBD', side:'TBD', sweet_or_tak:'TBD' },
+      Friday:    { dal:'TBD', rice:'TBD', bhaji:'TBD', koshimbir:'TBD', side:'TBD', sweet_or_tak:'TBD' },
+      Saturday:  { dal:'TBD', rice:'TBD', bhaji:'TBD', koshimbir:'TBD', side:'TBD', sweet_or_tak:'TBD' },
+    }
+  },
 };
 
 
@@ -1300,7 +1320,7 @@ let state = {
 
 function getWeeks() {
   var weeks = [];
-  var weekStarts = ['2025-05-11','2025-05-18','2025-05-25','2025-06-01','2025-06-08','2025-06-15'];
+  var weekStarts = ['2025-05-11','2025-05-18','2025-05-25','2025-06-01','2025-06-08','2025-06-15','2025-06-22','2025-06-29'];
   weekStarts.forEach(function(startStr) {
     var parts = startStr.split('-');
     var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
