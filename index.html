@@ -1299,11 +1299,31 @@ var WEEK_MENUS = {
       Saturday:  { dal:'Tomato Saar', rice:'Normal Rice + 3 Chapati', bhaji:'Kobi Mattar', koshimbir:'Kakdi Koshimbir with Curd', side:'Loncha', sweet_or_tak:'Sheera' },
     }
   },
+  '2025-07-06': {
+    thali: {
+      Monday:    { dal:'Amti', rice:'Normal Rice + 3 Chapati', bhaji:'Batata Vatana Rassa', koshimbir:'Dry Gajar with Tadka', side:'Chutney', sweet_or_tak:'Solkadhi' },
+      Tuesday:   { dal:'Dal Tadka', rice:'Jeera Rice + 3 Chapati', bhaji:'Matar Paneer', koshimbir:'Beetroot', side:'Papad', sweet_or_tak:'Gulab Jamun (1 Pc)' },
+      Wednesday: { dal:'Normal Dal', rice:'Moong Dal Khichadi + 3 Chapati', bhaji:'Chole', koshimbir:'Kakdi Koshimbir with Curd', side:'Chutney', sweet_or_tak:'Rice Kheer' },
+      Thursday:  { dal:'Sambar', rice:'Normal Rice + 3 Chapati', bhaji:'Kobi Matar Bhaji', koshimbir:'Onion-Kakdi Salad', side:'Loncha', sweet_or_tak:'Rajgira Vadi' },
+      Friday:    { dal:'Dal Fry', rice:'Soya Jeera Rice + 3 Chapati', bhaji:'Mix Veg', koshimbir:'Mixed Sprout Salad', side:'Papad', sweet_or_tak:'Taak' },
+      Saturday:  { dal:'Normal Dal', rice:'Normal Rice + 3 Chapati', bhaji:'Dodka Chana', koshimbir:'Kakdi Tomato Onion Chopped', side:'Loncha', sweet_or_tak:'Kheer Daliya' },
+    }
+  },
+  '2025-07-13': {
+    thali: {
+      Monday:    { dal:'Dal Tadka', rice:'Veg Pulao + 3 Chapati', bhaji:'Rajma Masala', koshimbir:'Dry Gajar with Tadka', side:'Papad', sweet_or_tak:'Rajgira Vadi' },
+      Tuesday:   { dal:'Dal Fry', rice:'Normal Rice + 3 Chapati', bhaji:'Pav Bhaji', koshimbir:'Beetroot', side:'Loncha', sweet_or_tak:'Taak' },
+      Wednesday: { dal:'Dal Palak', rice:'Jeera Rice + 3 Chapati', bhaji:'Kobi Batata', koshimbir:'Onion Slice', side:'Papad', sweet_or_tak:'Gulab Jamun (1 Pc)' },
+      Thursday:  { dal:'Normal Dal', rice:'Masale Bhat + 3 Chapati', bhaji:'Chole', koshimbir:'Onion-Kakdi Salad', side:'Chatni', sweet_or_tak:'Rice Kheer' },
+      Friday:    { dal:'Amti', rice:'Normal Rice + 3 Chapati', bhaji:'Vanga Batata', koshimbir:'Kakdi Gajar Slice', side:'Loncha', sweet_or_tak:'Rajgira Vadi' },
+      Saturday:  { dal:'Normal Dal', rice:'Jeera Rice + 3 Chapati', bhaji:'Vange', koshimbir:'Kakdi Tomato Onion Chopped', side:'Papad', sweet_or_tak:'Taak' },
+    }
+  },
 };
 
 
 let state = {
-  currentWeek: '2025-06-08',
+  currentWeek: '2025-07-06',
   selectedDay: null,
   menu: {},
   sales: {},
@@ -1320,7 +1340,7 @@ let state = {
 
 function getWeeks() {
   var weeks = [];
-  var weekStarts = ['2025-05-11','2025-05-18','2025-05-25','2025-06-01','2025-06-08','2025-06-15','2025-06-22','2025-06-29'];
+  var weekStarts = ['2025-05-11','2025-05-18','2025-05-25','2025-06-01','2025-06-08','2025-06-15','2025-06-22','2025-06-29','2025-07-06','2025-07-13'];
   weekStarts.forEach(function(startStr) {
     var parts = startStr.split('-');
     var d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
@@ -1375,7 +1395,7 @@ function load() {
     if (!exists) state.stock.push(JSON.parse(JSON.stringify(def)));
   });
   // Always force currentWeek to 2025-05-25 (latest active week)
-  state.currentWeek = '2025-06-08';
+  state.currentWeek = '2025-07-06';
 
   // Always apply authoritative thali menus from WEEK_MENUS
   Object.keys(WEEK_MENUS).forEach(function(wk) {
