@@ -1152,22 +1152,22 @@ const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DAY_DATES_APR = ['20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr'];
 
 const THALI_ITEMS = [
-  { id:'full_thali',         name:'Full Thali',            price:70,  group:'dine-in' },
-  { id:'dal_rice',           name:'Dal Rice',              price:40,  group:'dine-in' },
-  { id:'chap_bhaji',         name:'Chapati Bhaji',         price:45,  group:'dine-in' },
-  { id:'chapati',            name:'Chapati',               price:10,  group:'extras'  },
-  { id:'rice',               name:'Rice',                  price:20,  group:'extras'  },
-  { id:'dal',                name:'Dal',                   price:15,  group:'extras'  },
-  { id:'bhaji',              name:'Bhaji',                 price:20,  group:'extras'  },
-  { id:'buttermilk',         name:'Buttermilk (paid)',     price:30,  group:'extras'  },
-  { id:'sweet',              name:'Sweet',                 price:35,  group:'extras'  },
-  { id:'papad',              name:'Papad (extra)',         price:10,  group:'extras'  },
-  { id:'koshimbir',          name:'Koshimbir',             price:15,  group:'extras'  },
-  { id:'chopped_salad',      name:'Chopped Salad',         price:10,  group:'extras'  },
-  { id:'full_thali_parcel',  name:'Full Thali — Parcel',  price:80,  group:'parcel'  },
-  { id:'dal_rice_parcel',    name:'Dal Rice — Parcel',    price:45,  group:'parcel'  },
-  { id:'chap_bhaji_parcel',  name:'Chapati Bhaji — Parcel',price:50, group:'parcel'  },
-  { id:'sharbat',            name:'Sharbat',              price:30,  group:'drinks'  },
+  { id:'full_thali',         name:'Full Thali',              price:80,  group:'dine-in' },
+  { id:'dal_rice',           name:'Dal Rice',                price:40,  group:'dine-in' },
+  { id:'chap_bhaji',         name:'Chapati Bhaji',           price:50,  group:'dine-in' },
+  { id:'chapati',            name:'Chapati (extra)',          price:10,  group:'extras'  },
+  { id:'rice',               name:'1 Bowl Rice',             price:20,  group:'extras'  },
+  { id:'dal',                name:'1 Bowl Dal',              price:15,  group:'extras'  },
+  { id:'bhaji',              name:'1 Bowl Bhaji',            price:20,  group:'extras'  },
+  { id:'buttermilk',         name:'Buttermilk (paid)',       price:30,  group:'extras'  },
+  { id:'sweet',              name:'Sweet',                   price:45,  group:'extras'  },
+  { id:'papad',              name:'Papad (extra)',           price:10,  group:'extras'  },
+  { id:'koshimbir',          name:'Koshimbir',               price:15,  group:'extras'  },
+  { id:'chopped_salad',      name:'1 Bowl Salad',            price:10,  group:'extras'  },
+  { id:'full_thali_parcel',  name:'Full Thali — Parcel',    price:90,  group:'parcel'  },
+  { id:'dal_rice_parcel',    name:'Dal Rice — Parcel',      price:45,  group:'parcel'  },
+  { id:'chap_bhaji_parcel',  name:'Chapati Bhaji — Parcel', price:55,  group:'parcel'  },
+  { id:'sharbat',            name:'Sharbat',                price:30,  group:'drinks'  },
 ];
 
 const DEFAULT_STOCK = [
@@ -3689,7 +3689,7 @@ function formatSalesData(data) {
     Object.entries(days).forEach(([day, s]) => {
       const t = s.thali || {};
       const b = s.bowl || {};
-      const tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*35+(t.papad||0)*10;
+      const tRev = (t.full_thali||0)*80+(t.dal_rice||0)*40+(t.chap_bhaji||0)*50+(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20+(t.buttermilk||0)*25+(t.sweet||0)*45+(t.papad||0)*10;
       const bRev = (b.sold||0)*280;
       rows.push([week, day, t.full_thali||0, t.dal_rice||0, t.chap_bhaji||0, t.chapati||0, t.rice||0, t.dal||0, t.bhaji||0, t.buttermilk||0, t.sweet||0, t.papad||0, tRev, b.sold||0, b.free||0, bRev, tRev+bRev]);
     });
@@ -4818,9 +4818,9 @@ function formatSalesData(data) {
     Object.keys(sales[week]).forEach(function(day) {
       var s = sales[week][day];
       var t = s.thali || {};
-      var tRev = (t.full_thali||0)*70+(t.dal_rice||0)*40+(t.chap_bhaji||0)*45
+      var tRev = (t.full_thali||0)*80+(t.dal_rice||0)*40+(t.chap_bhaji||0)*50
         +(t.chapati||0)*10+(t.rice||0)*20+(t.dal||0)*15+(t.bhaji||0)*20
-        +(t.buttermilk||0)*30+(t.sweet||0)*35+(t.papad||0)*10
+        +(t.buttermilk||0)*30+(t.sweet||0)*45+(t.papad||0)*10
         +(t.koshimbir||0)*15+(t.chopped_salad||0)*10;
       var actualDate = getActualDate(week, day);
       rows.push([actualDate, week, day,
